@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Office;
 use App\Payment;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class PaymentController extends Controller
@@ -35,7 +36,7 @@ class PaymentController extends Controller
         $id = $request['id'];
         $office = Office::find(intval($id));
         if ($office != null) {
-            return response()->json(['success' => ['rental' => $office->total_payment, 'rental_formatted' => number_format($office->total_payment)]]);
+            return response()->json(['success' => ['rental' => $office->monthly_payment, 'rental_formatted' => number_format($office->monthly_payment)]]);
 
         } else {
             return response()->json(['errors' => ['error' => 'Office Invalid!']]);
@@ -56,7 +57,7 @@ class PaymentController extends Controller
             'office' => 'required|exists:office,idoffice',
             'discount' => 'nullable|numeric',
             'payment' => 'required|numeric',
-            'paymentDate' => 'required|date',
+            'month' => 'required|date',
 
         ], [
             'office.required' => 'Office should be provided!',
@@ -64,8 +65,8 @@ class PaymentController extends Controller
             'discount.numeric' => 'Discount can only contains numbers!',
             'payment.numeric' => 'Payment can only contains numbers!',
             'payment.required' => 'Payment should be provided!',
-            'paymentDate.date' => 'Payment date format invalid!',
-            'paymentDate.required' => 'Payment date should be provided!',
+            'month.date' => 'Payment date format invalid!',
+            'month.required' => 'Payment date should be provided!',
 
         ]);
 
@@ -83,7 +84,7 @@ class PaymentController extends Controller
         $user->discount = round($request['discount'], 2);
         $user->payment = round($request['payment'], 2);
         $user->total_with_discount = round($request['payment'] + $request['discount'], 2);
-        $user->paid_date = date('Y-m-d', strtotime($request['paymentDate']));
+        $user->for_month = date('Y-m-d', strtotime($request['month']));
         $user->status = 1; // default value for active user
         $user->save();
         //save in payment table  end
@@ -120,6 +121,75 @@ class PaymentController extends Controller
         $offices = Office::where('status', '1')->get();
         return view('payment.view_payments', ['title' => __('View Payments'), 'offices' => $offices,'payments'=>$payments]);
 
+    }
+
+
+    /**
+     * View outstanding payments
+     *
+     * @param  int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function viewOutstanding(Request $request)
+    {
+        $office = $request['office'];
+
+        $query = Office::query();
+        if (!empty($office)) {
+            $query = $query->where('idoffice', $office);
+        }
+
+        $payableOffices = $query->where('status', 1)->where('payment_date','<=',date('Y-m-d'))->where('monthly_payment','>',0)->latest()->get();
+
+        $payableOffices->each(function ($item, $key) use($payableOffices){
+            $lastPayment = $this->getLastPaymentByOffice($item->idoffice);
+            if ( $lastPayment != null && date('Y-m', strtotime($lastPayment)) >= date('Y-m')) {
+                $payableOffices->forget($key);
+            }
+            else{
+                $outstanding = $this->calOutStandingByOffice($item->idoffice);
+                $item['last_payment_date'] = $lastPayment == null ? 'No Payment Received ' : date('F-Y', strtotime($lastPayment));
+                $item['outstanding_total'] = $outstanding;
+            }
+        });
+        $offices = Office::where('status', '1')->get();
+        return view('payment.outstanding_payments', ['title' => __('Outstanding Payments'), 'offices' => $offices,'outstandingOffices'=>$payableOffices]);
+
+    }
+
+    public function getLastPaymentByOffice($officeId){
+        $office = Office::find(intval($officeId));
+        $officePayments = Payment::where('idoffice',$office->idoffice)->select('for_month')->get();
+        if($officePayments != null){
+            $lastPayment = $officePayments->max('for_month');
+        }
+        else{
+            $lastPayment =null;
+        }
+       return $lastPayment;
+    }
+
+    public function calOutStandingByOffice($officeId){
+        $office = Office::find(intval($officeId));
+        $monthlyPayment = Office::find(intval($officeId))->monthly_payment;
+        $lastPaidDate = $this->getLastPaymentByOffice($officeId);
+        if($lastPaidDate != null){
+
+            $start = new Carbon(date('Y-m-d', strtotime($lastPaidDate)));
+            $end = new Carbon(date('Y-m-d'));
+            $diff_months = $start->diff($end);
+            $inMonths = intval($diff_months->format('%y') * 12 + $diff_months->format('%m'));
+            $outstanding = round(floatval($inMonths * $monthlyPayment),2);
+        }
+        else{
+            $fistPaymentDate = $office->payment_date;
+            $start = new Carbon(date('Y-m-d', strtotime($fistPaymentDate)));
+            $end = new Carbon(date('Y-m-d'));
+            $diff_months = $start->diff($end);
+            $inMonths = intval($diff_months->format('%y') * 12 + $diff_months->format('%m'));
+           $outstanding = round(floatval($inMonths * $monthlyPayment),2);
+        }
+        return $outstanding;
     }
 
     /**

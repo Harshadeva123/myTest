@@ -12,4 +12,20 @@ class Agent extends Model
     public function user(){
         return $this->hasOne(User::class,'idUser');
     }
+
+    public function electionDivision(){
+        return $this->belongsTo(ElectionDivision::class,'idelection_division');
+    }
+
+    public function pollingBooth(){
+        return $this->belongsTo(PollingBooth::class,'idpolling_booth');
+    }
+
+    public function gramasewaDivision(){
+        return $this->belongsTo(GramasewaDivision::class,'idgramasewa_division');
+    }
+
+    public function village(){
+        return $this->belongsTo(Village::class,'idvillage');
+    }
 }

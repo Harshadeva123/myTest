@@ -55,7 +55,7 @@
                                                         class="mdi mdi-account-circle"></em></span>
                                         </div>
                                         <select id="userRole" name="userRole" class="form-control"
-                                                onchange="userRoleChanged(this);setCustomValidity('');" required
+                                                onchange="userRoleChanged(this.value);setCustomValidity('');" required
                                                 oninvalid="this.setCustomValidity('Please select user role')">
                                             <option value="" disabled selected>Select User Role</option>
                                             @if($userRoles != null)
@@ -100,7 +100,7 @@
                                         <input autocomplete="on" type="text" class="form-control" required
                                                oninput="setCustomValidity('')"
                                                oninvalid="this.setCustomValidity('Please enter first name')"
-                                               placeholder="" name="firstName" id="firstName">
+                                               placeholder="Enter first name here" name="firstName" id="firstName">
                                     </div>
                                 </div>
                             </div>
@@ -116,11 +116,11 @@
                                         <input autocomplete="on" type="text" class="form-control" required
                                                oninput="setCustomValidity('')"
                                                oninvalid="this.setCustomValidity('Please enter last name')"
-                                               placeholder="" name="lastName" id="lastName">
+                                               placeholder="Enter last name here" name="lastName" id="lastName">
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group col-md-6">
+                            <div class="form-group col-md-6 viewToggle">
                                 <label for="nic">{{ __('NIC No') }}</label>
                                 <div>
                                     <div class="input-group">
@@ -128,14 +128,14 @@
                                             <span class="input-group-text"><em
                                                         class="mdi mdi-credit-card-scan"></em></span>
                                         </div>
-                                        <input autocomplete="on" type="text" class="form-control" required
-                                               oninput="setCustomValidity('')"
+                                        <input autocomplete="on" type="text" class="form-control"
+                                               oninput="setCustomValidity('')" required
                                                oninvalid="this.setCustomValidity('Please Enter NIC No')"
                                                placeholder="" name="nic" id="nic">
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group col-md-6">
+                            <div class="form-group col-md-6 viewToggle">
                                 <label for="email">{{ __('Email') }}</label>
                                 <div>
                                     <div class="input-group">
@@ -147,7 +147,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group col-md-4">
+                            <div class="form-group col-md-4 viewToggle">
                                 <label for="phone">{{ __('Phone') }}</label>
                                 <div>
                                     <div class="input-group">
@@ -160,7 +160,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group col-md-8">
+                            <div class="form-group col-md-8 viewToggle">
                                 <label for="address">{{ __('Address') }}</label>
                                 <div>
                                     <div class="input-group">
@@ -184,11 +184,11 @@
                                         <input oninput="setCustomValidity('')"
                                                oninvalid="this.setCustomValidity('Please enter user name')"
                                                autocomplete="on" type="text" class="form-control" required
-                                               placeholder="" name="username" id="username">
+                                               placeholder="Unique username here" name="username" id="username">
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group col-md-4">
+                            <div class="form-group col-md-4 viewToggle">
                                 <label for="dob">{{ __('Date of Birth') }}</label>
                                 <div>
                                     <div class="input-group">
@@ -196,7 +196,7 @@
                                             <span class="input-group-text"><em class="mdi mdi-calendar"></em></span>
                                         </div>
                                         <input autocomplete="off" type="text" class="form-control datepicker-autoclose"
-                                               required onchange="setCustomValidity('')"
+                                                onchange="setCustomValidity('')" required
                                                oninvalid="this.setCustomValidity('Please enter a valid date')"
                                                placeholder="mm/dd/yyyy" name="dob" id="dob">
                                     </div>
@@ -224,17 +224,17 @@
                                             <span class="input-group-text"><em class="mdi mdi-key-variant"></em></span>
                                         </div>
                                         <input autocomplete="off" type="password" class="form-control" required
-                                               placeholder="" name="password_confirmation" id="password_confirmation">
+                                               placeholder="Re-enter password" name="password_confirmation" id="password_confirmation">
                                     </div>
                                 </div>
                             </div>
 
 
                             <div class="form-group col-md-4">
-                                <label style="margin-left: 5px;" class="control-label ">{{ __('Gender') }}</label>
+                                <label style="margin-left: 5px;" class="control-label">{{ __('Gender') }}</label>
                                 <div class="row">
                                     <label style="margin-left: 5px;" class="radio-inline"><input
-                                                style="margin-left: 5px;" type="radio" value="0" name="gender" checked>&nbsp;{{ __('Male') }}
+                                                style="margin-left: 5px;" type="radio" required value="0" name="gender" checked>&nbsp;{{ __('Male') }}
                                     </label>
                                     &nbsp;
                                     &nbsp;
@@ -275,18 +275,12 @@
         });
 
         function clearAll() {
+            $('select').val('').trigger('change');
             $('input').not(':radio').val('');
             $(':radio').attr('checked', false);
-            $('select').val('').trigger('change');
         }
 
-        function initializeDate() {
-            jQuery('.datepicker-autoclose').datepicker({
-                autoclose: true,
-                todayHighlight: true
-            });
 
-        }
 
         $("#form1").on("submit", function (event) {
             event.preventDefault();
@@ -350,8 +344,21 @@
             }
         });
 
-        function userRoleChanged(el) {
+        function userRoleChanged(id) {
 
+            if(id == 4){
+
+                $('#nic').attr('required',false);
+                $('#dob').attr('required',false);
+                $('.viewToggle').hide();
+            }
+            else{
+                $('.viewToggle').show();
+                $('#nic').attr('required',true);
+                $('#dob').attr('required',true);
+
+
+            }
         }
     </script>
 @endsection

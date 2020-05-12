@@ -9,12 +9,13 @@ class District extends Model
     protected $table = 'district';
     protected $primaryKey = 'iddistrict';
 
-    public function electionDivision(){
+    public function electionDivisions(){
         return $this->hasMany(ElectionDivision::class,'iddistrict');
     }
 
     public function offices(){
         return $this->hasMany(Office::class,'iddistrict');
     }
+
 
 }

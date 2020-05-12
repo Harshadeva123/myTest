@@ -16,6 +16,9 @@
 <!-- notify alert -->
 <link href="{{ URL::asset('assets/css/jquery.notify.css')}}" rel="stylesheet" type="text/css">
 
+<!-- sweet alert -->
+<link href="{{ URL::asset('assets/plugins/sweet-alert2/sweetalert2.min.css')}}" rel="stylesheet" type="text/css">
+
 
 
 

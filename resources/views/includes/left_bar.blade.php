@@ -178,12 +178,13 @@
                     {{--</li>--}}
                     <li class="menu-title">{{ __('ADMINISTRATION') }}</li>
 
+                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role <= 2)
                     <li class="has_sub">
                         <a href="javascript:void(0);" class="waves-effect"><i class="dripicons-suitcase"></i><span>{{ __('Payments') }}<span
                                         class="pull-right"><i class="mdi mdi-chevron-right"></i></span> </span></a>
                         <ul class="list-unstyled">
                             <li><a href="{{route('addPayment')}}">{{ __('Add Payment') }}</a></li>
-                            <li><a href="{{route('viewCategory')}}">{{ __('Outstanding Payments') }}</a></li>
+                            <li><a href="{{route('viewOutstandingPayments')}}">{{ __('View Outstanding') }}</a></li>
                             <li><a href="{{route('viewPayments')}}">{{ __('View Payments') }}</a></li>
                         </ul>
                     </li>
@@ -205,11 +206,22 @@
                         </ul>
                     </li>
 
+                    @endif
+                    <li class="has_sub">
+                        <a href="javascript:void(0);" class="waves-effect"><i class="dripicons-suitcase"></i><span>{{ __('Hierarchy') }}<span
+                                        class="pull-right"><i class="mdi mdi-chevron-right"></i></span> </span></a>
+                        <ul class="list-unstyled">
+                            <li><a href="{{route('electionDivision')}}">{{ __('Election Division') }}</a></li>
+                            <li><a href="{{route('pollingBooth')}}">{{ __('Polling Booth') }}</a></li>
+                            <li><a href="{{route('gramasewaDivision')}}">{{ __('Gramasewa Division') }}</a></li>
+                        </ul>
+                    </li>
                     <li class="has_sub">
                         <a href="javascript:void(0);" class="waves-effect"><i class="dripicons-suitcase"></i><span>{{ __('Users') }}<span
                                         class="pull-right"><i class="mdi mdi-chevron-right"></i></span> </span></a>
                         <ul class="list-unstyled">
                             <li><a href="{{route('addUser')}}">{{ __('Add Users') }}</a></li>
+                            <li><a href="{{route('pendingAgents')}}">{{ __('Pending Requests') }}</a></li>
                             <li><a href="{{route('viewUser')}}">{{ __('View Users') }}</a></li>
                         </ul>
                     </li>

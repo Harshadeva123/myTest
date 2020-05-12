@@ -6,5 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class GramasewaDivision extends Model
 {
-    //
+    protected $table = 'gramasewa_division';
+    protected $primaryKey = 'idgramasewa_division';
+
+    public function pollingBooth(){
+        return $this->belongsTo(PollingBooth::class,'idpolling_booth');
+    }
+    public function villages(){
+        return $this->hasMany(Village::class,'idgramasewa_division');
+    }
+    public function agents(){
+        return $this->hasMany(Agent::class,'idgramasewa_division');
+    }
 }

@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\Auth;
 
 class User extends Authenticatable
 {
@@ -19,7 +20,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'fName', 'email', 'password','iduser_role','idbranch'
+        'fName', 'email', 'password', 'iduser_role', 'idbranch'
     ];
 
     /**
@@ -41,43 +42,53 @@ class User extends Authenticatable
     ];
 
 
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      * return user role meta data
      */
-    public function userRole(){
-        return $this->belongsTo(UserRole::class,'iduser_role');
+    public function userRole()
+    {
+        return $this->belongsTo(UserRole::class, 'iduser_role');
     }
 
-    public function office(){
-        return $this->belongsTo(Office::class,'idoffice');
+    public function office()
+    {
+        return $this->belongsTo(Office::class, 'idoffice');
     }
 
-    public function userTitle(){
-        return $this->belongsTo(UserTitle::class,'iduser_title');
+    public function userTitle()
+    {
+        return $this->belongsTo(UserTitle::class, 'iduser_title');
     }
 
-    public function taskAgent(){
-        return $this->hasMany(Task::class,'idUser');
+    public function taskAgent()
+    {
+        return $this->hasMany(Task::class, 'idUser');
     }
 
-    public function taskAssigned(){
-        return $this->hasMany(Task::class,'assigned_by');
+    public function taskAssigned()
+    {
+        return $this->hasMany(Task::class, 'assigned_by');
     }
 
-    public function post(){
-        return $this->hasMany(Post::class,'idUser');
+    public function post()
+    {
+        return $this->hasMany(Post::class, 'idUser');
     }
 
-    public function member(){
-        return $this->hasOne(Member::class,'idUser');
+    public function member()
+    {
+        return $this->hasOne(Member::class, 'idUser');
     }
 
-    public function agent(){
-        return $this->hasOne(Agent::class,'idUser');
+    public function agent()
+    {
+        return $this->hasOne(Agent::class, 'idUser');
     }
 
-    public function officeAdmin(){
-        return $this->hasOne(OfficeAdmin::class,'idUser');
+    public function officeAdmin()
+    {
+        return $this->hasOne(OfficeAdmin::class, 'idUser');
     }
 }

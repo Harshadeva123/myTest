@@ -36,7 +36,7 @@
                                             <option value="" disabled selected>Select District</option>
                                             @if($districts != null)
                                                 @foreach($districts as $district)
-                                                    <option value="{{$district->iddistrict}}">{{$district->district_name}}</option>
+                                                    <option value="{{$district->iddistrict}}">{{$district->name_en}}</option>
                                                 @endforeach
                                             @endif
 

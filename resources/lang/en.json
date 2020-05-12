@@ -1,5 +1,5 @@
 {
-  "Login_title":"This is login",
+  "Login_title":"Login",
   "Login_text":"Sign in to continue to SYSTEM.",
 
 
@@ -10,6 +10,9 @@
   "add_user_lname":"Last Name",
   "password_confirmation":"Confirm Password",
   "add_user_registration_btn":"Register",
-  "add_user_cancel_btn":"Cancel"
+  "add_user_cancel_btn":"Cancel",
+
+
+  "election_division_name":"Election Division Name"
 
 }

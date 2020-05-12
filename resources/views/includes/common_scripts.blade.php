@@ -26,10 +26,32 @@
 <!-- notify alert -->
 <script src="{{ URL::asset('assets/js/jquery.notify.min.js')}}"></script>
 
+<!-- sweet alert -->
+<script src="{{ URL::asset('assets/plugins/sweet-alert2/sweetalert2.min.js')}}"></script>
+
+
 <script language="JavaScript" type="text/javascript">
     $('.gtZero').on('input',function () {
         this.value = this.value < 0 ? 0 : this.value;
     })
+
+    $('.monthPicker').datepicker({
+        autoclose: true,
+        minViewMode: 1,
+        format: 'mm/dd/yyyy'
+    }).on('changeDate', function(selected){
+        startDate = new Date(selected.date.valueOf());
+        startDate.setDate(startDate.getDate(new Date(selected.date.valueOf())));
+        $('.to').datepicker('setStartDate', startDate);
+    });
+
+    function initializeDate() {
+        jQuery('.datepicker-autoclose').datepicker({
+            autoclose: true,
+            todayHighlight: true
+        });
+
+    }
 </script>
 
 

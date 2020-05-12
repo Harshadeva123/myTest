@@ -77,21 +77,19 @@ class OfficeController extends Controller
 
         //validation end
 
-
-
-
         //save in user table
         $office = new Office();
         $office->iddistrict = $request['district'];
         $office->office_name = $request['officeName'];
         $office->sub_total = round($subTotal,2);
         $office->discount = round($request['discount'],2);
-        $office->total_payment = $netTotal;
+        $office->monthly_payment = $netTotal;
         $office->payment_date =  date('Y-m-d', strtotime($request['paymentDate']));
         $office->analysis_available = $analysis;
         $office->attendence_available = $attendance;
         $office->status = 1; // default value for active office
         $office->save();
+
         //save in user table  end
 
         return response()->json(['success' => 'Office Registered Successfully!']);

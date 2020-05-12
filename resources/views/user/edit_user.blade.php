@@ -57,7 +57,7 @@
                                                         class="mdi mdi-account-circle"></em></span>
                                         </div>
                                         <select id="userRole" name="userRole" class="form-control"
-                                                onchange="userRoleChanged(this);setCustomValidity('');" required
+                                                onchange="userRoleChanged(this.value);setCustomValidity('');" required
                                                 oninvalid="this.setCustomValidity('Please select user role')">
                                             <option value="" disabled selected>Select User Role</option>
                                             @if($userRoles != null)
@@ -122,7 +122,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group col-md-6">
+                            <div class="form-group col-md-6 viewToggle">
                                 <label for="nic">{{ __('NIC No') }}</label>
                                 <div>
                                     <div class="input-group">
@@ -138,7 +138,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group col-md-6">
+                            <div class="form-group col-md-6 viewToggle">
                                 <label for="email">{{ __('Email') }}</label>
                                 <div>
                                     <div class="input-group">
@@ -151,7 +151,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group col-md-4">
+                            <div class="form-group col-md-4 viewToggle">
                                 <label for="phone">{{ __('Phone') }}</label>
                                 <div>
                                     <div class="input-group">
@@ -165,7 +165,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group col-md-8">
+                            <div class="form-group col-md-8 viewToggle">
                                 <label for="address">{{ __('Address') }}</label>
                                 <div>
                                     <div class="input-group">
@@ -194,7 +194,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group col-md-4">
+                            <div class="form-group col-md-4 viewToggle">
                                 <label for="dob">{{ __('Date of Birth') }}</label>
                                 <div>
                                     <div class="input-group">
@@ -395,9 +395,21 @@
             }
         });
 
-        function userRoleChanged(el) {
+        function userRoleChanged(id) {
 
-            $('#officeAdminDetails').hide();
+            if(id == 4){
+
+                $('#nic').attr('required',false);
+                $('#dob').attr('required',false);
+                $('.viewToggle').hide();
+            }
+            else{
+                $('.viewToggle').show();
+                $('#nic').attr('required',true);
+                $('#dob').attr('required',true);
+
+
+            }
 
         }
     </script>

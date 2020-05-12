@@ -102,16 +102,16 @@
                             </div>
 
                             <div class="form-group col-md-3">
-                                <label for="paymentDate">{{ __('Payment Date') }}</label>
+                                <label for="month">{{ __('Payment for') }}</label>
                                 <div>
                                     <div class="input-group">
                                         <div class="input-group-append">
                                             <span class="input-group-text"><em class="mdi mdi-calendar"></em></span>
                                         </div>
-                                        <input autocomplete="off" type="text" class="form-control datepicker-autoclose"
+                                        <input autocomplete="off" type="text" class="form-control monthPicker"
                                                required onchange="setCustomValidity('')"
                                                oninvalid="this.setCustomValidity('Please enter payment date')"
-                                               placeholder="mm/dd/yyyy" name="paymentDate" id="paymentDate">
+                                               placeholder="mm/yyyy" name="month" id="month">
                                     </div>
                                 </div>
                             </div>

@@ -31,7 +31,7 @@
                                             </option>
                                             @if($districts != null)
                                                 @foreach($districts as $district)
-                                                    <option value="{{$district->iddistrict}}">{{$district->district_name}}</option>
+                                                    <option value="{{$district->iddistrict}}">{{$district->name_en}}</option>
                                                 @endforeach
                                             @endif
                                         </select>
@@ -82,7 +82,7 @@
                                                         @foreach($offices as $office)
                                                             <tr id="{{$office->idoffice}}">
                                                                 <td>{{strtoupper($office->office_name)}} </td>
-                                                                <td>{{strtoupper($office->district->district_name)}} </td>
+                                                                <td>{{strtoupper($office->district->name_en)}} </td>
                                                                 <td style="text-align: right;">{{number_format($office->discount,2)}}</td>
                                                                 <td style="text-align: right;">{{number_format($office->total_payment,2)}}</td>
                                                                 <td>{{$office->payment_date}}</td>

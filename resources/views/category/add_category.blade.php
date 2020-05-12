@@ -17,7 +17,7 @@
                                 </div>
                             </div>
                         </div>
-                        <h6 class="text-secondary">New Category</h6>
+                        {{--<h6 class="text-secondary">New Category</h6>--}}
                         <div class="row">
 
                             <div class="form-group col-md-3">
