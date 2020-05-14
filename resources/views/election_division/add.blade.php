@@ -60,7 +60,8 @@
                                         <input autocomplete="off" type="text" class="form-control"
                                                oninput="setCustomValidity('')" required
                                                oninvalid="this.setCustomValidity('Please enter election division name')"
-                                               placeholder="Election division name in sinhala" name="electionDivision_si"
+                                               placeholder="Election division name in sinhala"
+                                               name="electionDivision_si"
                                                id="electionDivision_si">
                                     </div>
                                 </div>
@@ -96,7 +97,8 @@
                                 <h6 class="text-secondary">Election Divisions</h6>
                             </div>
                             <div class="col-md-4 mb-1">
-                                <input type="text" placeholder="Search division name here" class="float-right form-control" id="searchBox">
+                                <input type="text" placeholder="Search division name here"
+                                       class="float-right form-control" id="searchBox">
                             </div>
 
                             <div class="col-md-12">
@@ -111,6 +113,7 @@
                                                 <th>ENGLISH</th>
                                                 <th>SINHALA</th>
                                                 <th>TAMIL</th>
+                                                <th style='text-align:center;'>UPDATE</th>
                                             </tr>
                                             </thead>
                                             <tbody id="electionDivisionTBody">
@@ -126,6 +129,110 @@
 
         </div> <!-- ./container -->
     </div><!-- ./wrapper -->
+
+
+
+    <!-- modal start -->
+
+    <div class="modal fade" id="updateModal" tabindex="-1"
+         role="dialog"
+         aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title mt-0">Update Election Division</h5>
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-hidden="true">×
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" id="updateForm" role="form">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="alert alert-danger alert-dismissible " id="errorAlertUpdate" style="display:none">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="district">{{ __('District') }}</label>
+                                <div>
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text"><em class="mdi mdi-account"></em></span>
+                                        </div>
+                                        <input autocomplete="off" type="text" class="form-control noClear" readonly
+                                               value="{{\Illuminate\Support\Facades\Auth::user()->office->district->name_en}}"
+                                               name="district"
+                                               id="district">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <label for="electionDivision">{{ __('Election Division Name') }}</label>
+                                <div>
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">EN</span>
+                                        </div>
+                                        <input autocomplete="off" type="text" class="form-control" required
+                                               oninput="setCustomValidity('')"
+                                               oninvalid="this.setCustomValidity('Please enter election division name')"
+                                               placeholder="Election division name in english" name="electionDivision"
+                                               id="electionDivisionU">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <label for="electionDivision_si">ඡන්ද කොට්ඨාශය</label>
+                                <div>
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">SI</span>
+                                        </div>
+                                        <input autocomplete="off" type="text" class="form-control"
+                                               oninput="setCustomValidity('')" required
+                                               oninvalid="this.setCustomValidity('Please enter election division name')"
+                                               placeholder="Election division name in sinhala"
+                                               name="electionDivision_si"
+                                               id="electionDivision_siU">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <label for="electionDivision_ta">தொகுதி</label>
+                                <div>
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">TA</span>
+                                        </div>
+                                        <input autocomplete="off" type="text" class="form-control"
+                                               oninput="setCustomValidity('')" required
+                                               oninvalid="this.setCustomValidity('Please enter election division name')"
+                                               placeholder="Election division name in tamil" name="electionDivision_ta"
+                                               id="electionDivision_taU">
+                                    </div>
+                                </div>
+                            </div>
+                            <input  type="hidden" name="updateId" id="updateId">
+                            <div class="form-group col-md-6" style="margin-top: 20px;">
+                                <button type="submit" onclick="clearAll();event.preventDefault();"
+                                        class="btn btn-danger btn-block ">{{ __('Cancel') }}</button>
+                            </div>
+                            <div class="form-group col-md-6" style="margin-top: 20px;">
+                                <button type="submit" form="updateForm"
+                                        class="btn btn-primary btn-block ">{{ __('Update Division') }}</button>
+                            </div>
+                        </div>
+                    </form> <!-- /form -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- modal end -->
 @endsection
 @section('psScript')
 
@@ -159,11 +266,20 @@
                         $('#electionDivisionTBody').html('');
                         $.each(array, function (key, value) {
                             $('#electionDivisionTBody').append(
-                                "<tr>" +
+                                "<tr id='"+value.idelection_division+"'>" +
                                 "<td>{{ strtoupper( \Illuminate\Support\Facades\Auth::user()->office->district->name_en)}}</td>" +
                                 "<td>" + value.name_en.toUpperCase() + "</td>" +
                                 "<td>" + value.name_si.toUpperCase() + "</td>" +
                                 "<td>" + value.name_ta.toUpperCase() + "</td>" +
+                                " <td style='text-align:center;'>" +
+                                "<p>" +
+                                " <button type='button' " +
+                                "class='btn btn-sm btn-warning  waves-effect waves-light'" +
+                                "onclick='showUpdateModal(" + value.idelection_division + ")'>" +
+                                " <i class='fa fa-edit'></i>" +
+                                "</button>" +
+                                " </p>" +
+                                " </td>" +
                                 "</tr>"
                             );
                         });
@@ -268,5 +384,77 @@
             });
         });
 
+
+        function showUpdateModal(id) {
+            $('#updateId').val(id);
+            $('#electionDivisionU').val($('#'+id).find("td").eq(1).html());
+            $('#electionDivision_siU').val($('#'+id).find("td").eq(2).html());
+            $('#electionDivision_taU').val($('#'+id).find("td").eq(3).html());
+            $('#updateModal').modal('show');
+        }
+
+        $("#updateForm").on("submit", function (event) {
+            event.preventDefault();
+
+            //initialize alert and variables
+            $('.notify').empty();
+            $('.alert').hide();
+            $('.alert').html("");
+            let completed = true;
+            //initialize alert and variables end
+
+
+            //validate user input
+
+            //validation end
+
+            if (completed) {
+
+                $.ajax({
+                    url: '{{route('updateElectionDivision')}}',
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function (data) {
+                        if (data.errors != null) {
+                            $('#errorAlertUpdate').show();
+                            $.each(data.errors, function (key, value) {
+                                $('#errorAlertUpdate').append('<p>' + value + '</p>');
+                            });
+                            $('html, body').animate({
+                                scrollTop: $("body").offset().top
+                            }, 1000);
+                        }
+                        if (data.success != null) {
+
+                            notify({
+                                type: "success", //alert | success | error | warning | info
+                                title: 'ELECTION DIVISION UPDATED!',
+                                autoHide: true, //true | false
+                                delay: 2500, //number ms
+                                position: {
+                                    x: "right",
+                                    y: "top"
+                                },
+                                icon: '<em class="mdi mdi-check-circle-outline"></em>',
+
+                                message: 'Division details saved successfully.'
+                            });
+                            clearAll();
+                            $('#updateModal').modal('hide');
+                            showTableData();
+                        }
+                    }
+
+
+                });
+            }
+            else {
+                $('#errorAlert').html('Please provide all required fields.');
+                $('#errorAlert').show();
+                $('html, body').animate({
+                    scrollTop: $("body").offset().top
+                }, 1000);
+            }
+        });
     </script>
 @endsection

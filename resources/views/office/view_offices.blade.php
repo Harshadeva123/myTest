@@ -18,7 +18,8 @@
 
                                     <div class="form-group col-md-4 ">
                                         <label for="officeName">Office Name</label>
-                                        <input class="form-control " type="text" placeholder="Search office name here" id="officeName"
+                                        <input class="form-control " type="text" placeholder="Search office name here"
+                                               id="officeName"
                                                name="officeName">
                                     </div>
 
@@ -70,8 +71,10 @@
                                                     <th>OFFICE NAME</th>
                                                     <th>DISTRICT</th>
                                                     <th style="text-align: right;">DISCOUNT</th>
-                                                    <th style="text-align: right;">TOTAL PAYMENT</th>
+                                                    <th style="text-align: right;">MONTHLY PAYMENT</th>
                                                     <th>PAYMENT DATE</th>
+                                                    <th>ANALYSIS MODULE</th>
+                                                    <th>ATTENDANCE MODULE</th>
                                                     <th>CREATED AT</th>
                                                     <th>OPTION</th>
                                                 </tr>
@@ -84,8 +87,18 @@
                                                                 <td>{{strtoupper($office->office_name)}} </td>
                                                                 <td>{{strtoupper($office->district->name_en)}} </td>
                                                                 <td style="text-align: right;">{{number_format($office->discount,2)}}</td>
-                                                                <td style="text-align: right;">{{number_format($office->total_payment,2)}}</td>
+                                                                <td style="text-align: right;">{{number_format($office->monthly_payment,2)}}</td>
                                                                 <td>{{$office->payment_date}}</td>
+                                                                @if($office->analysis_available)
+                                                                    <td><em class="mdi mdi-checkbox-blank-circle text-success"></em> ENABLED</td>
+                                                                @else
+                                                                    <td><em class="mdi mdi-checkbox-blank-circle text-danger"></em> DISABLED</td>
+                                                                @endif
+                                                                @if($office->attendence_available)
+                                                                    <td><em class="mdi mdi-checkbox-blank-circle text-success"></em> ENABLED</td>
+                                                                @else
+                                                                    <td><em class="mdi mdi-checkbox-blank-circle text-danger"></em> DISABLED</td>
+                                                                @endif
                                                                 <td>{{$office->created_at}}</td>
                                                                 <td>
                                                                     <div class="dropdown">
@@ -99,7 +112,9 @@
 
                                                                         <div class="dropdown-menu"
                                                                              aria-labelledby="dropdownMenuButton">
-                                                                            <a href="#" class="dropdown-item">Edit
+                                                                            <a href="#"
+                                                                               onclick="showUpdateModal({{$office->idoffice}})"
+                                                                               class="dropdown-item">Edit
                                                                             </a>
                                                                         </div>
 
@@ -136,14 +151,311 @@
     </div><!-- ./wrapper -->
 
 
+    <!-- modal start -->
+    <div class="modal fade" id="updateModal" tabindex="-1"
+         role="dialog"
+         aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title mt-0">Update Office</h5>
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-hidden="true">×
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" id="updateForm" role="form">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="alert alert-danger alert-dismissible " id="errorAlertUpdate"
+                                     style="display:none">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-5">
+                                <label for="districtU" class="control-label">{{ __('District') }}</label>
+                                <div>
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text"><em class="mdi mdi-bank"></em></span>
+                                        </div>
+                                        <select id="districtU" name="district" class="form-control"
+                                                onchange="setCustomValidity('')"
+                                                oninvalid="this.setCustomValidity('Please select district')"
+                                                required>
+                                            <option value="" disabled selected>Select District</option>
+                                            @if($districts != null)
+                                                @foreach($districts as $district)
+                                                    <option value="{{$district->iddistrict}}">{{$district->name_en}}</option>
+                                                @endforeach
+                                            @endif
 
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-7">
+                                <label for="officeName">{{ __('Office Name') }}</label>
+                                <div>
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text"><em class="mdi mdi-account"></em></span>
+                                        </div>
+                                        <input autocomplete="off" type="text" class="form-control" required
+                                               oninput="setCustomValidity('')"
+                                               oninvalid="this.setCustomValidity('Please enter office name')"
+                                               placeholder="Office name" name="officeName" id="officeNameU">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br/>
+                        <h6 class="text-secondary">Additional Features</h6>
+                        <hr/>
+                        <div class="row">
+                            <div style="text-align: center;" class="form-group col-md-2">
+                                <label style="margin-left: 5px;"
+                                       class="control-label ">{{ __('Analysis Feature') }}</label>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <input name="analysis" onchange="calTotal()" type="checkbox" id="analysisBtnU"
+                                               switch="none"/>
+                                        <label for="analysisBtnU" data-on-label="On"
+                                               data-off-label="Off"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="text-align: center;" class="form-group col-md-2">
+                                <label style="margin-left: 5px;"
+                                       class="control-label ">{{ __('Attendance Feature') }}</label>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <input name="attendance" onchange="calTotal()" type="checkbox"
+                                               id="attendanceBtnU" switch="none"/>
+                                        <label for="attendanceBtnU" data-on-label="On"
+                                               data-off-label="Off"></label>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <br/>
+                        <h6 class="text-secondary">Payment Details</h6>
+                        <hr/>
+                        <div class="row">
+                            <div class="form-group col-md-3">
+                                <label for="paymentU">{{ __('Payment Amount') }}</label>
+                                <div>
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">Rs.</span>
+                                        </div>
+                                        <input autocomplete="on" type="number" class="form-control gtZero"
+                                               oninput="setCustomValidity('');calTotal();"
+                                               oninvalid="this.setCustomValidity('Please Enter payment amount')"
+                                               placeholder="0.00" name="payment" id="paymentU">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-3">
+                                <label for="discountU">{{ __('Discount') }}</label>
+                                <div>
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">Rs.</span>
+                                        </div>
+                                        <input autocomplete="on" type="number" class="form-control gtZero"
+                                               oninput="setCustomValidity('');calTotal();"
+                                               oninvalid="this.setCustomValidity('Please Enter discount')"
+                                               placeholder="0.00" name="discount" id="discountU">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-3">
+                                <label for="paymentDateU">{{ __('First Payment Date') }}</label>
+                                <div>
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text"><em class="mdi mdi-calendar"></em></span>
+                                        </div>
+                                        <input autocomplete="off" type="text" class="form-control datepicker-autoclose"
+                                               required onchange="setCustomValidity('')"
+                                               oninvalid="this.setCustomValidity('Please enter payment date')"
+                                               placeholder="mm/dd/yyyy" name="paymentDate" id="paymentDateU">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="totalU">{{ __('Total Monthly Payment') }}</label>
+                                <div>
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">Rs.</span>
+                                        </div>
+                                        <input autocomplete="on" type="number" class="form-control" readonly
+                                               placeholder="0.00" name="total" id="totalU">
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <hr/>
+                        <input type="hidden" name="updateId" id="updateId">
+                        <div class="row">
+                            <div class="form-group col-md-2">
+                                <button type="submit"
+                                        class="btn btn-primary btn-block ">{{ __('Add Office') }}</button>
+                            </div>
+                            <div class="form-group col-md-2">
+                                <button type="submit" onclick="clearAll();event.preventDefault();"
+                                        class="btn btn-danger btn-block ">{{ __('Cancel') }}</button>
+                            </div>
+                        </div>
+                    </form> <!-- /form -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- modal end -->
 @endsection
 @section('psScript')
 
     <script language="JavaScript" type="text/javascript">
         $(document).ready(function () {
-
+            initializeDate();
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
         });
+
+        function showUpdateModal(id) {
+            $('#updateId').val(id);
+            $.ajax({
+                url: '{{route('getOfficeById')}}',
+                data: {id: id},
+                type: 'POST',
+                success: function (data) {
+                    $('#districtU').val(data.iddistrict).trigger('change');
+                    $('#officeNameU').val(data.office_name);
+                    let subTotal = data.sub_total;
+                    if (data.analysis_available) {
+                        subTotal -= 5000;
+                        $('#analysisBtnU').prop('checked', true);
+
+                    }
+                    else {
+                        $('#analysisBtnU').prop('checked', false);
+                    }
+                    if (data.attendence_available) {
+                        subTotal -= 5000;
+                        $('#attendanceBtnU').prop('checked', true);
+                    }
+                    else {
+                        $('#attendanceBtnU').prop('checked', false);
+                    }
+                    $('#paymentU').val(subTotal);
+                    $('#discountU').val(data.discount);
+                    $('#paymentDateU').val(data.payment_date);
+                    calTotal();
+                    $('#updateModal').modal('show');
+                }
+            });
+        }
+
+        $("#updateForm").on("submit", function (event) {
+            event.preventDefault();
+
+            //initialize alert and variables
+            $('.notify').empty();
+            $('.alert').hide();
+            $('.alert').html("");
+            let completed = true;
+            //initialize alert and variables end
+
+
+            //validate user input
+
+            //validation end
+
+            if (completed) {
+
+                $.ajax({
+                    url: '{{route('updateOffice')}}',
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function (data) {
+                        if (data.errors != null) {
+                            $('#errorAlertUpdate').show();
+                            $.each(data.errors, function (key, value) {
+                                $('#errorAlertUpdate').append('<p>' + value + '</p>');
+                            });
+                            $('html, body').animate({
+                                scrollTop: $("body").offset().top
+                            }, 1000);
+                        }
+                        if (data.success != null) {
+
+                            notify({
+                                type: "success", //alert | success | error | warning | info
+                                title: 'OFFICE UPDATED!',
+                                autoHide: true, //true | false
+                                delay: 2500, //number ms
+                                position: {
+                                    x: "right",
+                                    y: "top"
+                                },
+                                icon: '<em class="mdi mdi-check-circle-outline"></em>',
+
+                                message: 'Office details saved successfully.'
+                            });
+                            $('#updateModal').modal('hide');
+                            location.reload();
+                        }
+                    }
+
+
+                });
+            }
+            else {
+                $('#errorAlert').html('Please provide all required fields.');
+                $('#errorAlert').show();
+                $('html, body').animate({
+                    scrollTop: $("body").offset().top
+                }, 1000);
+            }
+        });
+
+        function calTotal() {
+            attendance = $('#attendanceBtnU').prop('checked');
+            analysis = $('#analysisBtnU').prop('checked');
+            payment = $('#paymentU').val() ? parseFloat($('#paymentU').val()) < 0 ? 0 : parseFloat($('#paymentU').val()) : 0;
+            discount = $('#discountU').val() ? parseFloat($('#discountU').val()) < 0 ? 0 : parseFloat($('#discountU').val()) : 0;
+
+            total = payment;
+            if (attendance) {
+                total += 5000;
+            }
+            if (analysis) {
+                total += 5000;
+            }
+
+            let netTotal = total - discount;
+            if (netTotal < 0) {
+                $('#discountU').val(0);
+                calTotal();
+            }
+            else {
+                $('#totalU').val(netTotal);
+
+            }
+
+        }
 
     </script>
 @endsection

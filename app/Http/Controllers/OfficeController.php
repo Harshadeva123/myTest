@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\District;
 use App\Office;
+use App\User;
 use Illuminate\Http\Request;
 
 class OfficeController extends Controller
@@ -126,5 +127,97 @@ class OfficeController extends Controller
         return view('office.view_offices', ['title' =>  __('View Office'), 'offices' => $offices, 'districts' => $districts]);
     }
 
+    public function getById(Request $request){
+            $id = $request['id'];
+            $office =  Office::find(intval($id));
+            $office->payment_date =  date('m/d/Y', strtotime($office->payment_date));
+            return $office;
+    }
+
+    public function update(Request $request){
+        //validation start
+        $validator = \Validator::make($request->all(), [
+            'updateId' => 'required',
+            'district' => 'required|numeric|exists:district,iddistrict',
+            'officeName' => 'required|regex:/^[a-zA-Z ]*$/|max:100',
+            'payment' => 'nullable|numeric',
+            'paymentDate' => 'nullable|date'
+
+        ], [
+            'updateId.required' => 'Update process has failed!',
+            'district.required' => 'District should be provided!',
+            'district.numeric' => 'District invalid!',
+            'district.exists' => 'District invalid!',
+            'officeName.required' => 'Office name should be provided!',
+            'officeName.regex' => 'Office name should be only contains characters!',
+            'officeName.max' => 'Office name should be less than 10 characters long!',
+            'payment.numeric' => 'Payment should be only contains numbers!',
+            'paymentDate.date' => 'Payment date format invalid!'
+
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()->all()]);
+        }
+
+        $subTotal = floatval($request['payment']);
+        if($request['analysis'] == 'on'){
+            $analysis = 1 ;
+            $subTotal += 5000;
+        }
+        else{
+            $analysis = 0 ;
+        }
+
+        if($request['attendance'] == 'on'){
+            $attendance = 1 ;
+            $subTotal += 5000;
+        }
+        else{
+            $attendance = 0 ;
+        }
+
+        $netTotal = round($subTotal - $request['discount'],2);
+        if($netTotal < 0){
+            return response()->json(['errors' => ['error'=>'Total monthly payment must be grater than zero(0)']]);
+
+        }
+
+        $nameExist = Office::where('office_name',$request['officeName'])->where('idoffice','!=',$request['updateId'])->first();
+        if($nameExist != null){
+            return response()->json(['errors' => ['error'=>'Office name already exist!']]);
+        }
+
+        $office = Office::find(intval($request['updateId']));
+        if($office->iddistrict != $request['district']){
+            $district = $request['district'];
+            $users = User::where('idoffice',$request['updateId'])->where('iduser_role',6)->first();
+            if($users != null) {
+                return response()->json(['errors' => ['district'=>'District can not be changed after agent registration']]);
+            }
+        }
+        else{
+            $district = $office->iddistrict;
+
+        }
+
+        //validation end
+
+        //save in user table
+        $office->iddistrict = $district;
+        $office->office_name = $request['officeName'];
+        $office->sub_total = round($subTotal,2);
+        $office->discount = round($request['discount'],2);
+        $office->monthly_payment = $netTotal;
+        $office->payment_date =  date('Y-m-d', strtotime($request['paymentDate']));
+        $office->analysis_available = $analysis;
+        $office->attendence_available = $attendance;
+        $office->status = 1; // default value for active office
+        $office->save();
+
+        //save in user table  end
+
+        return response()->json(['success' => 'Office Registered Successfully!']);
+    }
 
 }

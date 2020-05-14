@@ -26,7 +26,7 @@ class ElectionDivisionController extends Controller
     public function getByAuth()
     {
         $district  = Auth::user()->office->iddistrict;
-        $electionDivisions = ElectionDivision::where('iddistrict',$district)->where('status',1)->latest()->get();
+        $electionDivisions = ElectionDivision::where('iddistrict',$district)->where('status','>=',1)->latest()->get();
         return response()->json(['success'  =>$electionDivisions]);
     }
 
@@ -65,6 +65,7 @@ class ElectionDivisionController extends Controller
         $division->name_si = $request['electionDivision_si'];
         $division->name_ta = $request['electionDivision_ta'];
         $division->status = 1;
+        $division->idUser = Auth::user()->idUser;
         $division->save();
         return response()->json(['success' => 'Election division saved']);
 
@@ -99,9 +100,42 @@ class ElectionDivisionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        $validator = \Validator::make($request->all(), [
+            'updateId' => 'required',
+            'electionDivision' => 'required|max:100',
+            'electionDivision_si' => 'required|max:100',
+            'electionDivision_ta' => 'required|max:100'
+
+        ], [
+            'updateId.required' => 'Update process has failed!',
+            'electionDivision.required' => 'Election division should be provided!',
+            'electionDivision_si.required' => 'Election division (Sinhala) should be provided!',
+            'electionDivision_ta.required' => 'Election division (Tamil) should be provided!',
+            'electionDivision.max' => 'Election division should be less than 100 characters long!',
+            'electionDivision_si.max' => 'Election division (Sinhala) should be less than 100 characters long!',
+            'electionDivision_ta.max' => 'Election division (Tamil) should be less than 100 characters long!',
+
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()->all()]);
+        }
+
+        //validation end
+
+        // save in election division table
+        $division = ElectionDivision::find($request['updateId']);
+        $division->name_en = strtoupper($request['electionDivision']);
+        $division->name_si = $request['electionDivision_si'];
+        $division->name_ta = $request['electionDivision_ta'];
+        $division->idUser = Auth::user()->idUser;
+        $division->save();
+        // save in election division table end
+
+
+        return response()->json(['success' => 'Election division updated']);
     }
 
     /**

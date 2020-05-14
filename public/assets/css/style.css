@@ -3425,7 +3425,7 @@ Invoice
   width: 240px;
   -webkit-transition: all 0.4s ease-in-out;
   transition: all 0.4s ease-in-out;
-  background: radial-gradient(at 50% -20%, #004a43, #0a1832) fixed;
+  background: radial-gradient(at 50% -20%, #0d4468, #10254c) fixed;
   -webkit-box-shadow: 1px 0 14px 0 rgba(0, 0, 0, 0.5);
   box-shadow: 1px 0 14px 0 rgba(0, 0, 0, 0.5);
   position: absolute;

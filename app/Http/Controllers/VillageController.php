@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Agent;
+use App\GramasewaDivision;
+use App\Village;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class VillageController extends Controller
 {
@@ -13,7 +17,8 @@ class VillageController extends Controller
      */
     public function index()
     {
-        //
+        $gramasewaDivisions = GramasewaDivision::where('iddistrict',Auth::user()->office->iddistrict)->where('status','>=',1)->get();
+        return view('village.add')->with(['title'=>'Village','gramasewaDivisions'=>$gramasewaDivisions]);
     }
 
     /**
@@ -21,9 +26,11 @@ class VillageController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function getByAuth()
     {
-        //
+        $district  = intval(Auth::user()->office->iddistrict);
+        $villages = Village::with(['gramasewaDivision'])->where('iddistrict',$district)->where('status','>=',1)->get();
+        return response()->json(['success'  => $villages]);
     }
 
     /**
@@ -34,7 +41,42 @@ class VillageController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = \Validator::make($request->all(), [
+            'gramasewaDivision' => 'required|exists:gramasewa_division,idgramasewa_division',
+            'village' => 'required|max:100',
+            'village_si' => 'required|max:100',
+            'village_ta' => 'required|max:100'
+
+        ], [
+            'gramasewaDivision.required' => 'Gramasewa Division should be provided!',
+            'gramasewaDivision.exists' => 'Gramasewa Division invalid!',
+            'village.required' => 'Village should be provided!',
+            'village_si.required' => 'Village (Sinhala) should be provided!',
+            'village_ta.required' => 'Village (Tamil) should be provided!',
+            'village.max' => 'Village should be less than 100 characters long!',
+            'village_si.max' => 'Village (Sinhala) should be less than 100 characters long!',
+            'village_ta.max' => 'Village (Tamil) should be less than 100 characters long!',
+
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()->all()]);
+        }
+
+        //validation end
+
+        $division = new Village();
+        $division->idgramasewa_division = $request['gramasewaDivision'];
+        $division->idpolling_booth = GramasewaDivision::find(intval($request['gramasewaDivision']))->idpolling_booth;
+        $division->idelection_division = GramasewaDivision::find(intval($request['gramasewaDivision']))->idelection_division;
+        $division->iddistrict = GramasewaDivision::find(intval($request['gramasewaDivision']))->iddistrict;
+        $division->name_en = $request['village'];
+        $division->name_si = $request['village_si'];
+        $division->name_ta = $request['village_ta'];
+        $division->status = 1;
+        $division->idUser = Auth::user()->idUser;
+        $division->save();
+        return response()->json(['success' => 'Village saved']);
     }
 
     /**
@@ -66,9 +108,50 @@ class VillageController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        $validator = \Validator::make($request->all(), [
+            'updateId' => 'required',
+            'gramasewaDivision' => 'required|exists:gramasewa_division,idgramasewa_division',
+            'village' => 'required|max:100',
+            'village_si' => 'required|max:100',
+            'village_ta' => 'required|max:100'
+
+        ], [
+            'updateId.required' => 'Update process has failed!',
+            'gramasewaDivision.required' => 'Gramasewa Division should be provided!',
+            'gramasewaDivision.exists' => 'Gramasewa Division invalid!',
+            'village.required' => 'Village should be provided!',
+            'village_si.required' => 'Village (Sinhala) should be provided!',
+            'village_ta.required' => 'Village (Tamil) should be provided!',
+            'village.max' => 'Village should be less than 100 characters long!',
+            'village_si.max' => 'Village (Sinhala) should be less than 100 characters long!',
+            'village_ta.max' => 'Village (Tamil) should be less than 100 characters long!',
+
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()->all()]);
+        }
+
+        $village = Village::find($request['updateId']);
+        if($village->idgramasewa_division != $request['gramasewaDivision']){
+            $users = Agent::where('idvillage',$request['updateId'])->first();
+            if($users != null) {
+                return response()->json(['errors' => ['pollingBooth'=>'Gramasewa division can not be changed!']]);
+            }
+            $village->idgramasewa_division = $request['gramasewaDivision'];
+            $village->idpolling_booth = GramasewaDivision::find(intval($request['gramasewaDivision']))->idpolling_booth;
+            $village->idelection_division = GramasewaDivision::find(intval($request['gramasewaDivision']))->idelection_division;
+        }
+        //validation end
+
+        $village->name_en = $request['village'];
+        $village->name_si = $request['village_si'];
+        $village->name_ta = $request['village_ta'];
+        $village->idUser = Auth::user()->idUser;
+        $village->save();
+        return response()->json(['success' => 'Village updated']);
     }
 
     /**

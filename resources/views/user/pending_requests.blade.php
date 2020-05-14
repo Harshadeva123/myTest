@@ -92,11 +92,11 @@
                                                     @if(count($users) > 0)
                                                         @foreach($users as $user)
                                                             <tr id="{{$user->idUser}}">
-                                                                <td>{{strtoupper($user->userTitle->title)}} {{strtoupper($user->fName)}} {{strtoupper($user->lName)}}</td>
-                                                                <td>{{strtoupper($user->agent->electionDivision->division_name)}}</td>
-                                                                <td>{{strtoupper($user->agent->pollingBooth->booth_name)}}</td>
-                                                                <td>{{strtoupper($user->agent->gramasewaDivision->gramasewa_name)}}</td>
-                                                                <td>{{strtoupper($user->agent->village->village_name)}}</td>
+                                                                <td>{{strtoupper($user->userTitle->name_en)}} {{strtoupper($user->fName)}} {{strtoupper($user->lName)}}</td>
+                                                                <td>{{strtoupper($user->agent->electionDivision->name_en)}}</td>
+                                                                <td>{{strtoupper($user->agent->pollingBooth->name_en)}}</td>
+                                                                <td>{{strtoupper($user->agent->gramasewaDivision->name_en)}}</td>
+                                                                <td>{{strtoupper($user->agent->village->name_en)}}</td>
                                                                 <td>{{$user->nic}}</td>
                                                             @if($user->gender == 0)
                                                                     <td>MALE</td>
@@ -161,7 +161,11 @@
 
     <script language="JavaScript" type="text/javascript">
         $(document).ready(function () {
-
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
         });
 
         function approveAgent(id) {
@@ -176,37 +180,57 @@
                 buttonsStyling: false
             }).then(function () {
 
+                $.ajax({
+                    url: '{{route('approveAgent')}}',
+                    type: 'POST',
+                    data: {id: id},
+                    success: function (data) {
+                        if (data.errors != null) {
+                            notify({
+                                type: "error", //alert | success | error | warning | info
+                                title: 'APPROVE PROCESS INVALID!',
+                                autoHide: true, //true | false
+                                delay: 2500, //number ms
+                                position: {
+                                    x: "right",
+                                    y: "top"
+                                },
+                                icon: '<em class="mdi mdi-check-circle-outline"></em>',
 
-//                $.post('removeGrnItemTable', {rid: rid}, function (data) {
-//
-//                    if (data == "1") {
-//                        swal(
-//                            'Deleted!',
-//                            'Item deleted successfully.',
-//                            'success'
-//                        )
-//                        loadGrnItemTempTable();
-//                    } else {
-//                        swal(
-//                            'Failed!',
-//                            'Invalid info or Invalid Item!',
-//                            'error'
-//                        )
-//                    }
-//
-//
-//                });
+                                message: 'Something wrong with process.contact administrator..'
+                            });
+                        }
+                        if (data.success != null) {
+
+                            notify({
+                                type: "success", //alert | success | error | warning | info
+                                title: 'AGENT APPROVED!',
+                                autoHide: true, //true | false
+                                delay: 2500, //number ms
+                                position: {
+                                    x: "right",
+                                    y: "top"
+                                },
+                                icon: '<em class="mdi mdi-check-circle-outline"></em>',
+
+                                message: 'Agent approved successfully.'
+                            });
+                            $('#'+id).remove();
+                        }
+
+                    }
+                });
 
             }, function (dismiss) {
                 // dismiss can be 'cancel', 'overlay',
                 // 'close', and 'timer'
-                if (dismiss === 'cancel') {
-                    swal(
-                        'Cancelled',
-                        'Process has been cancelled',
-                        'error'
-                    )
-                }
+//                if (dismiss === 'cancel') {
+//                    swal(
+//                        'Cancelled',
+//                        'Process has been cancelled',
+//                        'error'
+//                    )
+//                }
             })
         }
     </script>

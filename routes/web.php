@@ -37,11 +37,15 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
         Route::post('edit_users', 'UserController@edit')->name('editUser');
         Route::post('update_user', 'UserController@update')->name('updateUser');
         Route::post('get_user_by_id', 'UserController@getById')->name('getUserById');
+        Route::post('approve_agent', 'UserController@approveAgent')->name('approveAgent');
 
         //office management
         Route::get('add_office', 'OfficeController@index')->name('addOffice');
         Route::post('save_office', 'OfficeController@store')->name('saveOffice');
         Route::get('view_offices', 'OfficeController@view')->name('viewOffice');
+        Route::post('get_office_by_id', 'OfficeController@getById')->name('getOfficeById');
+        Route::post('update_office', 'OfficeController@update')->name('updateOffice');
+
 
         //category management
         Route::get('add_category', 'CategoryController@index')->name('addCategory');
@@ -61,16 +65,26 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
         Route::get('election_division', 'ElectionDivisionController@index')->name('electionDivision');
         Route::post('get_election_division_by_auth', 'ElectionDivisionController@getByAuth')->name('getElectionDivisionsByAuth');
         Route::post('save_election_division', 'ElectionDivisionController@store')->name('saveElectionDivision');
+        Route::post('update_election_division', 'ElectionDivisionController@update')->name('updateElectionDivision');
 
         //Polling Booth
         Route::get('polling_booth', 'PollingBoothController@index')->name('pollingBooth');
         Route::post('get_polling_booth_by_auth', 'PollingBoothController@getByAuth')->name('getPollingBoothByAuth');
         Route::post('save_polling_booth', 'PollingBoothController@store')->name('savePollingBooth');
+        Route::post('update_polling_booth', 'PollingBoothController@update')->name('updatePollingBooth');
 
         //Gramasewa Division
         Route::get('gramasewa_division', 'GramasewaDivisionController@index')->name('gramasewaDivision');
         Route::post('get_pgramasewa_division_by_auth', 'GramasewaDivisionController@getByAuth')->name('getGramasewaDivisionByAuth');
         Route::post('save_gramasewa_division', 'GramasewaDivisionController@store')->name('saveGramasewaDivision');
+        Route::post('update_gramasewa_division', 'GramasewaDivisionController@update')->name('updateGramasewaDivision');
+
+        //Village
+        Route::get('village', 'VillageController@index')->name('village');
+        Route::post('get_village_by_auth', 'VillageController@getByAuth')->name('getVillageByAuth');
+        Route::post('save_village', 'VillageController@store')->name('saveVillage');
+        Route::post('update_village', 'VillageController@update')->name('updateVillage');
+
     });
 
 });

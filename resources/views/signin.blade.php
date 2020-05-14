@@ -5,14 +5,14 @@
 <!-- Begin page -->
 <div class="wrapper-page" >
 
-    <div class="card " style="background-color: rgba(75,177,177,0.46)">
+    <div class="card " style="background-color: rgba(71,184,210,0.27)">
         <div class="card-body">
 
 
             <div class="row d-flex justify-content-center">
                 <div  class="col-xl-6 col-lg-6 col-md-12 col-xm-12 col-xs-12">
                     <div class="text-center m-0">
-                        <img  draggable="false" src="{{\Illuminate\Support\Facades\URL::asset('assets/images/resources/lock.svg')}}" width="100%"
+                        <img  style="border-radius: 20px;" draggable="false" src="{{\Illuminate\Support\Facades\URL::asset('assets/images/resources/login3.jpg')}}" width="100%"
                                                                      alt="Lock">
                     </div>
 

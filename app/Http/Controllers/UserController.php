@@ -20,7 +20,7 @@ class UserController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth');
+//        $this->middleware('auth');
     }
 
     /**
@@ -73,14 +73,11 @@ class UserController extends Controller
             'dob.date' => 'Date of birth format invalid!',
             'dob.before' => 'Date of birth should be a valid birthday!',
             'gender.required' => 'Gender should be provided!',
-            'gender.boolean' => 'Gender invalid!',
-
+            'gender.boolean' => 'Gender invalid!'
         ];
 
         $validator = \Validator::make($request->all(), [
             'userRole' => 'required|exists:user_role,iduser_role',
-            'userRole.required' => 'User role should be provided!',
-            'userRole.exists' => 'User role invalid!',
             'username' => 'required|max:50|unique:usermaster',
             'password' => 'required|confirmed',
             'title' => 'required|numeric',
@@ -423,6 +420,7 @@ class UserController extends Controller
         $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
         $referral =  substr(str_shuffle($permitted_chars), 0, 2).$name[0].substr(str_shuffle($permitted_chars), 0, 2).substr(str_shuffle($user->office->office_name), 0, 2);
+//        $referral [7] = 2 randoms from row . first name first character . 2 randoms from row . 2 randoms from office name;
 
         if($user->iduser_role == 3){
             $exist = OfficeAdmin::where('referral_code',$referral)->first();
@@ -504,6 +502,23 @@ class UserController extends Controller
         }
     }
 
+    public function approveAgent(Request $request){
+        $id  = $request['id'];
+        $agent = User::find(intval($id));
+        if($agent->idoffice == Auth::user()->idoffice){
+            $agent->status = 1;
+            $agent->save();
+
+            $agent->agent->status = 1;
+            $agent->agent->save();
+
+            return response()->json(['success' => 'Approved']);
+
+        }
+        else{
+            return response()->json(['errors' => ['error'=>'Agent approving process invalid!']]);
+        }
+    }
 
 
 

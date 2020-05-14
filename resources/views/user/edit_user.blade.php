@@ -83,7 +83,7 @@
                                             <option value="" disabled selected>Select title</option>
                                             @if($userTitles != null)
                                                 @foreach($userTitles as $userTitle)
-                                                    <option value="{{$userTitle->iduser_title}}">{{$userTitle->title}}</option>
+                                                    <option value="{{$userTitle->iduser_title}}">{{$userTitle->name_en}}</option>
                                                 @endforeach
                                             @endif
                                         </select>

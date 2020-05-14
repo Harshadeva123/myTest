@@ -119,7 +119,7 @@
                                                     @if(count($users) > 0)
                                                         @foreach($users as $user)
                                                             <tr id="{{$user->idUser}}">
-                                                                <td>{{$user->userTitle->title}} {{$user->fName}} {{$user->lName}}</td>
+                                                                <td>{{$user->userTitle->name_en}} {{$user->fName}} {{$user->lName}}</td>
                                                                 @if(\Illuminate\Support\Facades\Auth::user()->iduser_role <= 2 )
                                                                     <td>{{strtoupper($user->office->office_name)}}</td>
                                                                 @endif
@@ -229,6 +229,7 @@
                                 </div>
                             </div>
                         @endif
+
                             <div class="form-group col-md-6 ">
                                 <label for="userRoleV">{{ __('User Role') }}</label>
                                 <div>

@@ -20,21 +20,20 @@
                         </div>
                         <div class="row">
                             <div class="form-group col-md-6">
-                                <label for="electionDivision"
-                                       class="control-label">{{ __('Election Division') }}</label>
+                                <label for="pollingBooth" class="control-label">{{ __('Polling Booth') }}</label>
                                 <div>
                                     <div class="input-group">
                                         <div class="input-group-append">
                                             <span class="input-group-text"><em class="mdi mdi-bank"></em></span>
                                         </div>
-                                        <select id="electionDivision" name="electionDivision" class="form-control"
+                                        <select id="pollingBooth" name="pollingBooth" class="form-control"
                                                 onchange="setCustomValidity('')"
-                                                oninvalid="this.setCustomValidity('Please select election division')"
+                                                oninvalid="this.setCustomValidity('Please select polling booth')"
                                                 required>
-                                            <option value="" disabled selected>Select Division</option>
-                                            @if($electionDivisions != null)
-                                                @foreach($electionDivisions as $electionDivision)
-                                                    <option value="{{$electionDivision->idelection_division}}">{{strtoupper($electionDivision->name_en)}}</option>
+                                            <option value="" disabled selected>Select polling booth</option>
+                                            @if($pollingBooths != null)
+                                                @foreach($pollingBooths as $pollingBooth)
+                                                    <option value="{{$pollingBooth->idpolling_booth}}">{{strtoupper($pollingBooth->name_en)}}</option>
                                                 @endforeach
                                             @endif
 
@@ -44,7 +43,7 @@
                             </div>
 
                             <div class="form-group col-md-6">
-                                <label for="pollingBooth">{{ __('Polling Booth Name') }}</label>
+                                <label for="gramasewaDivision">{{ __('Gramasewa Division Name') }}</label>
                                 <div>
                                     <div class="input-group">
                                         <div class="input-group-append">
@@ -52,15 +51,15 @@
                                         </div>
                                         <input autocomplete="off" type="text" class="form-control" required
                                                oninput="setCustomValidity('')"
-                                               oninvalid="this.setCustomValidity('Please enter polling booth name')"
-                                               placeholder="Enter polling booth name in english" name="pollingBooth"
-                                               id="pollingBooth">
+                                               oninvalid="this.setCustomValidity('Please enter gramasewa division name')"
+                                               placeholder="Enter gramasewa division name in english" name="gramasewaDivision"
+                                               id="gramasewaDivision">
                                     </div>
                                 </div>
                             </div>
 
                             <div class="form-group col-md-6">
-                                <label for="pollingBooth_si">ඡන්ද මධ්‍යස්ථානය</label>
+                                <label for="gramasewaDivision_si">ග්‍රාමසේවක වසම</label>
                                 <div>
                                     <div class="input-group">
                                         <div class="input-group-append">
@@ -68,15 +67,15 @@
                                         </div>
                                         <input autocomplete="off" type="text" class="form-control"
                                                oninput="setCustomValidity('')" required
-                                               oninvalid="this.setCustomValidity('Please enter polling booth name')"
-                                               placeholder="Enter polling booth name in sinhala" name="pollingBooth_si"
-                                               id="pollingBooth_si">
+                                               oninvalid="this.setCustomValidity('Please enter gramasewa division name')"
+                                               placeholder="Enter gramasewa division name in sinhala" name="gramasewaDivision_si"
+                                               id="gramasewaDivision_si">
                                     </div>
                                 </div>
                             </div>
 
                             <div class="form-group col-md-6">
-                                <label for="pollingBooth_ta">வாக்குச்சாவடி</label>
+                                <label for="gramasewaDivision_ta">கிராம சேவா பிரிவு</label>
                                 <div>
                                     <div class="input-group">
                                         <div class="input-group-append">
@@ -84,15 +83,15 @@
                                         </div>
                                         <input autocomplete="off" type="text" class="form-control"
                                                oninput="setCustomValidity('')" required
-                                               oninvalid="this.setCustomValidity('Please enter polling booth name')"
-                                               placeholder="Enter polling booth name in tamil" name="pollingBooth_ta"
-                                               id="pollingBooth_ta">
+                                               oninvalid="this.setCustomValidity('Please enter gramasewa division name')"
+                                               placeholder="Enter gramasewa division name in tamil" name="gramasewaDivision_ta"
+                                               id="gramasewaDivision_ta">
                                     </div>
                                 </div>
                             </div>
                             <div class="form-group col-md-3" style="margin-top: 20px;">
                                 <button type="submit"
-                                        class="btn btn-primary btn-block ">{{ __('Add Polling Booth') }}</button>
+                                        class="btn btn-primary btn-block ">{{ __('Add Gramasewa Division') }}</button>
                             </div>
                             <div class="form-group col-md-2" style="margin-top: 20px;">
                                 <button type="submit" onclick="clearAll();event.preventDefault();"
@@ -102,11 +101,10 @@
                         <hr/>
                         <div class="row">
                             <div class="col-md-8">
-                                <h6 class="text-secondary">Polling Booths</h6>
+                                <h6 class="text-secondary">Gramasewa Divisions</h6>
                             </div>
                             <div class="col-md-4 mb-1">
-                                <input type="text" placeholder="Search polling booth name here"
-                                       class="float-right form-control" id="searchBox">
+                                <input type="text" placeholder="Search gramasewa division name here" class="float-right form-control" id="searchBox">
                             </div>
 
                             <div class="col-md-12">
@@ -117,14 +115,14 @@
                                                width="100%">
                                             <thead>
                                             <tr>
-                                                <th>ELECTION DIVISION</th>
+                                                <th>POLLING BOOTH</th>
                                                 <th>ENGLISH</th>
                                                 <th>SINHALA</th>
                                                 <th>TAMIL</th>
                                                 <th>UPDATE</th>
                                             </tr>
                                             </thead>
-                                            <tbody id="pollingBoothTBody">
+                                            <tbody id="gramasewaDivisionTBody">
                                             </tbody>
                                         </table>
                                     </div>
@@ -148,7 +146,7 @@
         <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title mt-0">Update Polling Booth</h5>
+                    <h5 class="modal-title mt-0">Update Gramasewa Division</h5>
                     <button type="button" class="close" data-dismiss="modal"
                             aria-hidden="true">×
                     </button>
@@ -163,21 +161,20 @@
                         </div>
                         <div class="row">
                             <div class="form-group col-md-12">
-                                <label for="electionDivisionU"
-                                       class="control-label">{{ __('Election Division') }}</label>
+                                <label for="pollingBoothU" class="control-label">{{ __('Polling Booth') }}</label>
                                 <div>
                                     <div class="input-group">
                                         <div class="input-group-append">
                                             <span class="input-group-text"><em class="mdi mdi-bank"></em></span>
                                         </div>
-                                        <select id="electionDivisionU" name="electionDivision" class="form-control"
+                                        <select id="pollingBoothU" name="pollingBooth" class="form-control"
                                                 onchange="setCustomValidity('')"
-                                                oninvalid="this.setCustomValidity('Please select election division')"
+                                                oninvalid="this.setCustomValidity('Please select polling booth')"
                                                 required>
-                                            <option value="" disabled selected>Select Division</option>
-                                            @if($electionDivisions != null)
-                                                @foreach($electionDivisions as $electionDivision)
-                                                    <option value="{{$electionDivision->idelection_division}}">{{strtoupper($electionDivision->name_en)}}</option>
+                                            <option value="" disabled selected>Select polling booth</option>
+                                            @if($pollingBooths != null)
+                                                @foreach($pollingBooths as $pollingBooth)
+                                                    <option value="{{$pollingBooth->idpolling_booth}}">{{strtoupper($pollingBooth->name_en)}}</option>
                                                 @endforeach
                                             @endif
 
@@ -187,7 +184,7 @@
                             </div>
 
                             <div class="form-group col-md-12">
-                                <label for="pollingBoothU">{{ __('Polling Booth Name') }}</label>
+                                <label for="gramasewaDivisionU">{{ __('Gramasewa Division Name') }}</label>
                                 <div>
                                     <div class="input-group">
                                         <div class="input-group-append">
@@ -195,15 +192,15 @@
                                         </div>
                                         <input autocomplete="off" type="text" class="form-control" required
                                                oninput="setCustomValidity('')"
-                                               oninvalid="this.setCustomValidity('Please enter polling booth name')"
-                                               placeholder="Enter polling booth name in english" name="pollingBooth"
-                                               id="pollingBoothU">
+                                               oninvalid="this.setCustomValidity('Please enter gramasewa division name')"
+                                               placeholder="Enter gramasewa division name in english" name="gramasewaDivision"
+                                               id="gramasewaDivisionU">
                                     </div>
                                 </div>
                             </div>
 
                             <div class="form-group col-md-12">
-                                <label for="pollingBooth_siU">ඡන්ද මධ්‍යස්ථානය</label>
+                                <label for="gramasewaDivision_siU">ග්‍රාමසේවක වසම</label>
                                 <div>
                                     <div class="input-group">
                                         <div class="input-group-append">
@@ -211,15 +208,15 @@
                                         </div>
                                         <input autocomplete="off" type="text" class="form-control"
                                                oninput="setCustomValidity('')" required
-                                               oninvalid="this.setCustomValidity('Please enter polling booth name')"
-                                               placeholder="Enter polling booth name in sinhala" name="pollingBooth_si"
-                                               id="pollingBooth_siU">
+                                               oninvalid="this.setCustomValidity('Please enter gramasewa division name')"
+                                               placeholder="Enter gramasewa division name in sinhala" name="gramasewaDivision_si"
+                                               id="gramasewaDivision_siU">
                                     </div>
                                 </div>
                             </div>
 
                             <div class="form-group col-md-12">
-                                <label for="pollingBooth_taU">வாக்குச்சாவடி</label>
+                                <label for="gramasewaDivision_taU">கிராம சேவா பிரிவு</label>
                                 <div>
                                     <div class="input-group">
                                         <div class="input-group-append">
@@ -227,9 +224,9 @@
                                         </div>
                                         <input autocomplete="off" type="text" class="form-control"
                                                oninput="setCustomValidity('')" required
-                                               oninvalid="this.setCustomValidity('Please enter polling booth name')"
-                                               placeholder="Enter polling booth name in tamil" name="pollingBooth_ta"
-                                               id="pollingBooth_taU">
+                                               oninvalid="this.setCustomValidity('Please enter gramasewa division name')"
+                                               placeholder="Enter gramasewa division name in tamil" name="gramasewaDivision_ta"
+                                               id="gramasewaDivision_taU">
                                     </div>
                                 </div>
                             </div>
@@ -240,7 +237,7 @@
                             </div>
                             <div class="form-group col-md-6" style="margin-top: 20px;">
                                 <button type="submit" form="updateForm"
-                                        class="btn btn-primary btn-block ">{{ __('Update Polling Booth') }}</button>
+                                        class="btn btn-primary btn-block ">{{ __('Update Division') }}</button>
                             </div>
                         </div>
                     </form> <!-- /form -->
@@ -270,24 +267,26 @@
         }
 
         function showTableData() {
+
+
             $.ajax({
-                url: '{{route('getPollingBoothByAuth')}}',
+                url: '{{route('getGramasewaDivisionByAuth')}}',
                 type: 'POST',
                 success: function (data) {
                     if (data.success != null) {
                         let array = data.success;
-                        $('#pollingBoothTBody').html('');
+                        $('#gramasewaDivisionTBody').html('');
                         $.each(array, function (key1, value1) {
-                            $('#pollingBoothTBody').append(
-                                "<tr data-id='"+value1.idelection_division+"' id='"+value1.idpolling_booth+"'>" +
-                                "<td>" + value1.election_division.name_en.toUpperCase() + "</td>" +
+                            $('#gramasewaDivisionTBody').append(
+                                "<tr data-id='"+value1.idpolling_booth+"' id='"+value1.idgramasewa_division+"'>" +
+                                "<td>" + value1.polling_booth.name_en.toUpperCase() + "</td>" +
                                 "<td>" + value1.name_en.toUpperCase() + "</td>" +
                                 "<td>" + value1.name_si.toUpperCase() + "</td>" +
                                 "<td>" + value1.name_ta.toUpperCase() + "</td>" +
-                                " <td style='text-align:center;'>" +
+                                "<td>" +
                                 "<p>" +
                                 " <button type='button' " +
-                                "class='btn btn-sm btn-warning  waves-effect waves-light' onclick='showUpdateModal(" + value1.idpolling_booth + ")'>" +
+                                "class='btn btn-sm btn-warning  waves-effect waves-light' onclick='showUpdateModal(" + value1.idgramasewa_division + ")'>" +
                                 " <i class='fa fa-edit'></i>" +
                                 "</button>" +
                                 " </p>" +
@@ -295,8 +294,6 @@
                                 "</tr>"
                             );
                         });
-
-
                     }
                     else {
                         //initialize alert and variables
@@ -333,7 +330,7 @@
             if (completed) {
 
                 $.ajax({
-                    url: '{{route('savePollingBooth')}}',
+                    url: '{{route('saveGramasewaDivision')}}',
                     type: 'POST',
                     data: $(this).serialize(),
                     success: function (data) {
@@ -350,7 +347,7 @@
 
                             notify({
                                 type: "success", //alert | success | error | warning | info
-                                title: 'POLLING BOOTH SAVED!',
+                                title: 'GRAMASEWA DIVISION SAVED!',
                                 autoHide: true, //true | false
                                 delay: 2500, //number ms
                                 position: {
@@ -359,7 +356,7 @@
                                 },
                                 icon: '<em class="mdi mdi-check-circle-outline"></em>',
 
-                                message: 'Polling booth details saved successfully.'
+                                message: 'Gramasewa division details saved successfully.'
                             });
                             clearAll();
                             showTableData();
@@ -400,10 +397,10 @@
 
         function showUpdateModal(id) {
             $('#updateId').val(id);
-            $('#electionDivisionU').val($('#'+id).attr('data-id')).trigger('change');
-            $('#pollingBoothU').val($('#'+id).find("td").eq(1).html());
-            $('#pollingBooth_siU').val($('#'+id).find("td").eq(2).html());
-            $('#pollingBooth_taU').val($('#'+id).find("td").eq(3).html());
+            $('#pollingBoothU').val($('#'+id).attr('data-id')).trigger('change');
+            $('#gramasewaDivisionU').val($('#'+id).find("td").eq(1).html());
+            $('#gramasewaDivision_siU').val($('#'+id).find("td").eq(2).html());
+            $('#gramasewaDivision_taU').val($('#'+id).find("td").eq(3).html());
             $('#updateModal').modal('show');
         }
 
@@ -425,7 +422,7 @@
             if (completed) {
 
                 $.ajax({
-                    url: '{{route('updatePollingBooth')}}',
+                    url: '{{route('updateGramasewaDivision')}}',
                     type: 'POST',
                     data: $(this).serialize(),
                     success: function (data) {
@@ -442,7 +439,7 @@
 
                             notify({
                                 type: "success", //alert | success | error | warning | info
-                                title: 'POLLING BOOTH UPDATED!',
+                                title: 'GRAMASEWA DIVISION UPDATED!',
                                 autoHide: true, //true | false
                                 delay: 2500, //number ms
                                 position: {
@@ -451,7 +448,7 @@
                                 },
                                 icon: '<em class="mdi mdi-check-circle-outline"></em>',
 
-                                message: 'Polling booth details saved successfully.'
+                                message: 'Gramasewa division details saved successfully.'
                             });
                             clearAll();
                             $('#updateModal').modal('hide');
