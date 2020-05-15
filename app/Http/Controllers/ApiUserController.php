@@ -9,7 +9,6 @@ use App\ElectionDivision;
 use App\Ethnicity;
 use App\GramasewaDivision;
 use App\Member;
-use App\Nationality;
 use App\NatureOfIncome;
 use App\Office;
 use App\OfficeAdmin;
@@ -80,8 +79,6 @@ class ApiUserController extends Controller
             'gender.boolean' => 'Gender invalid!',
             'ethnicity.required' => 'Ethnicity should be provided!',
             'ethnicity.exists' => 'Ethnicity invalid!',
-            'nationality.required' => 'Nationality should be provided!',
-            'nationality.exists' => 'Nationality invalid!',
             'religion.required' => 'Religion should be provided!',
             'religion.exists' => 'Religion invalid!',
             'career.required' => 'Career should be provided!',
@@ -181,7 +178,6 @@ class ApiUserController extends Controller
             $agent->idgramasewa_division = $request['gramasewaDivision'];
             $agent->idvillage = $request['village'];
             $agent->idethnicity = $request['ethnicity'];
-            $agent->idnationality = $request['nationality'];
             $agent->idreligion = $request['religion'];
             $agent->ideducational_qualification = $request['educationalQualification'];
             $agent->idnature_of_income = $request['natureOfIncome'];
@@ -201,7 +197,6 @@ class ApiUserController extends Controller
             $member->idgramasewa_division = $agent->idgramasewa_division;
             $member->idvillage = $agent->idvillage;
             $member->idethnicity = $request['ethnicity'];
-            $member->idnationality = $request['nationality'];
             $member->idreligion = $request['religion'];
             $member->ideducational_qualification = $request['educationalQualification'];
             $member->idnature_of_income = $request['natureOfIncome'];

@@ -85,6 +85,10 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
         Route::post('save_village', 'VillageController@store')->name('saveVillage');
         Route::post('update_village', 'VillageController@update')->name('updateVillage');
 
+        //Post
+        Route::get('create_post', 'PostController@index')->name('createPost');
+        Route::post('save_post', 'PostController@store')->name('savePost');
+
     });
 
 });

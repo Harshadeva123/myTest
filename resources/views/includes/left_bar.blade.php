@@ -62,6 +62,7 @@
                         </ul>
                     </li>
 
+
                     <li class="has_sub">
                         <a href="javascript:void(0);" class="waves-effect"><i class="dripicons-suitcase"></i><span>{{ __('Office') }}<span
                                         class="pull-right"><i class="mdi mdi-chevron-right"></i></span> </span></a>
@@ -72,6 +73,15 @@
                     </li>
 
                     @endif
+                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role <= 3)
+                    <li class="has_sub">
+                        <a href="javascript:void(0);" class="waves-effect"><i class="dripicons-suitcase"></i><span>{{ __('Post') }}<span
+                                        class="pull-right"><i class="mdi mdi-chevron-right"></i></span> </span></a>
+                        <ul class="list-unstyled">
+                            <li><a href="{{route('createPost')}}">{{ __('Create Post') }}</a></li>
+                            <li><a href="{{route('viewCategory')}}">{{ __('View Category') }}</a></li>
+                        </ul>
+                    </li>
 
                     <li class="has_sub">
                         <a href="javascript:void(0);" class="waves-effect"><i class="dripicons-suitcase"></i><span>{{ __('Users') }}<span
@@ -82,6 +92,7 @@
                             <li><a href="{{route('viewUser')}}">{{ __('View Users') }}</a></li>
                         </ul>
                     </li>
+                    @endif
 
                 </ul>
             </div>
