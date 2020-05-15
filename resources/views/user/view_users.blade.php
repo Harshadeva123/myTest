@@ -166,6 +166,13 @@
                                                                                onclick="viewUser({{$user->idUser}})"
                                                                                class="dropdown-item">View
                                                                             </a>
+                                                                            @if( \Illuminate\Support\Facades\Auth::user()->iduser_role <= 3)
+                                                                                {{--<a href="#"--}}
+                                                                                   {{--onclick="disableUser({{$user->idUser}})"--}}
+                                                                                   {{--class="dropdown-item">Disable--}}
+                                                                                {{--</a>--}}
+                                                                            @endif
+
                                                                         </div>
 
 
@@ -215,98 +222,47 @@
                     </button>
                 </div>
                 <div class="modal-body">
+                    <h6 class="text-secondary">Personal Details</h6>
+                    <hr/>
                     <div class="row">
-                        @if(\Illuminate\Support\Facades\Auth::user()->iduser_role <= 2 )
-                            <div class="form-group col-md-6">
-                                <label for="officeV">{{ __('Office') }}</label>
-                                <div>
-                                    <div class="input-group">
-                                        <div class="input-group-append">
-                                            <span class="input-group-text"><em class="mdi mdi-dice-3"></em></span>
-                                        </div>
-                                        <input autocomplete="off" readonly type="text" class="form-control" name="officeV" id="officeV">
+                        <div class="form-group col-md-2">
+                            <label for="userTitleV">{{ __('User Title') }}</label>
+                            <div>
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><em class="mdi mdi-dice-3"></em></span>
                                     </div>
+                                    <input autocomplete="off" readonly type="text" class="form-control"
+                                           name="userTitleV" id="userTitleV">
                                 </div>
                             </div>
-                        @endif
+                        </div>
+                        <div class="form-group col-md-5">
+                            <label for="firstNameV">{{ __('add_user_fname') }}</label>
+                            <div>
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><em class="mdi mdi-account"></em></span>
+                                    </div>
+                                    <input autocomplete="on" type="text" class="form-control" readonly="true"
+                                           placeholder="Enter first name here" name="firstNameV" id="firstNameV">
+                                </div>
+                            </div>
+                        </div>
 
-                            <div class="form-group col-md-6 ">
-                                <label for="userRoleV">{{ __('User Role') }}</label>
-                                <div>
-                                    <div class="input-group">
-                                        <div class="input-group-append">
-                                            <span class="input-group-text"><em class="mdi mdi-dice-3"></em></span>
-                                        </div>
-                                        <input autocomplete="off" readonly type="text" class="form-control" name="userRoleV" id="userRoleV">
+                        <div class="form-group col-md-5">
+                            <label for="lastNameV">{{ __('add_user_lname') }}</label>
+                            <div>
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                            <span class="input-group-text"><em
+                                                        class="mdi mdi-account-multiple"></em></span>
                                     </div>
+                                    <input autocomplete="on" type="text" class="form-control" readonly="true"
+                                           placeholder="Enter last name here" name="lastNameV" id="lastNameV">
                                 </div>
                             </div>
-                            <div class="form-group col-md-6">
-                                <label for="userTitleV">{{ __('User Title') }}</label>
-                                <div>
-                                    <div class="input-group">
-                                        <div class="input-group-append">
-                                            <span class="input-group-text"><em class="mdi mdi-dice-3"></em></span>
-                                        </div>
-                                        <input autocomplete="off" readonly type="text" class="form-control" name="userTitleV" id="userTitleV">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label for="usernameV">{{ __('Username') }}</label>
-                                <div>
-                                    <div class="input-group">
-                                        <div class="input-group-append">
-                                            <span class="input-group-text"><em class="mdi mdi-dice-3"></em></span>
-                                        </div>
-                                        <input autocomplete="off" readonly type="text" class="form-control" name="usernameV" id="usernameV">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group col-md-6 hideManagement hierarchy">
-                                <label for="electionDivisionV">{{ __('Election Division') }}</label>
-                                <div>
-                                    <div class="input-group">
-                                        <div class="input-group-append">
-                                            <span class="input-group-text"><em class="mdi mdi-dice-3"></em></span>
-                                        </div>
-                                        <input autocomplete="off" readonly type="text" class="form-control" name="electionDivisionV" id="electionDivisionV">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group col-md-6 hideManagement hierarchy">
-                                <label for="pollingBoothV">{{ __('Polling Booth') }}</label>
-                                <div>
-                                    <div class="input-group">
-                                        <div class="input-group-append">
-                                            <span class="input-group-text"><em class="mdi mdi-dice-3"></em></span>
-                                        </div>
-                                        <input autocomplete="off" readonly type="text" class="form-control" name="pollingBoothV" id="pollingBoothV">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group col-md-6 hideManagement hierarchy">
-                                <label for="gramasewaDivisionV">{{ __('Gramasewa Division') }}</label>
-                                <div>
-                                    <div class="input-group">
-                                        <div class="input-group-append">
-                                            <span class="input-group-text"><em class="mdi mdi-dice-3"></em></span>
-                                        </div>
-                                        <input autocomplete="off" readonly type="text" class="form-control" name="gramasewaDivisionV" id="gramasewaDivisionV">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group col-md-6 hideManagement  hierarchy">
-                                <label for="villageV">{{ __('Village') }}</label>
-                                <div>
-                                    <div class="input-group">
-                                        <div class="input-group-append">
-                                            <span class="input-group-text"><em class="mdi mdi-dice-3"></em></span>
-                                        </div>
-                                        <input autocomplete="off" readonly type="text" class="form-control" name="villageV" id="villageV">
-                                    </div>
-                                </div>
-                            </div>
+                        </div>
                         <div class="form-group col-md-4 hideManagement">
                             <label for="phoneV">{{ __('phone') }}</label>
                             <div>
@@ -333,33 +289,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group col-md-6">
-                            <label for="firstNameV">{{ __('add_user_fname') }}</label>
-                            <div>
-                                <div class="input-group">
-                                    <div class="input-group-append">
-                                        <span class="input-group-text"><em class="mdi mdi-account"></em></span>
-                                    </div>
-                                    <input autocomplete="on" type="text" class="form-control" readonly="true"
-                                           placeholder="Enter first name here" name="firstNameV" id="firstNameV">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group col-md-6">
-                            <label for="lastNameV">{{ __('add_user_lname') }}</label>
-                            <div>
-                                <div class="input-group">
-                                    <div class="input-group-append">
-                                            <span class="input-group-text"><em
-                                                        class="mdi mdi-account-multiple"></em></span>
-                                    </div>
-                                    <input autocomplete="on" type="text" class="form-control" readonly="true"
-                                           placeholder="Enter last name here" name="lastNameV" id="lastNameV">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group col-md-6 hideManagement">
+                        <div class="form-group col-md-4 hideManagement">
                             <label for="nicV">{{ __('NIC No') }}</label>
                             <div>
                                 <div class="input-group">
@@ -367,11 +297,14 @@
                                             <span class="input-group-text"><em
                                                         class="mdi mdi-credit-card-scan"></em></span>
                                     </div>
-                                    <input autocomplete="on" type="text" class="form-control" readonly="true" name="nicV"
+                                    <input autocomplete="on" type="text" class="form-control" readonly="true"
+                                           name="nicV"
                                            id="nicV">
                                 </div>
                             </div>
                         </div>
+
+
                         <div class="form-group col-md-6 hideManagement">
                             <label for="emailV">{{ __('Email') }}</label>
                             <div>
@@ -384,21 +317,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <div class="form-group col-md-8 hideManagement">
-                            <label for="addressV">{{ __('Address') }}</label>
-                            <div>
-                                <div class="input-group">
-                                    <div class="input-group-append">
-                                            <span class="input-group-text"><em
-                                                        class="mdi mdi-book-open"></em></span>
-                                    </div>
-                                    <input autocomplete="on" type="text" class="form-control" readonly="true"
-                                           placeholder="" name="addressV" id="addressV">
-                                </div>
-                            </div>
-                        </div>
-
 
                         <div class="form-group col-md-4">
                             <label style="margin-left: 5px;" class="control-label">{{ __('Gender') }}</label>
@@ -418,6 +336,176 @@
                                 </label>
                             </div>
                         </div>
+                        <div class="form-group col-md-6 onlyAppLevel">
+                            <label for="ethnicityV">{{ __('Ethnicity') }}</label>
+                            <div>
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><em class="mdi mdi-dice-3"></em></span>
+                                    </div>
+                                    <input autocomplete="on" type="text" class="form-control" readonly="true"
+                                           placeholder="" name="ethnicityV" id="ethnicityV">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 onlyAppLevel">
+                            <label for="religionV">{{ __('Religion') }}</label>
+                            <div>
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><em class="mdi mdi-dice-3"></em></span>
+                                    </div>
+                                    <input autocomplete="on" type="text" class="form-control" readonly="true"
+                                           placeholder="" name="religionV" id="religionV">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 onlyAppLevel">
+                            <label for="incomeV">{{ __('Nature of Income') }}</label>
+                            <div>
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><em class="mdi mdi-dice-3"></em></span>
+                                    </div>
+                                    <input autocomplete="on" type="text" class="form-control" readonly="true"
+                                           placeholder="" name="incomeV" id="incomeV">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 onlyAppLevel">
+                            <label for="educationV">{{ __('Educational Qualification') }}</label>
+                            <div>
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><em class="mdi mdi-dice-3"></em></span>
+                                    </div>
+                                    <input autocomplete="on" type="text" class="form-control" readonly="true"
+                                           placeholder="" name="educationV" id="educationV">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12 onlyAppLevel">
+                            <label for="careerV">{{ __('Career') }}</label>
+                            <div>
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><em class="mdi mdi-dice-3"></em></span>
+                                    </div>
+                                    <input autocomplete="on" type="text" class="form-control" readonly="true"
+                                           placeholder="" name="careerV" id="careerV">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12 hideManagement">
+                            <label for="addressV">{{ __('Address') }}</label>
+                            <div>
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                            <span class="input-group-text"><em
+                                                        class="mdi mdi-book-open"></em></span>
+                                    </div>
+                                    <input autocomplete="on" type="text" class="form-control" readonly="true"
+                                           placeholder="" name="addressV" id="addressV">
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <h6 class="text-secondary">System Details</h6>
+                    <hr/>
+                    <div class="row">
+                        @if(\Illuminate\Support\Facades\Auth::user()->iduser_role <= 2 )
+                            <div class="form-group col-md-6">
+                                <label for="officeV">{{ __('Office') }}</label>
+                                <div>
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text"><em class="mdi mdi-dice-3"></em></span>
+                                        </div>
+                                        <input autocomplete="off" readonly type="text" class="form-control"
+                                               name="officeV" id="officeV">
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                        <div class="form-group col-md-6 ">
+                            <label for="userRoleV">{{ __('User Role') }}</label>
+                            <div>
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><em class="mdi mdi-dice-3"></em></span>
+                                    </div>
+                                    <input autocomplete="off" readonly type="text" class="form-control" name="userRoleV"
+                                           id="userRoleV">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label for="usernameV">{{ __('Username') }}</label>
+                            <div>
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><em class="mdi mdi-dice-3"></em></span>
+                                    </div>
+                                    <input autocomplete="off" readonly type="text" class="form-control" name="usernameV"
+                                           id="usernameV">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 hideManagement hierarchy">
+                            <label for="electionDivisionV">{{ __('Election Division') }}</label>
+                            <div>
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><em class="mdi mdi-dice-3"></em></span>
+                                    </div>
+                                    <input autocomplete="off" readonly type="text" class="form-control"
+                                           name="electionDivisionV" id="electionDivisionV">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 hideManagement hierarchy">
+                            <label for="pollingBoothV">{{ __('Polling Booth') }}</label>
+                            <div>
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><em class="mdi mdi-dice-3"></em></span>
+                                    </div>
+                                    <input autocomplete="off" readonly type="text" class="form-control"
+                                           name="pollingBoothV" id="pollingBoothV">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 hideManagement hierarchy">
+                            <label for="gramasewaDivisionV">{{ __('Gramasewa Division') }}</label>
+                            <div>
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><em class="mdi mdi-dice-3"></em></span>
+                                    </div>
+                                    <input autocomplete="off" readonly type="text" class="form-control"
+                                           name="gramasewaDivisionV" id="gramasewaDivisionV">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6 hideManagement  hierarchy">
+                            <label for="villageV">{{ __('Village') }}</label>
+                            <div>
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><em class="mdi mdi-dice-3"></em></span>
+                                    </div>
+                                    <input autocomplete="off" readonly type="text" class="form-control" name="villageV"
+                                           id="villageV">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+
                         <div class="form-group col-md-4 toggleOfficeAdmin">
                             <label for="referralV">{{ __('Referral Code') }}</label>
                             <div>
@@ -475,8 +563,9 @@
                         @if(\Illuminate\Support\Facades\Auth::user()->iduser_role <= 2)
                             $('#officeV').val(data.success.office.office_name);
                         @endif
+                        $('.onlyAppLevel').hide();
 
-                        $('#userTitleV').val(data.success.user_title.title);
+                        $('#userTitleV').val(data.success.user_title.name_en);
                         $('#firstNameV').val(data.success.fName);
                         $('#lastNameV').val(data.success.lName);
                         $('#usernameV').val(data.success.username);
@@ -511,15 +600,24 @@
                         }
                         if (data.success.iduser_role == 6 || data.success.iduser_role == 7) {
                             $('.hierarchy').show();
+                            $('.onlyAppLevel').show();
                             if (data.success.iduser_role == 6) {
                                 $('#electionDivisionV').val(data.success.agent.election_division.name_en);
                                 $('#pollingBoothV').val(data.success.agent.polling_booth.name_en);
                                 $('#gramasewaDivisionV').val(data.success.agent.gramasewa_division.name_en);
                                 $('#villageV').val(data.success.agent.village.name_en);
+                                $('#careerV').val(data.success.agent.career.name_en);
+                                $('#educationV').val(data.success.agent.educational_qualification.name_en);
+                                $('#incomeV').val(data.success.agent.nature_of_income.name_en);
+                                $('#religionV').val(data.success.agent.religion.name_en);
+                                $('#ethnicityV').val(data.success.agent.ethnicity.name_en);
                             }
                             else {
-
-                                $('#referralV').val(data.success.agent.refferal_code);
+                                $('#careerV').val(data.success.member.career.name_en);
+                                $('#educationV').val(data.success.member.education_qualification.name_en);
+                                $('#incomeV').val(data.success.agent.member.name_en);
+                                $('#religionV').val(data.success.member.riligion.name_en);
+                                $('#ethnicityV').val(data.success.member.ethnicity.name_en);
                             }
                         }
                         else {
@@ -534,6 +632,73 @@
             });
 
 
+        }
+
+        function disableUser(id) {
+            swal({
+                title: 'Do you want to disable this user?',
+                text:'All sub users will be disabled!',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Disable!',
+                cancelButtonText: 'No, cancel!',
+                confirmButtonClass: 'btn btn-danger',
+                cancelButtonClass: 'btn btn-success m-l-10',
+                buttonsStyling: false
+            }).then(function () {
+
+                $.ajax({
+                    url: '{{route('disableUser')}}',
+                    type: 'POST',
+                    data: {id: id},
+                    success: function (data) {
+                        if (data.errors != null) {
+                            notify({
+                                type: "error", //alert | success | error | warning | info
+                                title: 'DISABLE PROCESS INVALID!',
+                                autoHide: true, //true | false
+                                delay: 2500, //number ms
+                                position: {
+                                    x: "right",
+                                    y: "top"
+                                },
+                                icon: '<em class="mdi mdi-check-circle-outline"></em>',
+
+                                message: 'Something wrong with process.contact administrator..'
+                            });
+                        }
+                        if (data.success != null) {
+
+                            notify({
+                                type: "success", //alert | success | error | warning | info
+                                title: 'USER DISABLED!',
+                                autoHide: true, //true | false
+                                delay: 2500, //number ms
+                                position: {
+                                    x: "right",
+                                    y: "top"
+                                },
+                                icon: '<em class="mdi mdi-check-circle-outline"></em>',
+
+                                message: 'User disabled successfully.'
+                            });
+                            location.reload();
+                        }
+
+                    }
+                });
+
+            }, function (dismiss) {
+                // dismiss can be 'cancel', 'overlay',
+                // 'close', and 'timer'
+//                if (dismiss === 'cancel') {
+//                    swal(
+//                        'Cancelled',
+//                        'Process has been cancelled',
+//                        'error'
+//                    )
+//                }
+            })
         }
     </script>
 @endsection

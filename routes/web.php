@@ -38,6 +38,7 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
         Route::post('update_user', 'UserController@update')->name('updateUser');
         Route::post('get_user_by_id', 'UserController@getById')->name('getUserById');
         Route::post('approve_agent', 'UserController@approveAgent')->name('approveAgent');
+        Route::post('disable_user', 'UserController@disable')->name('disableUser');
 
         //office management
         Route::get('add_office', 'OfficeController@index')->name('addOffice');

@@ -492,7 +492,7 @@ class UserController extends Controller
             $user =  User::with(['office','officeAdmin','userRole','userTitle','agent.electionDivision','agent.pollingBooth','agent.gramasewaDivision','agent.village'])->find(intval($request['id']));
         }
         else{
-            $user =  User::with(['officeAdmin','userRole','userTitle','agent.electionDivision','agent.pollingBooth','agent.gramasewaDivision','agent.village'])->where('idUser',intval($request['id']))->where('idoffice',Auth::user()->idoffice)->first();
+            $user =  User::with(['officeAdmin','userRole','userTitle','agent.electionDivision','agent.pollingBooth','agent.gramasewaDivision','agent.village','agent.religion','agent.ethnicity','agent.career','agent.educationalQualification','agent.natureOfIncome'])->where('idUser',intval($request['id']))->where('idoffice',Auth::user()->idoffice)->first();
         }
         if($user != null){
             return response()->json(['success' => $user]);
@@ -520,230 +520,17 @@ class UserController extends Controller
         }
     }
 
+    public function disable(Request $request){
+        $user = User::find(intval($request['id']));
+        $user->status = 0;
+        $user->save();
 
+        if($user->iduser_role == 3){
+           $office = Office::find($user->idoffice);
+           $office->status = 0;
+           $office->save();
 
-
-
-
-
-
-//
-//    public function getPasswordById(Request $request)
-//    {
-//        $pid = $request['pid'];
-//        $findUserPword = User::find(intval($pid));
-//        return response()->json($findUserPword);
-//    }
-//
-//    public function createUser(Request $request)
-//    {
-//
-//        $title = $request->get('uTitle');
-//        $fName = $request->get('fName');
-//        $lName = $request->get('lName');
-//        $lName = $request->get('nic');
-//        $gender = $request->get('gender');
-//        $contactNo = $request->get('contactNo');
-//        $dob = $request->get('dob');
-//        $utype = $request->get('utype');
-//        $username = $request->get('username');
-//        $pass2 = $request->get('pass2');
-//        $agency = $request->get('agency');
-//
-//        $rules = [
-//            'uTitle' => 'required|in:Mr.,Mrs.,Miss.',
-//            'fName' => 'required|max:255',
-//            'lName' => 'required|max:255',
-//            'contactNo' => 'required',
-//            'utype' => 'required|exists:meta_userrole,idUserRole',
-//            'username' => 'required|email|unique:usermaster,username',
-//            'pass2' => 'required|min:8',
-//            'agency'=>'required',
-//            'proImage' => 'nullable|image|max:3048',
-//
-//
-//        ];
-//
-//        $customMessages = [
-//            'agency,required'=>'Agency should be provided!',
-//            'proImage.image'=>'User image format invalid!',
-//            'proImage.max'=>'User image size should lower than 3MB!',
-//            'uTitle.required' => 'Title should be provided!',
-//            'uTitle.in' => 'Title Invalid!',
-//            'fName.required' => 'First name should be provided!',
-//            'fName.max' => 'First name is too long!',
-//            'lName.required' => 'Last name should be provided!',
-//            'lName.max' => 'Last name is too long!',
-//            'contactNo.required' => 'Contact number should be provided!',
-//            'utype.required' => 'User type should be provided!',
-//            'utype.exists' => 'User type invalid!',
-//            'username.email' => 'Email format invalid!',
-//            'username.required' => 'Username should be provided!',
-//            'username.unique' => 'Username already taken!',
-//            'pass2.min' => 'The Password must be at least 8 characters.',
-//
-//        ];
-//
-//
-//        $this->validate($request, $rules, $customMessages);
-//        $name = "";
-//        if ($request->hasfile('proImage')) {
-//            $file = $request->file('proImage');
-//            $name =  time().$file->getClientOriginalName();
-//            $file->move(public_path('assets/images/users/'), $name);
-//        }
-//
-//
-//        $user = new User();
-//        $user->title = $title;
-//
-//        $user->fName = strtoupper($fName);
-//        $user->Lname = strtoupper($lName);
-//        $user->gender = $gender;
-//        $user->Company = $agency;
-//        $user->bday = date('Y-m-d', strtotime($dob));
-//        $user->contactNo = $contactNo;
-//        $user->UserRole = intval($utype);
-//        $user->username = $username;
-//
-//
-//        $advanceEncryption = (new  \App\MyResources\AdvanceEncryption($pass2, "Nova6566", 256));
-//
-//        $user->password = $advanceEncryption->encrypt();
-//        $user->image = $name;
-//        $user->status = 1;
-//        $user->save();
-//
-//        return redirect()->route('add_user')->with('success', 'User Information has been added');
-//
-//    }
-//
-//
-//    public function updateo(Request $request)
-//    {
-//        $hiddenVID = $request['hiddenVID'];
-//        $update_Title = $request['update_Title'];
-//        $update_fName = $request['update_fName'];
-//        $update_lName = $request['update_lName'];
-//        $update_gender = $request['update_gender'];
-//        $update_contactNo = $request['update_contactNo'];
-//        $update_type = $request['update_type'];
-//        $update_username = $request['update_username'];
-//        $dob = $request['dob'];
-//        $update_agency = $request['update_agency'];
-//
-//        $validator = \Validator::make($request->all(), [
-//            'update_Title' => 'required|in:Mr.,Mrs.,Miss.',
-//            'update_fName' => 'required|max:255',
-//            'update_lName' => 'required|max:255',
-//            'update_gender' => 'required',
-//            'update_contactNo' => 'required',
-//            'update_type' => 'required|exists:meta_userrole,idUserRole',
-//            'update_username' => 'required|email',
-//            'update_agency'=>'required',
-//            'update_proImage' => 'nullable|image|max:3048',
-//        ], [
-//            'update_agency.required'=>'Agency should be provided!',
-//            'update_fName.max' => 'First name is too long!',
-//            'update_lName.max' => 'Last name is too long!',
-//            'update_Title.required' => 'User Title should be provided!',
-//            'update_Title.in' => 'Title Invalid!',
-//            'update_fName.required' => 'First Name should be provided!',
-//            'update_lName.required' => 'Last Name should be provided!',
-//            'update_gender.required' => 'Gender should be provided!',
-//            'update_contactNo.required' => 'Contact Number should be provided!',
-//            'update_type.required' => 'User Type be provided!',
-//            'update_type.exists' => 'User Type invalid!',
-//            'update_username.required' => 'Username should be provided!.',
-//            'update_username.email' => 'Email format invalid!.',
-//            'update_proImage.image'=>'User image format invalid!',
-//            'update_proImage.max'=>'User image size should lower than 3MB!',
-//
-//        ]);
-//
-//        if ($validator->fails()) {
-//            return redirect('view_users')
-//                ->withErrors($validator)
-//                ->withInput();
-//        }
-//
-//        $name = "";
-//        if ($request->hasfile('update_proImage')) {
-//            $file = $request->file('update_proImage');
-//            $name =  time().$file->getClientOriginalName();
-//            $file->move(public_path('assets/images/users/'), $name);
-//        }
-//
-//        $updateUser = User::find(intval($hiddenVID));
-//        $updateUser->title = $update_Title;
-//        $updateUser->fName = strtoupper($update_fName);
-//        $updateUser->Lname = strtoupper($update_lName);
-//        $updateUser->gender = $update_gender;
-//        $updateUser->contactNo = $update_contactNo;
-//        $updateUser->UserRole = $update_type;
-//        $updateUser->image = $name;
-//        $updateUser->bday = date('Y-m-d', strtotime($dob));
-//        $updateUser->username = strtolower($update_username);
-//        $updateUser->Company=$update_agency;
-//        $updateUser->update();
-//
-//        return redirect()->route('view_users')->with('success', 'User Information updated successfully.');
-//
-//    }
-//
-//    public function updatePassword(Request $request)
-//    {
-//        $update_pass2 = $request['update_pass2'];
-//        $hiddenPID = $request['hiddenPID'];
-//        $compass = $request['compass'];
-//
-//        $validator = \Validator::make($request->all(), [
-//            'update_pass2' => 'required',
-//            'compass' => 'required',
-//
-//        ], [
-//            'update_pass2.required' => 'Password should be provided!',
-//            'compass.required' => 'Conform Password should be provided!',
-//        ]);
-//
-//        if ($validator->fails()) {
-//            return response()->json(['errors' => $validator->errors()->all()]);
-//        }
-//        if ($compass != $update_pass2) {
-//            return response()->json(['errors' => ['error'=>'Password not match.']]);
-//        }
-//
-//        $advanceEncryption = (new  \App\MyResources\AdvanceEncryption($update_pass2, "Nova6566", 256));
-//
-//        $pass = User::find(intval($hiddenPID));
-//        $pass->password = $advanceEncryption->encrypt();
-//        $pass->save();
-//
-//        return response()->json(['success' => 'User Password is successfully updated']);
-//
-//    }
-//
-//
-//    public function checkUsername(Request $request)
-//    {
-//        if (User::where('username',$request['username'])->exists()) {
-//            return 1;
-//        } else {
-//            return 0;
-//        }
-//
-//    }
-//
-//    public function changeStatus(Request $request){
-//        $id = $request['id'];
-//        $user = User::find(intval($id));
-//        if ($user->status == 1) {
-//            $user->status = 0;
-//        } else {
-//            $user->status = 1;
-//        }
-//        $user->save();
-//    }
-
-
+        }
+        return response()->json(['success' => 'disabled']);
+    }
 }

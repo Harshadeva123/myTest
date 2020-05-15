@@ -148,24 +148,24 @@
                         <h6 class="text-secondary">Post Attachments</h6>
                         <hr/>
                         <input type="file" style="display: none" id="imageFiles" onchange="readURL(this,1)"
-                               name="imageFiles" multiple accept="image/*">
+                               name="imageFiles[]" multiple accept="image/*">
                         <input type="file" style="display: none" id="videoFiles" onchange="readURL(this,2)"
-                               name="videoFiles" multiple
+                               name="videoFiles[]" multiple
                                accept="video/*">
-                        <input type="file" style="display: none" id="audioFiles" name="audioFiles"
+                        <input type="file" style="display: none" id="audioFiles" name="audioFiles[]"
                                onchange="readURL(this,3)"
                                multiple
                                accept="audio/*">
 
                         <div class="row">
-                            <div class="col-md-4 text-center" onclick="$('#imageFiles').click();">
+                            <div class="col-md-4 text-center py-2" onclick="$('#imageFiles').click();">
                                 <div class="attachmentBox bg-primary  pointer">
                                     <em style="width: 100%" class="fa fa-image (alias) fa-3x text-white"></em>
 
                                 </div>
 
                             </div>
-                            <div class="col-md-4 text-center" onclick="$('#videoFiles').click();">
+                            <div class="col-md-4 text-center py-2" onclick="$('#videoFiles').click();">
                                 <div class="attachmentBox bg-primary  pointer">
                                     <em style="width: 100%" class="fa fa-file-video-o fa-3x text-white"></em>
 
@@ -173,7 +173,7 @@
                                 </div>
 
                             </div>
-                            <div class="col-md-4 text-center" onclick="$('#audioFiles').click();">
+                            <div class="col-md-4 text-center py-2" onclick="$('#audioFiles').click();">
                                 <div class="attachmentBox bg-primary  pointer">
                                     <em style="width: 100%" class="fa fa-microphone fa-3x text-white"></em>
 
@@ -233,7 +233,7 @@
                                     <label for="electionDivisions"
                                            class="control-label">{{ __('Election Divisions') }}</label>
 
-                                    <select name="electionDivisions" id="electionDivisions"
+                                    <select name="electionDivisions[]" id="electionDivisions"
                                             class="select2 form-control select2-multiple" multiple="multiple" multiple
                                             onchange="electionDivisionChanged(this)"
                                             data-placeholder="Choose ...">
@@ -248,7 +248,7 @@
                                     <label for="pollingBooths"
                                            class="control-label">{{ __('Polling Booths') }}</label>
 
-                                    <select name="pollingBooths" id="pollingBooths"
+                                    <select name="pollingBooths[]" id="pollingBooths"
                                             class="select2 form-control select2-multiple" multiple="multiple" multiple
                                             onchange="pollingBoothChanged(this)"
                                             data-placeholder="Choose ...">
@@ -259,7 +259,7 @@
                                     <label for="gramasewaDivisions"
                                            class="control-label">{{ __('Gramasewa Divisions') }}</label>
 
-                                    <select name="gramasewaDivisions" id="gramasewaDivisions"
+                                    <select name="gramasewaDivisions[]" id="gramasewaDivisions"
                                             class="select2 form-control select2-multiple" multiple="multiple" multiple
                                             onchange="gramasewaDivisionsChanged(this)"
                                             data-placeholder="Choose ...">
@@ -270,7 +270,7 @@
                                     <label for="villages"
                                            class="control-label">{{ __('Villages') }}</label>
 
-                                    <select name="villages" id="villages"
+                                    <select name="villages[]" id="villages"
                                             class="select2 form-control select2-multiple" multiple="multiple" multiple
                                             data-placeholder="Choose ...">
 
@@ -290,7 +290,7 @@
                                     <label for="ethnicities"
                                            class="control-label">{{ __('Ethnicity') }}</label>
 
-                                    <select name="ethnicities" id="ethnicities"
+                                    <select name="ethnicities[]" id="ethnicities"
                                             class="select2 form-control select2-multiple" multiple="multiple" multiple
                                             data-placeholder="Choose ...">
                                         @if($ethnicities != null)
@@ -304,7 +304,7 @@
                                     <label for="religions"
                                            class="control-label">{{ __('Religion') }}</label>
 
-                                    <select name="religions" id="religions"
+                                    <select name="religions[]" id="religions"
                                             class="select2 form-control select2-multiple" multiple="multiple" multiple
                                             data-placeholder="Choose ...">
                                         @if($religions != null)
@@ -318,7 +318,7 @@
                                     <label for="incomes"
                                            class="control-label">{{ __('Nature of income') }}</label>
 
-                                    <select name="incomes" id="incomes"
+                                    <select name="incomes[]" id="incomes"
                                             class="select2 form-control select2-multiple" multiple="multiple" multiple
                                             data-placeholder="Choose ...">
                                         @if($incomes != null)
@@ -332,7 +332,7 @@
                                     <label for="educations"
                                            class="control-label">{{ __('Educational Qualification') }}</label>
 
-                                    <select name="educations" id="educations"
+                                    <select name="educations[]" id="educations"
                                             class="select2 form-control select2-multiple" multiple="multiple" multiple
                                             data-placeholder="Choose ...">
                                         @if($incomes != null)
@@ -346,7 +346,7 @@
                                     <label for="careers"
                                            class="control-label">{{ __('Career') }}</label>
 
-                                    <select name="careers" id="careers"
+                                    <select name="careers[]" id="careers"
                                             class="select2 form-control select2-multiple" multiple="multiple" multiple
                                             data-placeholder="Choose ...">
                                         @if($careers != null)
@@ -379,9 +379,26 @@
                                 <div class="form-group col-md-6">
                                     <label style="margin-left: 5px;" class="control-label">{{ __('Gender') }}</label>
                                     <span class="multi-range">
-                                <input type="range" min="0" max="50" name="minAge" value="5" id="lower">
-                                <input type="range" min="0" max="50" name="maxAge" value="45" id="upper">
-                            </span>
+                                        <input type="range" min="15" max="120" name="minAge" value="15" id="minAge">
+                                        <input type="range" min="15" max="120" name="maxAge" value="120" id="maxAge">
+                                    </span>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label style="margin-left: 5px;" class="control-label">{{ __('Job Sector') }}</label>
+                                    <div class="row">
+                                        <label style="margin-left: 10px;" class="radio-inline"><input
+                                                    style="margin-left: 10px;" type="radio" value="" name="jobSector"
+                                                    checked>&nbsp;{{ __('All') }}
+                                        </label>
+                                        <label style="margin-left: 5px;" class="radio-inline"><input
+                                                    style="margin-left: 5px;" type="radio" value="1"
+                                                    name="jobSector">&nbsp;{{ __('Government') }}
+                                        </label> &nbsp;
+                                        &nbsp;
+                                        <label style="margin-left: 5px;" class="radio-inline"><input
+                                                    style="margin-left: 5px;" type="radio" value="2"
+                                                    name="jobSector">&nbsp;{{ __('Private') }}</label>
+                                    </div>
                                 </div>
 
                             </div>
@@ -451,7 +468,7 @@
                                     </h5>
                                     <hr/>
                                     <div class="form-group">
-                                        <label for="paymentDate">&nbsp;</label>
+                                        <label >&nbsp;</label>
                                         <div class="row">
                                             <div class="col-md-6 text-center">
                                                 <input name="onlyOnce" type="checkbox"
@@ -495,7 +512,7 @@
                                                         class="fa fa-chevron-left"></em> {{ __('Previous') }} </button>
                                         </div>
                                         <div class="col-md-2  p-sm-2">
-                                            <button type="submit"
+                                            <button type="submit" form="form1"
                                                     class="btn btn-success btn-block ">{{ __('Publish Post') }}</button>
                                         </div>
 
@@ -586,35 +603,31 @@
             $('#villages').html('');
         }
 
-        var lowerSlider = document.querySelector('#lower'),
-            upperSlider = document.querySelector('#upper'),
+
+        let lowerSlider = document.querySelector('#minAge'),
+            upperSlider = document.querySelector('#maxAge'),
             lowerVal = parseInt(lowerSlider.value);
         upperVal = parseInt(upperSlider.value);
 
         upperSlider.oninput = function () {
+
+
             lowerVal = parseInt(lowerSlider.value);
             upperVal = parseInt(upperSlider.value);
 
-            if (upperVal < lowerVal + 4) {
-                lowerSlider.value = upperVal - 4;
-
-                if (lowerVal == lowerSlider.min) {
-                    upperSlider.value = 4;
-                }
+            if (upperVal <lowerVal + 1) {
+                lowerSlider.value = upperVal ;
             }
         };
 
 
         lowerSlider.oninput = function () {
+
             lowerVal = parseInt(lowerSlider.value);
             upperVal = parseInt(upperSlider.value);
 
-            if (lowerVal > upperVal - 4) {
-                upperSlider.value = lowerVal + 4;
-
-                if (upperVal == upperSlider.max) {
-                    lowerSlider.value = parseInt(upperSlider.max) - 4;
-                }
+            if (lowerVal > upperVal) {
+                upperSlider.value = lowerVal;
 
             }
         };
@@ -708,7 +721,7 @@
 
                                 message: 'Post published successfully.'
                             });
-                            clearAll();
+//                            clearAll();
                         }
                     }
 

@@ -28,4 +28,24 @@ class Agent extends Model
     public function village(){
         return $this->belongsTo(Village::class,'idvillage');
     }
+
+    public function religion(){
+        return $this->belongsTo(Religion::class,'idreligion');
+    }
+
+    public function career(){
+        return $this->belongsTo(Career::class,'idcareer');
+    }
+
+    public function ethnicity(){
+        return $this->belongsTo(Ethnicity::class,'idethnicity');
+    }
+
+    public function natureOfIncome(){
+        return $this->belongsTo(NatureOfIncome::class,'idnature_of_income');
+    }
+
+    public function educationalQualification(){
+        return $this->belongsTo(EducationalQualification::class,'ideducational_qualification');
+    }
 }

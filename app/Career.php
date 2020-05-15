@@ -8,4 +8,8 @@ class Career extends Model
 {
     protected $table = 'career';
     protected $primaryKey = 'idcareer';
+
+    public function agents(){
+        return $this->hasMany(Agent::class,'idcareer');
+    }
 }
