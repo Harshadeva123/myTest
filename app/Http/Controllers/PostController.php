@@ -8,8 +8,10 @@ use App\ElectionDivision;
 use App\Ethnicity;
 use App\GramasewaDivision;
 use App\NatureOfIncome;
+use App\Office;
 use App\PollingBooth;
 use App\Post;
+use App\PostAttachment;
 use App\PostCareer;
 use App\PostDistrict;
 use App\PostEducation;
@@ -24,6 +26,7 @@ use App\Religion;
 use App\Village;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -55,7 +58,18 @@ class PostController extends Controller
             'expireDate.required' => 'Expire date should be provided!',
             'expireDate.date' => 'Expire date format invalid!',
             'responsePanel.required' => 'Response panel should be provided!',
-
+            'imageFiles.*.file' => 'Image file invalid!',
+            'imageFiles.*.image' => 'Image file invalid!',
+            'imageFiles.*.mimes' => 'Image file format invalid!',
+            'imageFiles.*.max' => 'Image file should less than 5MB!',
+            'videoFiles.*.file' => 'Video file invalid!',
+            'videoFiles.*.image' => 'Video file invalid!',
+            'videoFiles.*.mimes' => 'Video file format invalid!',
+            'videoFiles.*.max' => 'Video file should less than 20MB!',
+            'audioFiles.*.file' => 'Audio file invalid!',
+            'audioFiles.*.image' => 'Audio file invalid!',
+            'audioFiles.*.mimes' => 'Audio file format invalid!',
+            'audioFiles.*.max' => 'Audio file should less than 20MB!',
         ];
 
         $validator = \Validator::make($request->all(), [
@@ -65,6 +79,9 @@ class PostController extends Controller
             'expireDate' => 'required|date',
             'onlyOnce' => 'nullable',
             'responsePanel' => 'required',
+            'imageFiles.*' => 'nullable|file|image|mimes:jpeg,png,gif,webp|max:5048',
+            'videoFiles.*' => 'nullable|mimes:mp4,mov,ogg,qt | max:20000',
+            'audioFiles.*' => 'nullable|mimes:mpga,wav | max:10000',
 
 
         ], $validationMessages);
@@ -74,7 +91,6 @@ class PostController extends Controller
         }
         $user = Auth::user()->idUser;
         $office = Auth::user()->idoffice;
-        $authDistrict = Auth::user()->office->iddistrict;
 
         $gramasewaArray = [];
         $pollingArray = [];
@@ -86,7 +102,7 @@ class PostController extends Controller
             foreach ($villages as $id) {
                 $selected = Village::find(intval($id));
                 if ($selected != null) {
-                    $gramasewaArray += $selected->idgramasewa_division;
+                    array_push($gramasewaArray, $selected->idgramasewa_division);
                 } else {
                     return response()->json(['errors' => ['error' => 'Villages Invalid!']]);
                 }
@@ -100,7 +116,7 @@ class PostController extends Controller
             foreach ($gramasewaDivisions as $id) {
                 $selected = GramasewaDivision::find(intval($id));
                 if ($selected != null) {
-                    $pollingArray += $selected->idpolling_booth;
+                    array_push($pollingArray, $selected->idpolling_booth);
                 } else {
                     return response()->json(['errors' => ['error' => 'Gramasewa divisions Invalid!']]);
                 }
@@ -114,7 +130,7 @@ class PostController extends Controller
             foreach ($pollingBooths as $id) {
                 $selected = PollingBooth::find(intval($id));
                 if ($selected != null) {
-                    $electionArray += $selected->idelection_division;
+                    array_push($electionArray, $selected->idelection_division);
                 } else {
                     return response()->json(['errors' => ['error' => 'Polling booths Invalid!']]);
                 }
@@ -122,7 +138,7 @@ class PostController extends Controller
         }
         //Polling booth level validation end
 
-        //Validation end
+        //-------------------------------------------Validation end---------------------------------------------------//
 
 
         //save in post table
@@ -297,7 +313,70 @@ class PostController extends Controller
 
         //save in hierarchy tables end
 
-        return response()->json(['success' => 'User Registered Successfully!']);
+        //save post attachment
+
+        //save images
+        $images = $request->file('imageFiles');
+        if (!empty($images)) {
+            foreach ($images as $image) {
+                $imageName = 'image' . uniqid() . rand(10, 100) . '.' . $image->getClientOriginalExtension();
+                Storage::putFileAs('public/' . Office::find($office)->random . '/posts/images', $image, $imageName);
+
+                $attachment = new PostAttachment();
+                $attachment->idPost = $post->idPost;
+                $attachment->attachment = $imageName;
+                $attachment->file_type = 1;
+                $attachment->size = $image->getSize();
+                $attachment->status = 1;//active attachment
+                $attachment->save();
+            }
+        }
+        //save images end
+
+        //save video
+        $videos = $request->file('videoFiles');
+        if (!empty($videos)) {
+            foreach ($videos as $video) {
+                $videoName = 'video' . uniqid() . rand(10, 100) . '.' . $video->getClientOriginalExtension();
+                Storage::putFileAs('public/' . Office::find($office)->random . '/posts/videos', $video, $videoName);
+
+                $attachment = new PostAttachment();
+                $attachment->idPost = $post->idPost;
+                $attachment->attachment = $videoName;
+                $attachment->file_type = 2;
+                $attachment->size = $video->getSize();
+                $attachment->status = 1;//active attachment
+                $attachment->save();
+            }
+        }
+        //save video end
+
+        //save audio
+        $audios = $request->file('audioFiles');
+        if (!empty($audios)) {
+            foreach ($audios as $audio) {
+                $audioName = 'audio' . uniqid() . rand(10, 100) . '.' . $audio->getClientOriginalExtension();
+                Storage::putFileAs('public/' . Office::find($office)->random . '/posts/audios', $audio, $audioName);
+
+                $attachment = new PostAttachment();
+                $attachment->idPost = $post->idPost;
+                $attachment->attachment = $audioName;
+                $attachment->file_type = 3;
+                $attachment->size = $audio->getSize();
+                $attachment->status = 1;//active attachment
+                $attachment->save();
+            }
+        }
+        //save audio end
+
+        //save post attachment end
+        return response()->json(['success' => 'Post published Successfully!']);
+
+    }
+
+    public function view(Request $request){
+        $posts = Post::where('status',1)->get();
+        return view('post.view_posts', ['title' => __('View Posts'), 'posts' => $posts]);
 
     }
 }

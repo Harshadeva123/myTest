@@ -129,6 +129,12 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-12 " >
+                                <button type="button" id="confirmBtn" onclick="confirm();event.preventDefault();"
+                                        class="btn btn-primary btn-md float-right">{{ __('Confirm All Gramasewa Divisions') }}</button>
+                            </div>
+                        </div>
                     </form> <!-- /form -->
                 </div><!-- /card body -->
             </div><!-- /card -->
@@ -275,6 +281,12 @@
                 success: function (data) {
                     if (data.success != null) {
                         let array = data.success;
+                        if(array.length == 0){
+                            $('#confirmBtn').hide();
+                        }
+                        else{
+                            $('#confirmBtn').show();
+                        }
                         $('#gramasewaDivisionTBody').html('');
                         $.each(array, function (key1, value1) {
                             $('#gramasewaDivisionTBody').append(
@@ -467,5 +479,72 @@
                 }, 1000);
             }
         });
+
+        function confirm() {
+            swal({
+                title: 'Confirm All?',
+                text:'You Will Need Administrator Permission To Revert This Process!',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Confirm',
+                cancelButtonText: 'No, cancel',
+                confirmButtonClass: 'btn btn-success',
+                cancelButtonClass: 'btn btn-danger m-l-10',
+                buttonsStyling: false
+            }).then(function () {
+
+                $.ajax({
+                    url: '{{route('confirmGramasewaDivisions')}}',
+                    type: 'POST',
+                    success: function (data) {
+                        if (data.errors != null) {
+                            notify({
+                                type: "error", //alert | success | error | warning | info
+                                title: 'PROCESS INVALID!',
+                                autoHide: true, //true | false
+                                delay: 2500, //number ms
+                                position: {
+                                    x: "right",
+                                    y: "top"
+                                },
+                                icon: '<em class="mdi mdi-check-circle-outline"></em>',
+
+                                message: 'Something wrong with process.contact administrator..'
+                            });
+                        }
+                        if (data.success != null) {
+
+                            notify({
+                                type: "success", //alert | success | error | warning | info
+                                title: 'GRAMASEWA DIVISIONS CONFIRMED!',
+                                autoHide: true, //true | false
+                                delay: 2500, //number ms
+                                position: {
+                                    x: "right",
+                                    y: "top"
+                                },
+                                icon: '<em class="mdi mdi-check-circle-outline"></em>',
+
+                                message: 'Gramasewa divisions confirmed successfully.'
+                            });
+                            showTableData();
+                        }
+
+                    }
+                });
+
+            }, function (dismiss) {
+                // dismiss can be 'cancel', 'overlay',
+                // 'close', and 'timer'
+//                if (dismiss === 'cancel') {
+//                    swal(
+//                        'Cancelled',
+//                        'Process has been cancelled',
+//                        'error'
+//                    )
+//                }
+            })
+        }
+
     </script>
 @endsection

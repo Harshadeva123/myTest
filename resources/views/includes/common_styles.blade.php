@@ -10,9 +10,6 @@
 <link href="{{ URL::asset('assets/css/style.css')}}" rel="stylesheet" type="text/css">
 <meta name="csrf-token" content="{{ csrf_token() }}"/>
 
-<!--sign in page labels -->
-<link href="{{ URL::asset('assets/css/bootstrap-extended.min.css')}}" rel="stylesheet" type="text/css">
-
 <!-- notify alert -->
 <link href="{{ URL::asset('assets/css/jquery.notify.css')}}" rel="stylesheet" type="text/css">
 

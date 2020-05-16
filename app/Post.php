@@ -14,6 +14,10 @@ class Post extends Model
         return $this->belongsTo(User::class,'idUser');
     }
 
+    public function attachments(){
+        return $this->hasMany(PostAttachment::class,'idPost');
+    }
+
     public function nextPostNo($office){
         $last = $this->whereHas('user', function (Builder $query) use($office) {
             $query->where('idoffice',$office);

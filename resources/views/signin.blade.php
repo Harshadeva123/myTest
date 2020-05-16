@@ -1,6 +1,7 @@
 @include('includes.header_start')
 @include('includes.common_styles')
-
+<!--sign in page labels -->
+<link href="{{ URL::asset('assets/css/bootstrap-extended.min.css')}}" rel="stylesheet" type="text/css">
 
 <!-- Begin page -->
 <div class="wrapper-page" >

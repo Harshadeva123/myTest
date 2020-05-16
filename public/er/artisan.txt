@@ -1,0 +1,2 @@
+composer update
+php artisan storage:link

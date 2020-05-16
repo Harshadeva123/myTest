@@ -85,6 +85,7 @@ class OfficeController extends Controller
         $office->sub_total = round($subTotal,2);
         $office->discount = round($request['discount'],2);
         $office->monthly_payment = $netTotal;
+        $office->random = $this->generateRandom();
         $office->payment_date =  date('Y-m-d', strtotime($request['paymentDate']));
         $office->analysis_available = $analysis;
         $office->attendence_available = $attendance;
@@ -218,6 +219,18 @@ class OfficeController extends Controller
         //save in user table  end
 
         return response()->json(['success' => 'Office Registered Successfully!']);
+    }
+
+    public function generateRandom()
+    {
+        $permitted_chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $random = substr(str_shuffle($permitted_chars), 0, 7);
+        $exist = Office::where('random', $random)->first();
+        if ($exist != null) {
+            $this->generateRandom();
+        } else {
+            return $random;
+        }
     }
 
 }

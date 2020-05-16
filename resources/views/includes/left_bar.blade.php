@@ -16,7 +16,7 @@
         <div class="topbar-left">
             <div class="">
                 {{--<a href="" class="logo"><img src="{{ URL::asset('assets/images/resources/leftBar.jpg')}}" height="45" alt="logo"></a>--}}
-                <a href="" class="logo"><h2>SYSTEM</h2></a>
+                <a href="" class="logo"><h2>-SYSTEM-</h2></a>
             </div>
         </div>
         <br/>
@@ -79,7 +79,7 @@
                                         class="pull-right"><i class="mdi mdi-chevron-right"></i></span> </span></a>
                         <ul class="list-unstyled">
                             <li><a href="{{route('createPost')}}">{{ __('Create Post') }}</a></li>
-                            <li><a href="{{route('viewCategory')}}">{{ __('View Category') }}</a></li>
+                            <li><a href="{{route('viewPosts')}}">{{ __('View Posts') }}</a></li>
                         </ul>
                     </li>
 

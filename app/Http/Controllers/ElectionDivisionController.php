@@ -26,10 +26,16 @@ class ElectionDivisionController extends Controller
     public function getByAuth()
     {
         $district  = Auth::user()->office->iddistrict;
-        $electionDivisions = ElectionDivision::where('iddistrict',$district)->where('status','>=',1)->latest()->get();
+        $electionDivisions = ElectionDivision::where('iddistrict',$district)->where('iduser',Auth::user()->idUser)->where('status',2)->latest()->get();
         return response()->json(['success'  =>$electionDivisions]);
     }
 
+    public function getByDistrict(Request $request)
+    {
+        $id  = intval($request['id']);
+        $result = ElectionDivision::where('iddistrict',$id)->latest()->where('status',1)->get();
+        return response()->json(['success'  => $result]);
+    }
     /**
      * Store a newly created resource in storage.
      *
@@ -122,11 +128,14 @@ class ElectionDivisionController extends Controller
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()->all()]);
         }
+        $division = ElectionDivision::find($request['updateId']);
+        if($division->status != 2){
+            return response()->json(['errors' => ['error'=>'Sorry! Election divisions are not allowed to update after confirmation.']]);
+        }
 
         //validation end
 
         // save in election division table
-        $division = ElectionDivision::find($request['updateId']);
         $division->name_en = strtoupper($request['electionDivision']);
         $division->name_si = $request['electionDivision_si'];
         $division->name_ta = $request['electionDivision_ta'];
@@ -136,6 +145,15 @@ class ElectionDivisionController extends Controller
 
 
         return response()->json(['success' => 'Election division updated']);
+    }
+
+    public function confirm(Request $request){
+        $electionDivisions = ElectionDivision::where('idUser',Auth::user()->idUser)->where('status',2)->get();
+        $electionDivisions->each(function ($item,$key){
+            $item->status = 1;
+            $item->save();
+        });
+        return response()->json(['success' => 'Election divisions confirmed']);
     }
 
     /**

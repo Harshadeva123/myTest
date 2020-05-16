@@ -31,8 +31,33 @@ class PollingBoothController extends Controller
     public function getByAuth()
     {
         $district  = intval(Auth::user()->office->iddistrict);
-        $pollingBooth = PollingBooth::with(['electionDivision'])->where('iddistrict',$district)->latest()->where('status','>=',1)->get();
+        $pollingBooth = PollingBooth::with(['electionDivision'])->where('iddistrict',$district)->where('iduser',Auth::user()->idUser)->latest()->where('status',2)->get();
         return response()->json(['success'  => $pollingBooth]);
+    }
+
+
+    public function getByElectionDivision(Request $request)
+    {
+        $id  = intval($request['id']);
+        $result = PollingBooth::where('idelection_division',$id)->latest()->where('status',1)->get();
+        return response()->json(['success'  => $result]);
+    }
+
+    public function getByElectionDivisions(Request $request)
+    {
+        $ids  = $request['id'];
+        $merged  = collect();
+        if(!empty($ids)){
+            foreach ($ids as $id){
+                $next = PollingBooth::where('idelection_division',$id)->latest()->where('status',1)->get();
+                if($next != null){
+                    $merged = $merged->merge($next);
+                }
+            }
+            return response()->json(['success'  => $merged]);
+
+        }
+
     }
 
     /**
@@ -136,6 +161,11 @@ class PollingBoothController extends Controller
         }
         $parentChanged = false;
         $booth = PollingBooth::find($request['updateId']);
+
+        if($booth->status != 2){
+            return response()->json(['errors' => ['error'=>'Sorry! Polling booths are not allowed to update after confirmation.']]);
+        }
+
         if($booth->idelection_division != $request['electionDivision']){
             $users = Agent::where('idpolling_booth',$request['updateId'])->first();
             if($users != null) {
@@ -144,6 +174,7 @@ class PollingBoothController extends Controller
             $booth->idelection_division = $request['electionDivision'];
             $parentChanged = true;
         }
+
         //validation end
         $booth->name_en = $request['pollingBooth'];
         $booth->name_si = $request['pollingBooth_si'];
@@ -175,6 +206,15 @@ class PollingBoothController extends Controller
         //save in relation table end
 
         return response()->json(['success' => 'Polling Booth updated']);
+    }
+
+    public function confirm(Request $request){
+        $pollingBooths = PollingBooth::where('idUser',Auth::user()->idUser)->where('status',2)->get();
+        $pollingBooths->each(function ($item,$key){
+            $item->status = 1;
+            $item->save();
+        });
+        return response()->json(['success' => 'Polling booths confirmed']);
     }
 
     /**

@@ -30,10 +30,31 @@ class GramasewaDivisionController extends Controller
     public function getByAuth()
     {
         $district  = intval(Auth::user()->office->iddistrict);
-        $gramasewaDivisions = GramasewaDivision::with(['pollingBooth'])->where('iddistrict',$district)->where('status','>=',1)->get();
+        $gramasewaDivisions = GramasewaDivision::with(['pollingBooth'])->where('iddistrict',$district)->where('iduser',Auth::user()->idUser)->where('status',2)->get();
         return response()->json(['success'  => $gramasewaDivisions]);
     }
 
+    public function getByPollingBooth(Request $request)
+    {
+        $id  = intval($request['id']);
+        $result = GramasewaDivision::where('idpolling_booth',$id)->latest()->where('status',1)->get();
+        return response()->json(['success'  => $result]);
+    }
+
+    public function getByPollingBooths(Request $request)
+    {
+        $ids  = $request['id'];
+        $merged  = collect();
+        if(!empty($ids)){
+            foreach ($ids as $id){
+                $next = GramasewaDivision::where('idpolling_booth',$id)->latest()->where('status',1)->get();
+                $merged = $merged->merge($next);
+            }
+            return response()->json(['success'  => $merged]);
+
+        }
+
+    }
     /**
      * Store a newly created resource in storage.
      *
@@ -136,6 +157,11 @@ class GramasewaDivisionController extends Controller
 
         $parentChanged = false;
         $division = GramasewaDivision::find($request['updateId']);
+
+        if($division->status != 2){
+            return response()->json(['errors' => ['error'=>'Sorry! Gramasewa divisions are not allowed to update after confirmation.']]);
+        }
+
         if($division->idpolling_booth != $request['pollingBooth']){
             $users = Agent::where('idgramasewa_division',$request['updateId'])->first();
             if($users != null) {
@@ -166,6 +192,15 @@ class GramasewaDivisionController extends Controller
             }
         }
         return response()->json(['success' => 'Gramasewa Division updated']);
+    }
+
+    public function confirm(Request $request){
+        $gramasewaDivisions = GramasewaDivision::where('idUser',Auth::user()->idUser)->where('status',2)->get();
+        $gramasewaDivisions->each(function ($item,$key){
+            $item->status = 1;
+            $item->save();
+        });
+        return response()->json(['success' => 'Gramasewa divisions confirmed']);
     }
 
     /**

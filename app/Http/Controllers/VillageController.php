@@ -29,8 +29,30 @@ class VillageController extends Controller
     public function getByAuth()
     {
         $district  = intval(Auth::user()->office->iddistrict);
-        $villages = Village::with(['gramasewaDivision'])->where('iddistrict',$district)->where('status','>=',1)->get();
+        $villages = Village::with(['gramasewaDivision'])->where('iddistrict',$district)->where('iduser',Auth::user()->idUser)->where('status',2)->get();
         return response()->json(['success'  => $villages]);
+    }
+
+    public function getByGramasewaDivision(Request $request)
+    {
+        $id  = intval($request['id']);
+        $result = Village::where('idgramasewa_division',$id)->latest()->where('status',1)->get();
+        return response()->json(['success'  => $result]);
+    }
+
+    public function getByGramasewaDivisions(Request $request)
+    {
+        $ids  = $request['id'];
+        $merged  = collect();
+        if(!empty($ids)){
+            foreach ($ids as $id){
+                $next = Village::where('idgramasewa_division',$id)->latest()->where('status',1)->get();
+                $merged = $merged->merge($next);
+            }
+            return response()->json(['success'  => $merged]);
+
+        }
+
     }
 
     /**
@@ -135,6 +157,11 @@ class VillageController extends Controller
         }
 
         $village = Village::find($request['updateId']);
+
+        if($village->status != 2){
+            return response()->json(['errors' => ['error'=>'Sorry! Villages are not allowed to update after confirmation.']]);
+        }
+
         if($village->idgramasewa_division != $request['gramasewaDivision']){
             $users = Agent::where('idvillage',$request['updateId'])->first();
             if($users != null) {
@@ -154,6 +181,14 @@ class VillageController extends Controller
         return response()->json(['success' => 'Village updated']);
     }
 
+    public function confirm(Request $request){
+        $gramasewaDivisions = Village::where('idUser',Auth::user()->idUser)->where('status',2)->get();
+        $gramasewaDivisions->each(function ($item,$key){
+            $item->status = 1;
+            $item->save();
+        });
+        return response()->json(['success' => 'Village confirmed']);
+    }
     /**
      * Remove the specified resource from storage.
      *

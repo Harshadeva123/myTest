@@ -4,9 +4,20 @@
         .attachmentBox {
             height: 100px;
             width: 100px;
-            display: flex;
-            align-items: center;
+            position: relative;;
+            top: 50%;
+            left: 50%;
+            -ms-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
             border-radius: 10px;
+        }
+
+        .fa-3x {
+            position: absolute;;
+            top: 50%;
+            left: 50%;
+            -ms-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
         }
 
         .pointer {
@@ -158,23 +169,23 @@
                                accept="audio/*">
 
                         <div class="row">
-                            <div class="col-md-4 text-center py-2" onclick="$('#imageFiles').click();">
-                                <div class="attachmentBox bg-primary  pointer">
+                            <div class="col-md-4 text-center p-1">
+                                <div class="attachmentBox bg-primary  pointer" onclick="$('#imageFiles').click();">
                                     <em style="width: 100%" class="fa fa-image (alias) fa-3x text-white"></em>
 
                                 </div>
 
                             </div>
-                            <div class="col-md-4 text-center py-2" onclick="$('#videoFiles').click();">
-                                <div class="attachmentBox bg-primary  pointer">
+                            <div class="col-md-4 text-center p-1">
+                                <div class="attachmentBox bg-primary  pointer" onclick="$('#videoFiles').click();">
                                     <em style="width: 100%" class="fa fa-file-video-o fa-3x text-white"></em>
 
 
                                 </div>
 
                             </div>
-                            <div class="col-md-4 text-center py-2" onclick="$('#audioFiles').click();">
-                                <div class="attachmentBox bg-primary  pointer">
+                            <div class="col-md-4 text-center p-1">
+                                <div class="attachmentBox bg-primary  pointer" onclick="$('#audioFiles').click();">
                                     <em style="width: 100%" class="fa fa-microphone fa-3x text-white"></em>
 
                                 </div>
@@ -384,7 +395,8 @@
                                     </span>
                                 </div>
                                 <div class="form-group col-md-6">
-                                    <label style="margin-left: 5px;" class="control-label">{{ __('Job Sector') }}</label>
+                                    <label style="margin-left: 5px;"
+                                           class="control-label">{{ __('Job Sector') }}</label>
                                     <div class="row">
                                         <label style="margin-left: 10px;" class="radio-inline"><input
                                                     style="margin-left: 10px;" type="radio" value="" name="jobSector"
@@ -468,7 +480,7 @@
                                     </h5>
                                     <hr/>
                                     <div class="form-group">
-                                        <label >&nbsp;</label>
+                                        <label>&nbsp;</label>
                                         <div class="row">
                                             <div class="col-md-6 text-center">
                                                 <input name="onlyOnce" type="checkbox"
@@ -497,33 +509,35 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="card thirdPage">
-                                <div class="card-body">
-                                    <hr/>
-                                    <div class="row">
-                                        <div class="col-md-8 .d-sm-none ">
-                                        </div>
-                                        <div class="col-md-2  p-sm-2">
-                                            <button
-                                                    onclick="goSecondPage();event.preventDefault();"
-                                                    class="btn btn-primary float-right btn-block "><em
-                                                        style="margin-top: 5px;"
-                                                        class="fa fa-chevron-left"></em> {{ __('Previous') }} </button>
-                                        </div>
-                                        <div class="col-md-2  p-sm-2">
-                                            <button type="submit" form="form1"
-                                                    class="btn btn-success btn-block ">{{ __('Publish Post') }}</button>
-                                        </div>
-
-                                    </div>
-                                </div><!-- /card body -->
-                            </div><!-- /card -->
                         </div>
                     </div>
+
+                    <div class="card thirdPage">
+                        <div class="card-body">
+                            <hr/>
+                            <div class="row">
+                                <div class="col-md-8 .d-sm-none ">
+                                </div>
+                                <div class="col-md-2  p-sm-2">
+                                    <button
+                                            onclick="goSecondPage();event.preventDefault();"
+                                            class="btn btn-primary float-right btn-block "><em
+                                                style="margin-top: 5px;"
+                                                class="fa fa-chevron-left"></em> {{ __('Previous') }} </button>
+                                </div>
+                                <div class="col-md-2  p-sm-2">
+                                    <button type="submit" form="form1"
+                                            class="btn btn-success btn-block ">{{ __('Publish Post') }}</button>
+                                </div>
+
+                            </div>
+                        </div><!-- /card body -->
+                    </div><!-- /card -->
                 </div>
-            </form> <!-- /form -->
-        </div> <!-- ./container -->
+        </div>
+    </div>
+    </form> <!-- /form -->
+    </div> <!-- ./container -->
     </div><!-- ./wrapper -->
 
 @endsection
@@ -590,17 +604,54 @@
             $('#pollingBooths').html('');
             $('#gramasewaDivisions').html('');
             $('#villages').html('');
+
+            $.ajax({
+                url: '{{route('getPollingBoothByElectionDivisions')}}',
+                type: 'POST',
+                data: {id: divisions},
+                success: function (data) {
+                    let result = data.success;
+                    $.each(result, function (key, value) {
+                        $('#pollingBooths').append("<option value='" + value.idpolling_booth + "'>" + value.name_en + "</option>");
+                    });
+                }
+            });
         }
 
         function pollingBoothChanged(el) {
             let booths = $(el).val();
             $('#gramasewaDivisions').html('');
             $('#villages').html('');
+
+            $.ajax({
+                url: '{{route('getGramasewaDivisionByPollingBooths')}}',
+                type: 'POST',
+                data: {id: booths},
+                success: function (data) {
+                    let result = data.success;
+                    $.each(result, function (key, value) {
+                        $('#gramasewaDivisions').append("<option value='" + value.idgramasewa_division + "'>" + value.name_en + "</option>");
+                    });
+                }
+            });
         }
 
         function gramasewaDivisionsChanged(el) {
             let divisions = $(el).val();
             $('#villages').html('');
+
+            $.ajax({
+                url: '{{route('getVillageByGramasewaDivisions')}}',
+                type: 'POST',
+                data: {id: divisions},
+                success: function (data) {
+                    let result = data.success;
+                    console.log(result);
+                    $.each(result, function (key, value) {
+                        $('#villages').append("<option value='" + value.idvillage + "'>" + value.name_en + "</option>");
+                    });
+                }
+            });
         }
 
 
@@ -615,8 +666,8 @@
             lowerVal = parseInt(lowerSlider.value);
             upperVal = parseInt(upperSlider.value);
 
-            if (upperVal <lowerVal + 1) {
-                lowerSlider.value = upperVal ;
+            if (upperVal < lowerVal + 1) {
+                lowerSlider.value = upperVal;
             }
         };
 
@@ -648,9 +699,9 @@
                 validated = false;
                 $('#errorAlert').html("<em class='fa fa-genderless'></em> Please fill post title in english").show();
             }
-            if ($('#title_en').val() == '') {
+            if ($('#text_en').val() == '') {
                 validated = false;
-                $('#errorAlert').html("<em class='fa fa-genderless'></em> Please fill post title in english").show();
+                $('#errorAlert').html("<em class='fa fa-genderless'></em> Please fill post text in english").show();
             }
 
             if (validated) {
