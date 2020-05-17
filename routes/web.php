@@ -83,7 +83,7 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
         Route::get('gramasewa_division', 'GramasewaDivisionController@index')->name('gramasewaDivision');
         Route::post('get_pgramasewa_division_by_auth', 'GramasewaDivisionController@getByAuth')->name('getGramasewaDivisionByAuth');
         Route::post('get_pgramasewa_division_by_polling_booth', 'GramasewaDivisionController@getByPollingBooth')->name('getGramasewaDivisionByPollingBooth');
-        Route::post('get_pgramasewa_division_by_polling_booths', 'GramasewaDivisionController@getByPollingBooths')->name('getGramasewaDivisionByPollingBooths');
+        Route::post('get_gramasewa_division_by_polling_booths', 'GramasewaDivisionController@getByPollingBooths')->name('getGramasewaDivisionByPollingBooths');
         Route::post('save_gramasewa_division', 'GramasewaDivisionController@store')->name('saveGramasewaDivision');
         Route::post('update_gramasewa_division', 'GramasewaDivisionController@update')->name('updateGramasewaDivision');
         Route::post('confirm_gramasewa_divisions', 'GramasewaDivisionController@confirm')->name('confirmGramasewaDivisions');
@@ -101,6 +101,15 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
         Route::get('create_post', 'PostController@index')->name('createPost');
         Route::post('save_post', 'PostController@store')->name('savePost');
         Route::get('view_posts', 'PostController@view')->name('viewPosts');
+        Route::post('view_posts_admin', 'PostController@showAdmin')->name('viewPostAdmin');
+
+        //Task
+        Route::get('assign_task', 'TaskController@index')->name('assignTask');
+        Route::get('view_task', 'TaskController@view')->name('viewTasks');
+        Route::post('get_task_by_id', 'TaskController@getById')->name('getTaskById');
+
+        //Post Response
+        Route::get('view_comments', 'PostResponseController@viewComments')->name('viewComments');
 
     });
 

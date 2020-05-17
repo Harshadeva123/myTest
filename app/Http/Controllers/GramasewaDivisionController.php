@@ -48,7 +48,9 @@ class GramasewaDivisionController extends Controller
         if(!empty($ids)){
             foreach ($ids as $id){
                 $next = GramasewaDivision::where('idpolling_booth',$id)->latest()->where('status',1)->get();
-                $merged = $merged->merge($next);
+                if($next != null){
+                    $merged = $merged->merge($next);
+                }
             }
             return response()->json(['success'  => $merged]);
 

@@ -96,7 +96,7 @@
       ),
       'api' => 
       array (
-        'driver' => 'token',
+        'driver' => 'passport',
         'provider' => 'users',
       ),
     ),
@@ -603,6 +603,7 @@
     array (
       'local_path' => 'C:\\Users\\VISIRO\\AppData\\Local\\Temp',
       'remote_disk' => NULL,
+      'remote_prefix' => NULL,
     ),
   ),
   'datatables-buttons' => 
@@ -645,6 +646,12 @@
         4 => 'reload',
       ),
     ),
+    'generator' => 
+    array (
+      'columns' => 'id,add your columns,created_at,updated_at',
+      'buttons' => 'create,export,print,reset,reload',
+      'dom' => 'Bfrtip',
+    ),
   ),
   'datatables-html' => 
   array (
@@ -674,8 +681,12 @@
   ),
   'tinker' => 
   array (
+    'commands' => 
+    array (
+    ),
     'dont_alias' => 
     array (
+      0 => 'App\\Nova',
     ),
   ),
 );

@@ -52,6 +52,13 @@
         });
 
     }
+
+    function clearAll() {
+        $('input').not(':checkbox').val('');
+        $(":checkbox").attr('checked', false).trigger('change');
+        $(":radio").attr('checked', false).trigger('change');
+        $('select').val('').trigger('change');
+    }
 </script>
 
 

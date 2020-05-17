@@ -8,6 +8,7 @@ class PostAttachment extends Model
 {
     protected $table = 'post_attachment';
     protected $primaryKey = 'idpost_attachment';
+    protected $appends = array('full_path');
 
     public function post()
     {
@@ -27,7 +28,7 @@ class PostAttachment extends Model
         }
     }
 
-    public function getFile()
+    public function getFullPathAttribute()
     {
         if ($this->file_type == 1) {
             return 'storage/' . $this->post->user->office->random . '/posts/images/'.$this->attachment;

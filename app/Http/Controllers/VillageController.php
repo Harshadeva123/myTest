@@ -36,8 +36,14 @@ class VillageController extends Controller
     public function getByGramasewaDivision(Request $request)
     {
         $id  = intval($request['id']);
-        $result = Village::where('idgramasewa_division',$id)->latest()->where('status',1)->get();
-        return response()->json(['success'  => $result]);
+        if($id != null) {
+            $result = Village::where('idgramasewa_division', $id)->latest()->where('status', 1)->get();
+            return response()->json(['success' => $result]);
+        }
+        else{
+            return response()->json(['errors' => ['error'=>'Please provide selected value.']]);
+
+        }
     }
 
     public function getByGramasewaDivisions(Request $request)
@@ -47,7 +53,9 @@ class VillageController extends Controller
         if(!empty($ids)){
             foreach ($ids as $id){
                 $next = Village::where('idgramasewa_division',$id)->latest()->where('status',1)->get();
-                $merged = $merged->merge($next);
+                if($next != null){
+                    $merged = $merged->merge($next);
+                }
             }
             return response()->json(['success'  => $merged]);
 

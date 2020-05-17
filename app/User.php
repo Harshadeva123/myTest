@@ -5,10 +5,11 @@ namespace App;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Auth;
+use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use HasApiTokens,Notifiable;
 
     protected $table = 'usermaster';
     protected $primaryKey = 'idUser';
@@ -90,5 +91,10 @@ class User extends Authenticatable
     public function officeAdmin()
     {
         return $this->hasOne(OfficeAdmin::class, 'idUser');
+    }
+
+    public function responses()
+    {
+        return $this->hasMany(PostResponse::class, 'idUser');
     }
 }

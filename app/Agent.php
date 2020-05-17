@@ -9,6 +9,11 @@ class Agent extends Model
     protected $table = 'agent';
     protected $primaryKey = 'idagent';
 
+
+    public function numberOfMembers(){
+        return MemberAgent::where('idagent',$this->idagent)->where('status',1)->count();
+    }
+
     public function user(){
         return $this->hasOne(User::class,'idUser');
     }

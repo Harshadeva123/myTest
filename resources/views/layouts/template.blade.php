@@ -8,7 +8,11 @@
     <div class="page-content-wrapper">
         <div class="container-fluid">
 
+            <div class="card">
+                <div class="card-body">
 
+                </div>
+            </div>
 
         </div> <!-- ./container -->
     </div><!-- ./wrapper -->

@@ -24,6 +24,34 @@ use PhpOffice\PhpSpreadsheet\Chart\Title;
 
 class ApiUserController extends Controller
 {
+
+    public function login(Request $request){
+        //validation start
+        $validator = \Validator::make($request->all(), [
+            'username' => 'required|string',
+            'password' => 'required|string',
+        ], [
+            'username.required' => 'Username should be provided!',
+            'username.string' => 'Username must be a string!',
+            'password.required'=>'Password should be provided!',
+            'password.string'=>'Password should be a string!'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()->all()]);
+        }
+
+        if (!Auth::attempt($request->all())){
+            return response()->json(['error' => 'Username or Password Incorrect!']);
+        }
+
+        $token = Auth::user()->createToken('authToken')->accessToken; //generate access token
+        $name = Auth::user()->fName;
+
+        return response()->json(['success' => 'User logged in Successfully!'.$name,'accessToken'=>$token]);
+
+    }
+
     /**
      *add new user to database
      */
@@ -208,7 +236,9 @@ class ApiUserController extends Controller
         }
 //        save in selected user role table end
 
-        return response()->json(['success' => 'User Registered Successfully!']);
+        $token = $user->createToken('authToken')->accessToken; //generate access token
+
+        return response()->json(['success' => 'User Registered Successfully!','accessToken'=>$token]);
 
     }
 

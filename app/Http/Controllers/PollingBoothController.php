@@ -57,6 +57,9 @@ class PollingBoothController extends Controller
             return response()->json(['success'  => $merged]);
 
         }
+        else{
+            return response()->json(['errors'  => ['error'=>'Invalid parameter']]);
+        }
 
     }
 

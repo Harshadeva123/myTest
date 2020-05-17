@@ -18,6 +18,14 @@ class Post extends Model
         return $this->hasMany(PostAttachment::class,'idPost');
     }
 
+    public function responses(){
+        return $this->hasMany(PostResponse::class,'idPost');
+    }
+
+    public function getSize(){
+        return $this->attachments()->sum('size');
+    }
+
     public function nextPostNo($office){
         $last = $this->whereHas('user', function (Builder $query) use($office) {
             $query->where('idoffice',$office);

@@ -144,6 +144,7 @@ class PostController extends Controller
         //save in post table
         $post = new Post();
         $post->idUser = $user;
+        $post->idoffice = Auth::user()->idoffice;
         $post->post_no = $post->nextPostNo($office);
         $post->title_en = $request['title_en'];
         $post->title_si = $request['title_si'];
@@ -375,8 +376,16 @@ class PostController extends Controller
     }
 
     public function view(Request $request){
-        $posts = Post::where('status',1)->get();
+        $posts = Post::where('status',1)->latest()->get();
         return view('post.view_posts', ['title' => __('View Posts'), 'posts' => $posts]);
+
+    }
+
+    public function showAdmin(Request $request){
+        $id = intval($request['id']);
+        $post = Post::with(['attachments'])->find($id);
+
+        return response()->json(['success' => $post]);
 
     }
 }
