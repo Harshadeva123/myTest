@@ -24,6 +24,7 @@
 
         .commenterBox{
             background-color: rgba(58, 80, 96, 0.61);
+            border-radius: 10px;
         }
         .commenterBox.active{
             background-color: rgba(140, 164, 174, 0.61);
@@ -67,55 +68,33 @@
 
                             <div class="row">
 
-                                <div class="col-md-3 my-2 commentersContainer">
+                                <div class="col-md-12 my-2 ">
                                     @if(isset($commenters))
                                         @if(count($commenters) > 0)
-                                            @for($i=0 ; $i <3;$i++)
                                             @foreach($commenters as $key=>$item)
+                                                <form action="{{route('viewComment',['user'=>$key,'post_no'=>$item[0]->post->post_no])}}" id="form-{{$key}}" method="POST">
+                                                <a href="#" onclick="$('#form-{{$key}}').submit()">
+
+                                                    {{csrf_field()}}
                                                 <div class="row  commenterBox m-2 p-5">
+
                                                     <div class="col-md-12">
+
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                {{$item[0]->user->fName}}
                                                             </div>
                                                         </div>
+
                                                     </div>
                                                 </div>
+                                                </a>
+                                                </form>
 
                                             @endforeach
-                                                @endfor
                                         @else
                                         @endif
                                     @endif
-                                </div>
-                                <div class="col-md-9  my-2  commentsContainer">
-                                    <div class="row">
-
-                                        <div class="col-md-10 col-sm-8 col-sm-8 ownComment p-2 m-2 ml-auto ">df</div>
-                                        <div class="col-md-10 col-sm-8 col-sm-8 receivedComment  m-2 p-2 ">df</div>
-
-                                        <div id="previewCard"></div>
-                                    </div>
-                                    <div class="row bottom">
-                                        <div class="col-md-12">
-                                            <textarea class="form-control" id="comment" rows="1"></textarea>
-                                        </div>
-                                        <div class="col-md-12">.
-                                            <input type="file" style="display: none" id="imageFiles" onchange="readURL(this,1)"
-                                                   name="imageFiles[]" multiple accept="image/*">
-                                            <input type="file" style="display: none" id="videoFiles" onchange="readURL(this,2)"
-                                                   name="videoFiles[]" multiple
-                                                   accept="video/*">
-                                            <input type="file" style="display: none" id="audioFiles" name="audioFiles[]"
-                                                   onchange="readURL(this,3)"
-                                                   multiple
-                                                   accept="audio/*">
-                                            <em onclick="$('#imageFiles').click()" class="text-success mediaIcon fa fa-image (alias) fa-3x mr-2"></em>
-                                            <em onclick="$('#videoFiles').click()" class="text-success mediaIcon fa fa-video-camera fa-3x mx-2"></em>
-                                            <em onclick="$('#audioFiles').click()" class="text-success mediaIcon fa fa-microphone fa-3x mx-2"></em>
-                                        </div>
-
-                                    </div>
                                 </div>
                             </div>
                             <br/>

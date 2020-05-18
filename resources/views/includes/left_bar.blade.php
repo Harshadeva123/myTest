@@ -86,6 +86,14 @@
                                 <li><a href="{{route('viewPosts')}}">{{ __('View Posts') }}</a></li>
                             </ul>
                         </li>
+                        <li class="has_sub">
+                            <a href="javascript:void(0);" class="waves-effect"><i class="dripicons-suitcase"></i><span>{{ __('Staff') }}
+                                    <span
+                                            class="pull-right"><i class="mdi mdi-chevron-right"></i></span> </span></a>
+                            <ul class="list-unstyled">
+                                <li><a href="{{route('assignStaff')}}">{{ __('Assign Staff') }}</a></li>
+                            </ul>
+                        </li>
 
                         <li class="has_sub">
                             <a href="javascript:void(0);" class="waves-effect"><i class="dripicons-suitcase"></i><span>{{ __('Task') }}

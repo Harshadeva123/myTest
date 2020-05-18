@@ -12,4 +12,8 @@ class EducationalQualification extends Model
     public function agents(){
         return $this->hasMany(Agent::class,'ideducational_qualification');
     }
+
+    public function taskEducation(){
+        return $this->hasMany(TaskEducation::class,'ideducational_qualification');
+    }
 }

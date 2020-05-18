@@ -13,4 +13,8 @@ class NatureOfIncome extends Model
         return $this->hasMany(Agent::class,'idnature_of_income');
     }
 
+    public function taskIncome(){
+        return $this->hasMany(TaskIncome::class,'idnature_of_income');
+    }
+
 }

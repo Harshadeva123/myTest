@@ -12,4 +12,8 @@ class Career extends Model
     public function agents(){
         return $this->hasMany(Agent::class,'idcareer');
     }
+
+    public function taskCareer(){
+        return $this->hasMany(TaskCareer::class,'idcareer');
+    }
 }

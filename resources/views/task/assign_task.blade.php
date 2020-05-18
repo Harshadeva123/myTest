@@ -16,7 +16,7 @@
                             <h5 class="text-secondary"><em class="mdi mdi-account"></em> Select An Agent
                             </h5>
                             <hr/>
-                            <form action="{{route('viewUser')}}" method="GET">
+                            <form action="{{route('assignTask')}}"  method="GET">
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="alert alert-danger alert-dismissible " id="errorAlert"
@@ -34,8 +34,8 @@
                                                 <select class="form-control  " name="searchCol"
                                                         id="searchCol" required>
                                                     <option value="1" selected>AGENT FIRST NAME</option>
-                                                    <option value="1">AGENT LAST NAME</option>
-                                                    <option value="2">VILLAGE NAME</option>
+                                                    <option value="2">AGENT LAST NAME</option>
+                                                    <option value="3">VILLAGE NAME</option>
                                                 </select>
                                             </div>
                                             <input class="form-control " type="text" min="0" id="searchText"
@@ -124,6 +124,8 @@
             </div>
             <br/>
             <div style="display: none;" class="card secondPage">
+                <form  id="form1" method="GET">
+
                 <div class="card-body">
                     <div class="row secondPage">
                         <div class="col-md-10">
@@ -140,6 +142,11 @@
                         <div class="col-md-12">
                             <hr/>
                         </div>
+                        <div class="col-md-12">
+                            <div class="alert alert-danger alert-dismissible " id="errorAlert2"
+                                 style="display:none">
+                            </div>
+                        </div>
                         <div class="form-group col-md-2 ">
                             <label for="members" style="margin-left: 5px;"
                                    class="control-label">{{ __('Number of Members') }}</label>
@@ -149,20 +156,25 @@
                                    name="members">
                         </div>
                         <div class="form-group col-md-4 ">
-                            <label style="margin-left: 5px;" class="control-label">{{ __('Age') }}</label>
+                            <label for="ageComparison" style="margin-left: 5px;" class="control-label">{{ __('Age') }}</label>
                             <div class="input-group">
                                 <div class="input-group-append">
-                                    <select class="form-control  " name="ageComparison"
+                                    <select class="form-control  " name="ageComparison" onchange="ageChanged(this.value)"
                                             id="ageComparison" required>
                                         <option value="0" selected>EQUAL TO</option>
-                                        <option value="1">LOWER THAN</option>
-                                        <option value="2">MORE THAN</option>
+                                        <option value="1">LOWER </option>
+                                        <option value="2">GRATER </option>
+                                        <option value="3">BETWEEN</option>
                                     </select>
                                 </div>
                                 <input class="form-control " type="number"
                                        oninput="this.value = this.value < 0 ? 0 : this.value" min="0"
-                                       id="age"
-                                       name="age">
+                                       id="minAge" placeholder="Age"
+                                       name="minAge">
+                                <input style="display: none;" class="form-control " type="number"
+                                       oninput="this.value = this.value < 0 ? 0 : this.value" min="0"
+                                       id="maxAge" placeholder="Max Age"
+                                       name="maxAge">
 
                             </div>
                         </div>
@@ -246,19 +258,19 @@
                                    class="control-label">{{ __('Gender') }}</label>
                             <div class="row">
                                 <label style="margin-left: 10px;" class="radio-inline"><input
-                                            style="margin-left: 10px;" type="radio" value="" name="gender"
+                                            style="margin-left: 10px;" type="radio" value="0" name="gender"
                                             checked>&nbsp;{{ __('Any') }}
                                 </label>
                                 <label style="margin-left: 5px;" class="radio-inline"><input
-                                            style="margin-left: 5px;" type="radio" value="0"
+                                            style="margin-left: 5px;" type="radio" value="1"
                                             name="gender">&nbsp;{{ __('Male') }}
                                 </label> &nbsp;
                                 &nbsp;
                                 <label style="margin-left: 5px;" class="radio-inline"><input
-                                            style="margin-left: 5px;" type="radio" value="1"
+                                            style="margin-left: 5px;" type="radio" value="2"
                                             name="gender">&nbsp;{{ __('Female') }}</label>
                                 <label style="margin-left: 5px;" class="radio-inline"><input
-                                            style="margin-left: 5px;" type="radio" value="2"
+                                            style="margin-left: 5px;" type="radio" value="3"
                                             name="gender">&nbsp;{{ __('Other') }}</label>
                             </div>
                         </div>
@@ -268,7 +280,7 @@
                                    class="control-label">{{ __('Job Sector') }}</label>
                             <div class="row">
                                 <label style="margin-left: 10px;" class="radio-inline"><input
-                                            style="margin-left: 10px;" type="radio" value=""
+                                            style="margin-left: 10px;" type="radio" value="0"
                                             name="jobSector"
                                             checked>&nbsp;{{ __('Any') }}
                                 </label>
@@ -283,6 +295,7 @@
                             </div>
                         </div>
                     </div>
+                    <input name="userId" id="userId" type="hidden">
                     <div style="display: none;" class="row secondPage">
                         <div class="col-md-8 .d-sm-none ">
                         </div>
@@ -291,7 +304,7 @@
                                     class="btn btn-danger float-right btn-block ">{{ __('Cancel') }} </button>
                         </div>
                         <div class="col-md-2  p-sm-2">
-                            <button class="btn btn-primary float-right btn-block ">{{ __('Assign Task') }}
+                            <button form="form1" type="submit" class="btn btn-primary float-right btn-block ">{{ __('Assign Task') }}
                             </button>
                         </div>
 
@@ -306,11 +319,15 @@
 
     <script language="JavaScript" type="text/javascript">
         $(document).ready(function () {
-
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
         });
 
         function clearAll() {
-            $('input').not(':checkbox').val('');
+            $('input').not(':checkbox').not(':radio').val('');
             $(":checkbox").attr('checked', false).trigger('change');
             $(":radio").attr('checked', false).trigger('change');
             $('select').val('').trigger('change');
@@ -321,13 +338,89 @@
         function selectAgent(id) {
             $('.firstPage').fadeOut();
             $('.secondPage').fadeIn();
+            $('#userId').val(id);
             $('#agentName').html($('#'+id).find("td").eq(0).html());
         }
 
-        function showFistPage(id) {
+        function showFistPage() {
             $('.secondPage').fadeOut();
             $('.firstPage').fadeIn();
             clearAll();
         }
+
+        function ageChanged(id) {
+            if(id == 3){
+                $('#maxAge').show();
+                $('#minAge').attr('placeholder','Min age');
+            }else {
+                $('#maxAge').hide();
+                $('#minAge').attr('placeholder','Age');
+            }
+        }
+
+        $("#form1").on("submit", function (event) {
+
+            event.preventDefault();
+
+            //initialize alert and variables
+            $('.notify').empty();
+            $('.alert').hide();
+            $('.alert').html("");
+            let completed = true;
+            //initialize alert and variables end
+
+
+            //validate user input
+
+            //validation end
+
+            if (completed) {
+
+                $.ajax({
+                    url: '{{route('saveTask')}}',
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function (data) {
+                        if (data.errors != null) {
+                            $('#errorAlert2').show();
+                            $.each(data.errors, function (key, value) {
+                                $('#errorAlert2').append('<p>' + value + '</p>');
+                            });
+                            $('html, body').animate({
+                                scrollTop: $("body").offset().top
+                            }, 1000);
+                        }
+                        if (data.success != null) {
+
+                            notify({
+                                type: "success", //alert | success | error | warning | info
+                                title: 'NEW TASK ASSIGNED!',
+                                autoHide: true, //true | false
+                                delay: 2500, //number ms
+                                position: {
+                                    x: "right",
+                                    y: "top"
+                                },
+                                icon: '<em class="mdi mdi-check-circle-outline"></em>',
+
+                                message: 'Task assigned successfully.'
+                            });
+                            clearAll();
+                            showFistPage();
+                        }
+                    }
+
+
+                });
+            }
+            else {
+                $('#errorAlert2').html('Please provide all required fields.');
+                $('#errorAlert2').show();
+                $('html, body').animate({
+                    scrollTop: $("body").offset().top
+                }, 1000);
+            }
+        });
+
     </script>
 @endsection

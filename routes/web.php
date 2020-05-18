@@ -107,9 +107,16 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
         Route::get('assign_task', 'TaskController@index')->name('assignTask');
         Route::get('view_task', 'TaskController@view')->name('viewTasks');
         Route::post('get_task_by_id', 'TaskController@getById')->name('getTaskById');
+        Route::post('save_task', 'TaskController@store')->name('saveTask');
 
         //Post Response
         Route::get('view_comments', 'PostResponseController@viewComments')->name('viewComments');
+        Route::post('view_comment', 'PostResponseController@viewComment')->name('viewComment');
+        Route::post('save_comment', 'PostResponseController@store')->name('saveComment');
+        Route::post('save_comment_attachments', 'PostResponseController@storeAttachments')->name('saveCommentAttachments');
+
+        //Staff management
+        Route::get('assign_staff', 'StaffController@index')->name('assignStaff');
 
     });
 

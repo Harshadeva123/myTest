@@ -8,4 +8,12 @@ class TaskCareer extends Model
 {
     protected $table = 'task_career';
     protected $primaryKey = 'idtask_career';
+
+    public function task(){
+        return $this->belongsTo(Task::class,'idtask');
+    }
+
+    public function career(){
+        return $this->belongsTo(Career::class,'idcareer');
+    }
 }

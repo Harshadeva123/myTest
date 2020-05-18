@@ -145,8 +145,8 @@
                                     </div>
                                 </div>
                             </div>
-                            @if(isset($offices))
-                                {{$offices->links()}}
+                            @if(isset($task))
+                                {{$tasks->links()}}
                             @endif
                         </div>
                     </div>
@@ -171,7 +171,126 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row ">
+
+                                <div class="form-group col-md-3 ">
+                                    <label for="taskNo" style="margin-left: 5px;"
+                                           class="control-label">{{ __('Task No') }}</label>
+                                    <input class="form-control " type="number"
+                                           readonly
+                                           id="taskNo"
+                                           name="taskNo">
+                                </div>
+                                <div class="form-group col-md-3 ">
+                                    <label for="members" style="margin-left: 5px;"
+                                           class="control-label">{{ __('Target') }}</label>
+                                    <input class="form-control " type="text"
+                                           readonly
+                                           id="members"
+                                           name="members">
+                                </div>
+                                <div class="form-group col-md-6 ">
+                                    <label for="ageComparison" style="margin-left: 5px;"
+                                           class="control-label">{{ __('Age') }}</label>
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <select class="form-control  " name="ageComparison"
+                                                    onchange="ageChanged(this.value)"
+                                                    readonly disabled id="ageComparison" required>
+                                                <option value="" selected></option>
+                                                <option value="0">EQUAL TO</option>
+                                                <option value="1">LESS THAN</option>
+                                                <option value="2">GRATER THAN</option>
+                                                <option value="3">BETWEEN</option>
+                                            </select>
+                                        </div>
+                                        <input class="form-control " type="number"
+                                               readonly
+                                               id="minAge" placeholder=""
+                                               name="minAge">
+                                        <input style="display: none;" class="form-control " type="number"
+                                               readonly
+                                               id="maxAge" placeholder=""
+                                               name="maxAge">
+
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="ethnicities"
+                                           class="control-label">{{ __('Ethnicity') }}</label>
+
+                                    <div id="ethnicities"></div>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="religions"
+                                           class="control-label">{{ __('Religion') }}</label>
+
+                                    <div id="religions"></div>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="incomes"
+                                           class="control-label">{{ __('Nature of income') }}</label>
+
+                                    <div id="incomes"></div>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="educations"
+                                           class="control-label">{{ __('Educational Qualification') }}</label>
+
+                                    <div id="educations"></div>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label for="careers"
+                                           class="control-label">{{ __('Career') }}</label>
+
+                                    <div id="careers"></div>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label style="margin-left: 5px;"
+                                           class="control-label">{{ __('Gender') }}</label>
+                                    <div class="row">
+                                        <label style="margin-left: 10px;" class="radio-inline"><input
+                                                    style="margin-left: 10px;" type="radio" value="" name="gender"
+                                                    checked>&nbsp;{{ __('Any') }}
+                                        </label>
+                                        <label style="margin-left: 5px;" class="radio-inline"><input
+                                                    style="margin-left: 5px;" type="radio" value="0"
+                                                    name="gender">&nbsp;{{ __('Male') }}
+                                        </label> &nbsp;
+                                        &nbsp;
+                                        <label style="margin-left: 5px;" class="radio-inline"><input
+                                                    style="margin-left: 5px;" type="radio" value="1"
+                                                    name="gender">&nbsp;{{ __('Female') }}</label>
+                                        <label style="margin-left: 5px;" class="radio-inline"><input
+                                                    style="margin-left: 5px;" type="radio" value="2"
+                                                    name="gender">&nbsp;{{ __('Other') }}</label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-6">
+                                    <label style="margin-left: 5px;"
+                                           class="control-label">{{ __('Job Sector') }}</label>
+                                    <div class="row">
+                                        <label style="margin-left: 10px;" class="radio-inline"><input
+                                                    style="margin-left: 10px;" type="radio" value=""
+                                                    name="jobSector"
+                                                    checked>&nbsp;{{ __('Any') }}
+                                        </label>
+                                        <label style="margin-left: 5px;" class="radio-inline"><input
+                                                    style="margin-left: 5px;" type="radio" value="1"
+                                                    name="jobSector">&nbsp;{{ __('Government') }}
+                                        </label> &nbsp;
+                                        &nbsp;
+                                        <label style="margin-left: 5px;" class="radio-inline"><input
+                                                    style="margin-left: 5px;" type="radio" value="2"
+                                                    name="jobSector">&nbsp;{{ __('Private') }}</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                 </div>
             </div>
@@ -197,10 +316,54 @@
                 type: 'POST',
                 success: function (data) {
                     console.log(data.success);
+                    let result = data.success;
+                    $('#ethnicities').html('');
+                    $('#careers').html('');
+                    $('#religions').html('');
+                    $('#incomes').html('');
+                    $('#educations').html('');
+
+                    $('#members').val(result.target + ' Members');
+                    $('#taskNo').val(result.task_no);
+                    if (result.age != null) {
+                        $('#ageComparison').val(result.age.comparison).trigger('change');
+                        $('#minAge').val(result.age.minAge);
+                        $('#maxAge').val(result.age.maxAge);
+                    }
+                    else {
+                        $('#ageComparison').val('').trigger('change');
+                        $('#minAge').val('');
+                        $('#maxAge').val('');
+                    }
+                    $("input:radio[value='" + result.task_gender + "'][name='gender']").prop('checked', true);
+                    $("input:radio[value='" + result.task_job_sector + "'][name='jobSector']").prop('checked', true);
+
+                    $.each(result.ethnicities, function (key, value) {
+                        $('#ethnicities').append('<p><em class="fa fa-dot-circle-o"></em> ' + value.ethnicity.name_en + '</p>');
+                    });
+                    $.each(result.careers, function (key, value) {
+                        $('#careers').append('<p><em class="fa fa-dot-circle-o"></em> ' + value.career.name_en + '</p>');
+                    });
+                    $.each(result.religions, function (key, value) {
+                        $('#religions').append('<p><em class="fa fa-dot-circle-o"></em> ' + value.religion.name_en + '</p>');
+                    });
+                    $.each(result.incomes, function (key, value) {
+                        $('#incomes').append('<p><em class="fa fa-dot-circle-o"></em> ' + value.income.name_en + '</p>');
+                    });
+                    $.each(result.educations, function (key, value) {
+                        $('#educations').append('<p><em class="fa fa-dot-circle-o"></em> ' + value.education.name_en + '</p>');
+                    });
                     $('#viewModal').modal('show');
                 }
             });
         }
 
+        function ageChanged(id) {
+            if (id == 3) {
+                $('#maxAge').show();
+            } else {
+                $('#maxAge').hide();
+            }
+        }
     </script>
 @endsection

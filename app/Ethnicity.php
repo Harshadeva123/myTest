@@ -12,4 +12,8 @@ class Ethnicity extends Model
     public function agents(){
         return $this->hasMany(Agent::class,'idethnicity');
     }
+
+    public function taskEthnicity(){
+        return $this->hasMany(TaskEthnicity::class,'idethnicity');
+    }
 }
