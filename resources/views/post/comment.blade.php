@@ -81,6 +81,10 @@
         .mediaIcon {
         / /
         }
+
+        audio {
+            width: 100%;
+        }
     </style>
 @endsection
 @section('psContent')
@@ -92,54 +96,48 @@
                     <div class="card m-b-20">
                         <div class="card-body ">
                             <div class="row ">
-                                <div class="col-md-12 commenterBox ">
-                                    @if(isset($commenters))
-                                        @if(count($commenters) > 0)
-                                            @for($i=0 ; $i <12;$i++)
-                                                @foreach($commenters as $key=>$item)
-                                                    <div class="row">
-                                                        @if($item->is_admin == 1)
-                                                            <div class="ownComment col-md-8 p-2 m-2 ml-auto ">{{$item->response}}
-                                                            </div>
-                                                        @else
-                                                            <div class="receivedComment  col-md-8 m-2 p-2 ">{{$item->response}}</div>
-                                                        @endif
-                                                    </div>
+                                <div id="commenterBox" class="col-md-12 commenterBox ">
 
-                                                @endforeach
-                                            @endfor
-                                        @else
-                                        @endif
-                                    @endif
                                 </div>
                             </div>
-                            <div class="row ">
-                                <textarea title="Write your message here" class="form-control col-md-12" id="comment"
-                                          rows="3"></textarea>
-                                <div class="col-md-12">
-                                    <div class="row my-1">
-                                        <input class="" type="file" style="display: none" id="imageFiles"
-                                               onchange="readURL(this,1)"
-                                               name="imageFiles[]" multiple accept="image/*">
-                                        <input type="file" style="display: none" id="videoFiles"
-                                               onchange="readURL(this,2)"
-                                               name="videoFiles[]" multiple
-                                               accept="video/*">
-                                        <input type="file" style="display: none" id="audioFiles" name="audioFiles[]"
-                                               onchange="readURL(this,3)"
-                                               multiple
-                                               accept="audio/*">
-                                        <em onclick="$('#imageFiles').click()"
-                                            class="text-success mediaIcon fa fa-image (alias) fa-3x mr-2"></em>
-                                        <em onclick="$('#videoFiles').click()"
-                                            class="text-success mediaIcon fa fa-video-camera fa-3x mx-2"></em>
-                                        <em onclick="$('#audioFiles').click()"
-                                            class="text-success mediaIcon fa fa-microphone fa-3x mx-2"></em>
-                                        <button class="btn btn-primary ml-auto  float-right">Send</button>
+                            <form class="form-horizontal" id="form1" role="form">
 
+                                <input type="hidden" class="noClear" name="user_id" value="{{$_REQUEST['user']}}">
+                                <input type="hidden" class="noClear" name="post_no" value="{{$_REQUEST['post_no']}}">
+                                <div class="row ">
+                                <textarea title="Write your message here" class="form-control col-md-12" id="comment"
+                                          name="comment" rows="3"></textarea>
+                                    <div class="col-md-12">
+                                        <div class="row my-1">
+                                            <em onclick="$('#imageFiles').click()"
+                                                class="text-success mediaIcon fa fa-image (alias) fa-3x mr-2"></em>
+                                            <em onclick="$('#videoFiles').click()"
+                                                class="text-success mediaIcon fa fa-video-camera fa-3x mx-2"></em>
+                                            <em onclick="$('#audioFiles').click()"
+                                                class="text-success mediaIcon fa fa-microphone fa-3x mx-2"></em>
+                                            <button type="submit" class="btn btn-primary ml-auto  float-right">Send
+                                            </button>
+
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            </form>
+                            <form class="form-horizontal" id="formAttachments" role="form"
+                                  enctype="multipart/form-data">
+                                <input type="hidden" class="noClear" name="user_id" value="{{$_REQUEST['user']}}">
+                                <input type="hidden" class="noClear" name="post_no" value="{{$_REQUEST['post_no']}}">
+                                <input class="" type="file" style="display: none" id="imageFiles"
+                                       onchange="$('#formAttachments').submit();"
+                                       name="imageFiles[]" multiple accept="image/*">
+                                <input type="file" style="display: none" id="videoFiles"
+                                       onchange="$('#formAttachments').submit();"
+                                       name="videoFiles[]" multiple
+                                       accept="video/*">
+                                <input type="file" style="display: none" id="audioFiles" name="audioFiles[]"
+                                       onchange="$('#formAttachments').submit();"
+                                       multiple
+                                       accept="audio/*">
+                            </form>
                         </div>
 
                     </div>
@@ -158,8 +156,9 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-
+            refreshComments();
         });
+
 
         $("#formAttachments").on("submit", function (event) {
             event.preventDefault();
@@ -189,13 +188,22 @@
                     success: function (data) {
                         console.log(data);
                         if (data.errors != null) {
-                            $('#errorAlert3').show();
                             $.each(data.errors, function (key, value) {
-                                $('#errorAlert3').append("<p><em class='fa fa-genderless'></em> " + value + "</p>");
+                                notify({
+                                    type: "error", //alert | success | error | warning | info
+                                    title: 'FILE SENDING FAILED.',
+                                    autoHide: true, //true | false
+                                    delay: 5000, //number ms
+                                    position: {
+                                        x: "right",
+                                        y: "top"
+                                    },
+                                    icon: '<em class="mdi mdi-check-circle-outline"></em>',
+
+                                    message: '' + value + ''
+                                });
                             });
-                            $('html, body').animate({
-                                scrollTop: $("body").offset().top
-                            }, 1000);
+
                         }
                         if (data.success != null) {
 
@@ -212,7 +220,8 @@
 
                                 message: 'Post published successfully.'
                             });
-//                            clearAll();
+                          $("input[type='file']").val('');
+                            refreshComments();
                         }
                     }
 
@@ -248,38 +257,29 @@
                 $.ajax({
                     url: '{{route('saveComment')}}',
                     type: 'POST',
-                    data: new FormData(this),
-                    dataType: 'JSON',
-                    contentType: false,
-                    cache: false,
-                    processData: false,
+                    data: $(this).serialize(),
                     success: function (data) {
-                        console.log(data);
                         if (data.errors != null) {
-                            $('#errorAlert3').show();
+
                             $.each(data.errors, function (key, value) {
-                                $('#errorAlert3').append("<p><em class='fa fa-genderless'></em> " + value + "</p>");
+                                notify({
+                                    type: "error", //alert | success | error | warning | info
+                                    title: 'COMMENT SENDING FAILED.',
+                                    autoHide: true, //true | false
+                                    delay: 5000, //number ms
+                                    position: {
+                                        x: "right",
+                                        y: "top"
+                                    },
+                                    icon: '<em class="mdi mdi-check-circle-outline"></em>',
+
+                                    message: '' + value + ''
+                                });
                             });
-                            $('html, body').animate({
-                                scrollTop: $("body").offset().top
-                            }, 1000);
                         }
                         if (data.success != null) {
-
-                            notify({
-                                type: "success", //alert | success | error | warning | info
-                                title: 'POST PUBLISHED SUCCESSFULLY.',
-                                autoHide: true, //true | false
-                                delay: 2500, //number ms
-                                position: {
-                                    x: "right",
-                                    y: "top"
-                                },
-                                icon: '<em class="mdi mdi-check-circle-outline"></em>',
-
-                                message: 'Post published successfully.'
-                            });
-//                            clearAll();
+                            clearAll();
+                            refreshComments();
                         }
                     }
 
@@ -294,6 +294,64 @@
                 }, 1000);
             }
         });
+
+        function refreshComments() {
+            let postNo = "{{$_REQUEST['post_no']}}";
+            let userId = "{{$_REQUEST['user']}}";
+            $.ajax({
+                url: '{{route('getCommentByUserAndPost')}}',
+                type: 'POST',
+                data: {user_id: userId, post_no: postNo},
+                success: function (data) {
+                    let result = data.success;
+                    console.log(data);
+                    $('#commenterBox').html('');
+                    $.each(result, function (key, value) {
+                        if (value.is_admin == 1) {
+                            if(value.response_type == 1){
+                                $('#commenterBox').append(
+                                    "<div class='ownComment col-md-8 p-2 m-2 ml-auto '>" + value.response + "" +
+                                    "</div>"
+                                );
+                            }else if(value.response_type == 2){
+                                $('#commenterBox').append(
+                                    "<div class='ownComment col-md-5 p-2 m-2 ml-auto '>" +
+                                    "<img src='{{ asset('')}}"+value.full_path+"' width='200px'>' " +
+                                    "</div>"
+                                );
+                            }else if(value.response_type == 3){
+                                $('#commenterBox').append(
+                                    "<div class='ownComment col-md-5 p-2 m-2 ml-auto '>" +
+                                        " <video width='100%' controls controlsList='nodownload'>" +
+                                        "<source src='{{ asset('')}}"+value.full_path+"'  type='video/mp4'> " +
+                                        "<source src='{{ asset('')}}"+value.full_path+"' type='video/ogg'>" +
+                                            " Your browser does not support HTML video." +
+                                        " </video> " +
+                                    "</div>");
+                            }else if(value.response_type == 4){
+                                $('#commenterBox').append(
+                                    "<div class='ownComment col-md-5 p-2 m-2 ml-auto '>" +
+                                        " <audio width='100%' controls  controlsList='nofullscreen nodownload noremoteplayback'>" +
+                                        "<source src='{{ asset('')}}"+value.full_path+"'  type='audio/ogg'> " +
+                                        "<source src='{{ asset('')}}"+value.full_path+"' type='audio/mpeg'>" +
+                                            " Your browser does not support HTML audio." +
+                                        " </audio> " +
+                                    "</div>");
+                            }else{
+                                $('#commenterBox').append("");
+                            }
+                        }
+                        else {
+                            $('#commenterBox').append(
+                                "<div class='receivedComment  col-md-8 m-2 p-2 '>" + value.response + "" +
+                                "</div>"
+                            );
+                        }
+                    });
+                    $('#commenterBox').scrollTop($('#commenterBox')[0].scrollHeight);
+                }
+            });
+        }
 
     </script>
 @endsection

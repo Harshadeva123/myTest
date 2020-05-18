@@ -23,7 +23,9 @@ class Post extends Model
     }
 
     public function getSize(){
-        return $this->attachments()->sum('size');
+        $attachment =  $this->attachments()->sum('size');
+        $responses = $this->responses()->sum('size');
+        return $attachment + $responses;
     }
 
     public function nextPostNo($office){

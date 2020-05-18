@@ -54,10 +54,11 @@
     }
 
     function clearAll() {
-        $('input').not(':checkbox').val('');
-        $(":checkbox").attr('checked', false).trigger('change');
-        $(":radio").attr('checked', false).trigger('change');
-        $('select').val('').trigger('change');
+        $('input').not(':checkbox').not('.noClear').val('');
+        $('textarea').not('.noClear').val('');
+        $(":checkbox").not('.noClear').attr('checked', false).trigger('change');
+        $(":radio").not('.noClear').attr('checked', false).trigger('change');
+        $('select').not('.noClear').val('').trigger('change');
     }
 </script>
 

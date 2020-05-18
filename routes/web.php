@@ -114,6 +114,7 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
         Route::post('view_comment', 'PostResponseController@viewComment')->name('viewComment');
         Route::post('save_comment', 'PostResponseController@store')->name('saveComment');
         Route::post('save_comment_attachments', 'PostResponseController@storeAttachments')->name('saveCommentAttachments');
+        Route::post('get_comment_by_user_and_post', 'PostResponseController@getCommentByUserAndPost')->name('getCommentByUserAndPost');
 
         //Staff management
         Route::get('assign_staff', 'StaffController@index')->name('assignStaff');
