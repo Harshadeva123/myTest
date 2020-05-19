@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\BeneficialCat;
+use App\BeneficialMain;
+use App\BeneficialSub;
 use App\Career;
 use App\EducationalQualification;
 use App\ElectionDivision;
@@ -55,6 +58,7 @@ class PostController extends Controller
         $validationMessages = [
             'title_en.required' => 'Title in english should be provided!',
             'text_en.required' => 'Post text in english should be provided!',
+            'mainCat.required' => 'Main category should be provided!',
             'expireDate.required' => 'Expire date should be provided!',
             'expireDate.date' => 'Expire date format invalid!',
             'responsePanel.required' => 'Response panel should be provided!',
@@ -75,6 +79,7 @@ class PostController extends Controller
         $validator = \Validator::make($request->all(), [
             'title_en' => 'required',
             'text_en' => 'required',
+            'mainCat' => 'required',
             'gender' => 'nullable',
             'expireDate' => 'required|date',
             'onlyOnce' => 'nullable',
@@ -95,6 +100,24 @@ class PostController extends Controller
         $gramasewaArray = [];
         $pollingArray = [];
         $electionArray = [];
+
+        //category validation
+
+        $subCat = $request['subCat'];
+        if ($subCat == null) {
+            $mainAll = 1;
+        } else {
+            $mainAll = 0;
+        }
+
+        $cats = $request['cats'];
+        if ($cats[0] == null) {
+            $subAll = 1;
+        } else {
+            $subAll = 0;
+        }
+
+        //category validation end
 
         //village level validation
         $villages = $request['villages'];
@@ -370,18 +393,51 @@ class PostController extends Controller
         }
         //save audio end
 
+        //save in beneficial category tables
+
+        $mainCategory = new BeneficialMain();
+        $mainCategory->idPost = $post->idPost;
+        $mainCategory->idmain_category = $request['mainCat'];
+        $mainCategory->allChiled = $mainAll;
+        $mainCategory->status = 1;//default
+        $mainCategory->save();
+
+        if ($subCat != null) {
+            $subCategory = new BeneficialSub();
+            $subCategory->idPost = $post->idPost;
+            $subCategory->idsub_category = $subCat;
+            $subCategory->allChild = $subAll;
+            $subCategory->status = 1;//default
+            $subCategory->save();
+        }
+
+        if ($cats != null) {
+            foreach ($cats as $cat) {
+                $subCategory = new BeneficialCat();
+                $subCategory->idPost = $post->idPost;
+                $subCategory->idcategory = $cat;
+                $subCategory->status = 1;//default
+                $subCategory->save();
+            }
+        }
+
+        //save in category tables end
+
+
         //save post attachment end
         return response()->json(['success' => 'Post published Successfully!']);
 
     }
 
-    public function view(Request $request){
-        $posts = Post::where('status',1)->latest()->get();
+    public function view(Request $request)
+    {
+        $posts = Post::where('status', 1)->latest()->get();
         return view('post.view_posts', ['title' => __('View Posts'), 'posts' => $posts]);
 
     }
 
-    public function showAdmin(Request $request){
+    public function showAdmin(Request $request)
+    {
         $id = intval($request['id']);
         $post = Post::with(['attachments'])->find($id);
 

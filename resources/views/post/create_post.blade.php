@@ -497,26 +497,43 @@
                     <div class="card  thirdPage">
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-md-6">
-                                    <h5 class="text-secondary"><em class="mdi mdi-message-reply"></em> Response Panel
+                                <div class="col-md-12">
+                                    <h5 class="text-secondary"><em class="mdi mdi-view-grid"></em>Categorize
                                     </h5>
-                                    <div class="form-group ">
-                                        <select id="responsePanel" class="form-control" name="responsePanel">
-                                            <option value="1">Yes / No</option>
-                                            <option value="2">3 Categories</option>
-                                            <option value="3">5 Ratings</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <h5 class="text-secondary"><em class="mdi mdi-message-reply"></em> Analysis Staff
-                                    </h5>
-                                    <div class="form-group ">
-                                        <select id="staff" class="form-control" name="staff">
-                                            <option value="1">Yes / No</option>
-                                            <option value="2">3 Categories</option>
-                                            <option value="3">5 Ratings</option>
-                                        </select>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label for="responsePanel">{{ __('Response Panel') }}</label>
+                                            <select id="responsePanel" class="form-control" name="responsePanel">
+                                                <option value="1">Yes / No</option>
+                                                <option value="2">3 Categories</option>
+                                                <option value="3">5 Ratings</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-4  form-group">
+                                            <label for="mainCat">{{ __('Main Category') }}</label>
+                                            <select onchange="mainCategoryChanged(this.value)" id="mainCat" class="form-control" name="mainCat">
+                                                <option value="" selected disabled>Select Main Category</option>
+                                                <option value="1">PRIVATE</option>
+                                                <option value="2">PUBLIC</option>
+                                                <option value="3">GROUP</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4 form-group ">
+                                            <label for="subCat">{{ __('Sub Category') }}</label>
+                                            <select id="subCat"  onchange="subCategoryChanged(this.value)" class="form-control" name="subCat">
+                                                <option value="" disabled selected>Select Sub Category</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-12 form-group ">
+                                            <label for="cats">{{ __('Category') }}</label>
+                                            <select name="cats[]" id="cats"
+                                                    class="select2 form-control select2-multiple" multiple="multiple" multiple
+                                                    data-placeholder="Choose ...">
+                                                <option value="" disabled selected>Select Category</option>
+                                            </select>
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -798,5 +815,69 @@
                 }, 1000);
             }
         });
+
+        function mainCategoryChanged(id) {
+            if(id) {
+                $('.notify').empty();
+                $('.alert').hide();
+                $('.alert').html("");
+                $.ajax({
+                    url: '{{route('getSubCatByMain')}}',
+                    type: 'POST',
+                    data: {id: id},
+                    success: function (data) {
+                        if (data.errors != null) {
+                            $('#errorAlert').show();
+                            $.each(data.errors, function (key, value) {
+                                $('#errorAlert').append('<p>' + value + '</p>');
+                            });
+                            $('html, body').animate({
+                                scrollTop: $("body").offset().top
+                            }, 1000);
+                        }
+                        if (data.success != null) {
+
+                            let array = data.success;
+                            $('#subCat').html("<option value=''>Select Sub Category</option>");
+                            $('#cat').html("<option value=''>Select Category</option>");
+                            $.each(array, function (index, value) {
+                                $('#subCat').append(new Option(value.categroy, value.idsub_category));
+                            });
+                        }
+                    }
+                });
+            }
+        }
+
+        function subCategoryChanged() {
+            id = $('#subCat').val();
+            $.ajax({
+                url: '{{route('getCatBySub')}}',
+                type: 'POST',
+                data: {id:id},
+                success: function (data) {
+                    if (data.errors != null) {
+                        $('#errorAlert').show();
+                        $.each(data.errors, function (key, value) {
+                            $('#errorAlert').append('<p>' + value + '</p>');
+                        });
+                        $('html, body').animate({
+                            scrollTop: $("body").offset().top
+                        }, 1000);
+                    }
+                    if (data.success != null) {
+                        let array = data.success;
+                        $('#cats').html("<option value=''>Select Category</option>");
+                        console.log(array);
+                        $.each(array, function (index, value) {
+                            $('#cats').append(new Option(value.category, value.idcategory));
+                        });
+                    }
+                }
+
+
+            });
+        }
+
     </script>
 @endsection

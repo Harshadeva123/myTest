@@ -27,7 +27,7 @@
                                                     <option value="1">AGENT LAST NAME</option>
                                                 </select>
                                             </div>
-                                            <input class="form-control " type="text" min="0" id="searchText"
+                                            <input class="form-control " type="text"  id="searchText"
                                                    name="searchText">
 
                                         </div>

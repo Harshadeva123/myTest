@@ -93,6 +93,11 @@ class User extends Authenticatable
         return $this->hasOne(OfficeAdmin::class, 'idUser');
     }
 
+    public function officeStaff()
+    {
+        return $this->hasOne(OfficeStaff::class, 'idUser');
+    }
+
     public function responses()
     {
         return $this->hasMany(PostResponse::class, 'idUser');

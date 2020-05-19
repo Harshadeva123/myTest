@@ -126,6 +126,8 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
 
         //Staff management
         Route::get('assign_staff', 'StaffController@index')->name('assignStaff');
+        Route::post('assign_staff', 'StaffController@store')->name('assignStaff');
+        Route::post('view_assigned_division', 'StaffController@viewAssignedDivision')->name('viewAssignedDivision');
 
     });
 
