@@ -96,7 +96,7 @@ class GramasewaDivisionController extends Controller
         $division->name_en = $request['gramasewaDivision'];
         $division->name_si = $request['gramasewaDivision_si'];
         $division->name_ta = $request['gramasewaDivision_ta'];
-        $division->status = 1;
+        $division->status = 2;
         $division->idUser = Auth::user()->idUser;
         $division->save();
         return response()->json(['success' => 'Gramasewa Division saved']);

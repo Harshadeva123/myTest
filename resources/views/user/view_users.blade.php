@@ -106,6 +106,7 @@
                                                         <th>OFFICE</th>
                                                     @endif
                                                     <th>USER ROLE</th>
+                                                    <th>STATUS</th>
                                                     <th>GENDER</th>
                                                     <th>DOB</th>
                                                     <th>EMAIL</th>
@@ -124,6 +125,11 @@
                                                                     <td>{{strtoupper($user->office->office_name)}}</td>
                                                                 @endif
                                                                 <td>{{$user->userRole->role}}</td>
+                                                                @if($user->status)
+                                                                    <td nowrap><p><em  class="mdi mdi-checkbox-blank-circle text-success "></em> ENABLED</p></td>
+                                                                @else
+                                                                    <td nowrap><em class="mdi mdi-checkbox-blank-circle text-danger"></em> DISABLED</td>
+                                                                @endif
                                                                 @if($user->gender == 0)
                                                                     <td>MALE</td>
                                                                 @elseif ($user->gender == 1)
@@ -171,7 +177,19 @@
                                                                                    {{--onclick="disableUser({{$user->idUser}})"--}}
                                                                                    {{--class="dropdown-item">Disable--}}
                                                                                 {{--</a>--}}
+                                                                                    @if($user->status == 1)
+                                                                                        <a href="#"
+                                                                                           onclick="disableUser({{$user->idUser}})"
+                                                                                           class="dropdown-item">Disable
+                                                                                        </a>
+                                                                                    @else
+                                                                                        <a href="#"
+                                                                                           onclick="enableUser({{$user->idUser}})"
+                                                                                           class="dropdown-item">Enable
+                                                                                        </a>
+                                                                                    @endif
                                                                             @endif
+
 
                                                                         </div>
 
@@ -605,19 +623,19 @@
                                 $('#electionDivisionV').val(data.success.agent.election_division.name_en);
                                 $('#pollingBoothV').val(data.success.agent.polling_booth.name_en);
                                 $('#gramasewaDivisionV').val(data.success.agent.gramasewa_division.name_en);
-                                $('#villageV').val(data.success.agent.village.name_en);
-                                $('#careerV').val(data.success.agent.career.name_en);
-                                $('#educationV').val(data.success.agent.educational_qualification.name_en);
-                                $('#incomeV').val(data.success.agent.nature_of_income.name_en);
-                                $('#religionV').val(data.success.agent.religion.name_en);
-                                $('#ethnicityV').val(data.success.agent.ethnicity.name_en);
+                                $('#villageV').val(data.success.agent.village != null ? data.success.agent.village.name_en : '');
+                                $('#careerV').val(data.success.agent.career != null ? data.success.agent.career.name_en : '');
+                                $('#educationV').val(data.success.agent.educational_qualification != null ? data.success.agent.educational_qualification.name_en : '');
+                                $('#incomeV').val(data.success.agent.nature_of_income != null ? data.success.agent.nature_of_income.name_en : '');
+                                $('#religionV').val(data.success.agent.religion != null ? data.success.agent.religion.name_en : '');
+                                $('#ethnicityV').val(data.success.agent.ethnicity != null ? data.success.agent.ethnicity.name_en : '');
                             }
                             else {
-                                $('#careerV').val(data.success.member.career.name_en);
-                                $('#educationV').val(data.success.member.education_qualification.name_en);
-                                $('#incomeV').val(data.success.agent.member.name_en);
-                                $('#religionV').val(data.success.member.riligion.name_en);
-                                $('#ethnicityV').val(data.success.member.ethnicity.name_en);
+                                $('#careerV').val(data.success.member.career != null ? data.success.member.career.name_en : '');
+                                $('#educationV').val(data.success.member.educational_qualification != null ? data.success.member.educational_qualification.name_en : '');
+                                $('#incomeV').val(data.success.member.nature_of_income != null ? data.success.member.nature_of_income.name_en : '');
+                                $('#religionV').val(data.success.member.religion != null ? data.success.member.religion.name_en : '');
+                                $('#ethnicityV').val(data.success.member.ethnicity != null ? data.success.member.ethnicity.name_en : '');
                             }
                         }
                         else {
@@ -637,7 +655,6 @@
         function disableUser(id) {
             swal({
                 title: 'Do you want to disable this user?',
-                text:'All sub users will be disabled!',
                 type: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Yes, Disable!',
@@ -700,5 +717,72 @@
 //                }
             })
         }
+
+        function enableUser(id) {
+            swal({
+                title: 'Do you want to enable this user?',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Enable!',
+                cancelButtonText: 'No, cancel!',
+                confirmButtonClass: 'btn btn-danger',
+                cancelButtonClass: 'btn btn-success m-l-10',
+                buttonsStyling: false
+            }).then(function () {
+
+                $.ajax({
+                    url: '{{route('enableUser')}}',
+                    type: 'POST',
+                    data: {id: id},
+                    success: function (data) {
+                        if (data.errors != null) {
+                            notify({
+                                type: "error", //alert | success | error | warning | info
+                                title: 'ENABLE PROCESS INVALID!',
+                                autoHide: true, //true | false
+                                delay: 2500, //number ms
+                                position: {
+                                    x: "right",
+                                    y: "top"
+                                },
+                                icon: '<em class="mdi mdi-check-circle-outline"></em>',
+
+                                message: 'Something wrong with process.contact administrator..'
+                            });
+                        }
+                        if (data.success != null) {
+
+                            notify({
+                                type: "success", //alert | success | error | warning | info
+                                title: 'USER ENABLED!',
+                                autoHide: true, //true | false
+                                delay: 2500, //number ms
+                                position: {
+                                    x: "right",
+                                    y: "top"
+                                },
+                                icon: '<em class="mdi mdi-check-circle-outline"></em>',
+
+                                message: 'User enabled successfully.'
+                            });
+                            location.reload();
+                        }
+
+                    }
+                });
+
+            }, function (dismiss) {
+                // dismiss can be 'cancel', 'overlay',
+                // 'close', and 'timer'
+//                if (dismiss === 'cancel') {
+//                    swal(
+//                        'Cancelled',
+//                        'Process has been cancelled',
+//                        'error'
+//                    )
+//                }
+            })
+        }
+
     </script>
 @endsection

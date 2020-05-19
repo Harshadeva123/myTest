@@ -267,6 +267,7 @@
                 url: '{{route('getElectionDivisionsByAuth')}}',
                 type: 'POST',
                 success: function (data) {
+
                     if (data.success != null) {
                         let array = data.success;
                         if(array.length == 0){

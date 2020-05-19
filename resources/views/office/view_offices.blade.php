@@ -76,6 +76,7 @@
                                                     <th>PAYMENT DATE</th>
                                                     <th>ANALYSIS MODULE</th>
                                                     <th>ATTENDANCE MODULE</th>
+                                                    <th>OFFICE  STATUS</th>
                                                     <th>CREATED AT</th>
                                                     <th>OPTION</th>
                                                 </tr>
@@ -91,14 +92,19 @@
                                                                 <td style="text-align: right;">{{number_format($office->monthly_payment,2)}}</td>
                                                                 <td>{{$office->payment_date}}</td>
                                                                 @if($office->analysis_available)
-                                                                    <td><em class="mdi mdi-checkbox-blank-circle text-success"></em> ENABLED</td>
+                                                                    <td nowrap><em class="mdi mdi-checkbox-blank-circle text-success"></em> ENABLED</td>
                                                                 @else
-                                                                    <td><em class="mdi mdi-checkbox-blank-circle text-danger"></em> DISABLED</td>
+                                                                    <td nowrap><em class="mdi mdi-checkbox-blank-circle text-danger"></em> DISABLED</td>
                                                                 @endif
                                                                 @if($office->attendence_available)
-                                                                    <td><em class="mdi mdi-checkbox-blank-circle text-success"></em> ENABLED</td>
+                                                                    <td nowrap><em class="mdi mdi-checkbox-blank-circle text-success"></em> ENABLED</td>
                                                                 @else
-                                                                    <td><em class="mdi mdi-checkbox-blank-circle text-danger"></em> DISABLED</td>
+                                                                    <td nowrap><em class="mdi mdi-checkbox-blank-circle text-danger"></em> DISABLED</td>
+                                                                @endif
+                                                                @if($office->status)
+                                                                    <td nowrap><p><em  class="mdi mdi-checkbox-blank-circle text-success "></em> LIVE</p></td>
+                                                                @else
+                                                                    <td nowrap><em class="mdi mdi-checkbox-blank-circle text-danger"></em> DISABLED</td>
                                                                 @endif
                                                                 <td>{{$office->created_at}}</td>
                                                                 <td>
@@ -117,6 +123,17 @@
                                                                                onclick="showUpdateModal({{$office->idoffice}})"
                                                                                class="dropdown-item">Edit
                                                                             </a>
+                                                                            @if($office->status == 1)
+                                                                            <a href="#"
+                                                                               onclick="disableOffice({{$office->idoffice}})"
+                                                                               class="dropdown-item">Disable
+                                                                            </a>
+                                                                            @else
+                                                                                <a href="#"
+                                                                                   onclick="enableOffice({{$office->idoffice}})"
+                                                                                   class="dropdown-item">Enable
+                                                                                </a>
+                                                                            @endif
                                                                         </div>
 
 
@@ -458,5 +475,138 @@
 
         }
 
+        function disableOffice(id) {
+            swal({
+                title: 'Do you want to disable this office?',
+                text:'All sub users will be disabled!',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Disable!',
+                cancelButtonText: 'No, cancel!',
+                confirmButtonClass: 'btn btn-danger',
+                cancelButtonClass: 'btn btn-success m-l-10',
+                buttonsStyling: false
+            }).then(function () {
+
+                $.ajax({
+                    url: '{{route('disableOffice')}}',
+                    type: 'POST',
+                    data: {id: id},
+                    success: function (data) {
+                        if (data.errors != null) {
+                            notify({
+                                type: "error", //alert | success | error | warning | info
+                                title: 'DISABLE PROCESS INVALID!',
+                                autoHide: true, //true | false
+                                delay: 5000, //number ms
+                                position: {
+                                    x: "right",
+                                    y: "top"
+                                },
+                                icon: '<em class="mdi mdi-check-circle-outline"></em>',
+
+                                message: 'Something wrong with process.contact administrator..'
+                            });
+                        }
+                        if (data.success != null) {
+
+                            notify({
+                                type: "success", //alert | success | error | warning | info
+                                title: 'OFFICE DISABLED!',
+                                autoHide: true, //true | false
+                                delay: 2500, //number ms
+                                position: {
+                                    x: "right",
+                                    y: "top"
+                                },
+                                icon: '<em class="mdi mdi-check-circle-outline"></em>',
+
+                                message: 'Office disabled successfully.'
+                            });
+                            location.reload();
+                        }
+
+                    }
+                });
+
+            }, function (dismiss) {
+                // dismiss can be 'cancel', 'overlay',
+                // 'close', and 'timer'
+//                if (dismiss === 'cancel') {
+//                    swal(
+//                        'Cancelled',
+//                        'Process has been cancelled',
+//                        'error'
+//                    )
+//                }
+            })
+        }
+
+        function enableOffice(id) {
+            swal({
+                title: 'Do you want to enable this office?',
+                text:'All disabled users will be enabled!',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Enable!',
+                cancelButtonText: 'No, cancel!',
+                confirmButtonClass: 'btn btn-danger',
+                cancelButtonClass: 'btn btn-success m-l-10',
+                buttonsStyling: false
+            }).then(function () {
+
+                $.ajax({
+                    url: '{{route('enableOffice')}}',
+                    type: 'POST',
+                    data: {id: id},
+                    success: function (data) {
+                        if (data.errors != null) {
+                            notify({
+                                type: "error", //alert | success | error | warning | info
+                                title: 'ENABLE PROCESS INVALID!',
+                                autoHide: true, //true | false
+                                delay: 5000, //number ms
+                                position: {
+                                    x: "right",
+                                    y: "top"
+                                },
+                                icon: '<em class="mdi mdi-check-circle-outline"></em>',
+
+                                message: 'Something wrong with process.contact administrator..'
+                            });
+                        }
+                        if (data.success != null) {
+
+                            notify({
+                                type: "success", //alert | success | error | warning | info
+                                title: 'OFFICE ENABLED!',
+                                autoHide: true, //true | false
+                                delay: 2500, //number ms
+                                position: {
+                                    x: "right",
+                                    y: "top"
+                                },
+                                icon: '<em class="mdi mdi-check-circle-outline"></em>',
+
+                                message: 'Office enabled successfully.'
+                            });
+                            location.reload();
+                        }
+
+                    }
+                });
+
+            }, function (dismiss) {
+                // dismiss can be 'cancel', 'overlay',
+                // 'close', and 'timer'
+//                if (dismiss === 'cancel') {
+//                    swal(
+//                        'Cancelled',
+//                        'Process has been cancelled',
+//                        'error'
+//                    )
+//                }
+            })
+        }
     </script>
 @endsection

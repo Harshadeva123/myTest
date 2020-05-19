@@ -91,10 +91,102 @@ class CategoryController extends Controller
     }
 
     public function view(Request $request){
-        $categories = Category::where('status', '1')->paginate(10);
-        $subCategories = SubCategory::where('status', '1')->get();
+
+        $query = Category::query();
+        if (!empty($request['category'])) {
+            $query = $query->where('category',  'like', '%' . $request['category'] . '%');
+        }
+        if (!empty($request['subCat'])) {
+            $query = $query->where('idsub_category', $request['subCat'] );
+        }
+        if (!empty($request['mainCat'])) {
+            $query = $query->whereHas('subCategory', function($q) use($request){
+                $q->where('idmain_category',  $request['mainCat']);
+            });
+        }
+        if (!empty($request['start']) && !empty($request['end'])) {
+            $startDate = date('Y-m-d', strtotime($request['start']));
+            $endDate = date('Y-m-d', strtotime($request['end']. ' +1 day'));
+
+            $query = $query->whereBetween('created_at', [$startDate, $endDate]);
+        }
+        $categories = $query->paginate(10);
+
+        $mainCats = MainCategory::where('status', '1')->get();
         $mainCategories = MainCategory::where('status', '1')->get();
 
-        return view('category.view_category', ['title' =>  __('View Category'), 'categories' => $categories,'subCategories'=>$subCategories,'mainCategories'=>$mainCategories]);
+        return view('category.view_category', ['title' =>  __('View Category'), 'mainCats' => $mainCats, 'categories' => $categories,'mainCategories'=>$mainCategories]);
     }
+
+    public function update(Request $request){
+        //validation start
+        $validator = \Validator::make($request->all(), [
+            'subCat' => 'required|exists:sub_category,idsub_category',
+            'newCat' => 'required|max:255',
+            'updateId' => 'required',
+
+        ], [
+            'updateId.required' => 'Invalid category!',
+            'subCat.required' => 'Sub category should be provided!',
+            'subCat.exists' => 'Sub category invalid!',
+            'newCat.required' => 'New category name should be provided!',
+            'newCat.max' => 'New category should be less than 255 characters long!',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()->all()]);
+        }
+
+        $exist = Category::where('idsub_category',$request['subCat'])->where('idcategory','=!',$request['updateId'])->where('category',$request['newCat'])->first();
+        if($exist != null){
+            return response()->json(['errors' => ['newCat'=>'Categories already exist!']]);
+//
+        }
+        //validation end
+
+
+        //save in category table
+        $category = Category::find(intval($request['updateId']));
+        $category->idsub_category = $request['subCat'];
+        $category->category = $request['newCat'];
+        $category->save();
+        //save in category table  end
+
+
+        return response()->json(['success' => 'Category updated Successfully!']);
+
+    }
+
+    public function deactivate(Request $request){
+        $id = $request['id'];
+        $category = Category::find(intval($id));
+        if ($category != null) {
+            if($category->status == 1){
+                $category->status = 0;
+                $category->save();
+            }
+
+            return response()->json(['success' => 'Category deactivated!']);
+        } else {
+            return response()->json(['errors' => ['error'=>'Category invalid!']]);
+
+        }
+    }
+
+    public function activate(Request $request){
+        $id = $request['id'];
+        $category = Category::find(intval($id));
+        if ($category != null) {
+            if($category->status == 0){
+                $category->status = 1;
+                $category->save();
+            }
+
+            return response()->json(['success' => 'Category activated!']);
+        } else {
+            return response()->json(['errors' => ['error'=>'Category invalid!']]);
+
+        }
+    }
+
 }

@@ -39,6 +39,7 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
         Route::post('get_user_by_id', 'UserController@getById')->name('getUserById');
         Route::post('approve_agent', 'UserController@approveAgent')->name('approveAgent');
         Route::post('disable_user', 'UserController@disable')->name('disableUser');
+        Route::post('enable_user', 'UserController@enable')->name('enableUser');
 
         //office management
         Route::get('add_office', 'OfficeController@index')->name('addOffice');
@@ -46,6 +47,8 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
         Route::get('view_offices', 'OfficeController@view')->name('viewOffice');
         Route::post('get_office_by_id', 'OfficeController@getById')->name('getOfficeById');
         Route::post('update_office', 'OfficeController@update')->name('updateOffice');
+        Route::post('disable_office', 'OfficeController@disable')->name('disableOffice');
+        Route::post('enable_office', 'OfficeController@enable')->name('enableOffice');
 
 
         //category management
@@ -54,6 +57,9 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
         Route::post('get_sub_cat_by_main', 'CategoryController@getSubCatByMain')->name('getSubCatByMain');
         Route::post('get_cat_by_sub', 'CategoryController@getCatBySub')->name('getCatBySub');
         Route::post('save_category', 'CategoryController@store')->name('saveCategory');
+        Route::post('update_category', 'CategoryController@update')->name('updateCategory');
+        Route::post('deactivate_category', 'CategoryController@deactivate')->name('deactivateCategory');
+        Route::post('activate_category', 'CategoryController@activate')->name('activateCategory');
 
         //payment management
         Route::get('add_payment', 'PaymentController@index')->name('addPayment');
@@ -108,6 +114,8 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
         Route::get('view_task', 'TaskController@view')->name('viewTasks');
         Route::post('get_task_by_id', 'TaskController@getById')->name('getTaskById');
         Route::post('save_task', 'TaskController@store')->name('saveTask');
+        Route::post('deactivate_task', 'TaskController@deactivate')->name('deactivateTask');
+        Route::post('activate_task', 'TaskController@activate')->name('activateTask');
 
         //Post Response
         Route::get('view_comments', 'PostResponseController@viewComments')->name('viewComments');

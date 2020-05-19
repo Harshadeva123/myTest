@@ -508,6 +508,17 @@
                                         </select>
                                     </div>
                                 </div>
+                                <div class="col-md-6">
+                                    <h5 class="text-secondary"><em class="mdi mdi-message-reply"></em> Analysis Staff
+                                    </h5>
+                                    <div class="form-group ">
+                                        <select id="staff" class="form-control" name="staff">
+                                            <option value="1">Yes / No</option>
+                                            <option value="2">3 Categories</option>
+                                            <option value="3">5 Ratings</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

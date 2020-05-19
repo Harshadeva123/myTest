@@ -624,19 +624,12 @@
                                 $('#electionDivisionV').val(data.success.agent.election_division.name_en);
                                 $('#pollingBoothV').val(data.success.agent.polling_booth.name_en);
                                 $('#gramasewaDivisionV').val(data.success.agent.gramasewa_division.name_en);
-                                $('#villageV').val(data.success.agent.village.name_en);
-                                $('#careerV').val(data.success.agent.career.name_en);
-                                $('#educationV').val(data.success.agent.educational_qualification.name_en);
-                                $('#incomeV').val(data.success.agent.nature_of_income.name_en);
-                                $('#religionV').val(data.success.agent.religion.name_en);
-                                $('#ethnicityV').val(data.success.agent.ethnicity.name_en);
-                            }
-                            else {
-                                $('#careerV').val(data.success.member.career.name_en);
-                                $('#educationV').val(data.success.member.education_qualification.name_en);
-                                $('#incomeV').val(data.success.agent.member.name_en);
-                                $('#religionV').val(data.success.member.riligion.name_en);
-                                $('#ethnicityV').val(data.success.member.ethnicity.name_en);
+                                $('#villageV').val(data.success.agent.village != null ? data.success.agent.village.name_en : '');
+                                $('#careerV').val(data.success.agent.career != null ? data.success.agent.career.name_en : '');
+                                $('#educationV').val(data.success.agent.educational_qualification != null ? data.success.agent.educational_qualification.name_en : '');
+                                $('#incomeV').val(data.success.agent.nature_of_income != null ? data.success.agent.nature_of_income.name_en : '');
+                                $('#religionV').val(data.success.agent.religion != null ? data.success.agent.religion.name_en : '');
+                                $('#ethnicityV').val(data.success.agent.ethnicity != null ? data.success.agent.ethnicity.name_en : '');
                             }
                         }
                         else {

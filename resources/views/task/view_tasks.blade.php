@@ -86,7 +86,7 @@
                                                                     <td>
                                                                         <em style="color: #00a5bb"
                                                                             class="mdi mdi-checkbox-blank-circle"></em>
-                                                                        PENDING
+                                                                        ON GOING
                                                                     </td>
                                                                 @elseif($task->status == 2)
                                                                     <td>
@@ -96,9 +96,9 @@
                                                                     </td>
                                                                 @elseif($task->status == 0)
                                                                     <td>
-                                                                        <em style="color: #bb2011"
+                                                                        <em style="color: #ee1b09"
                                                                             class="mdi mdi-checkbox-blank-circle"></em>
-                                                                        DELETED
+                                                                        DEACTIVATED
                                                                     </td>
                                                                 @else
                                                                     <td>
@@ -124,6 +124,17 @@
                                                                                onclick="viewTask({{$task->idtask}})"
                                                                                class="dropdown-item">View
                                                                             </a>
+                                                                            @if($task->status == 1)
+                                                                                <a href="#"
+                                                                                   onclick="deactivateTask({{$task->idtask}})"
+                                                                                   class="dropdown-item">Deactivate
+                                                                                </a>
+                                                                            @elseif($task->status == 0)
+                                                                                <a href="#"
+                                                                                   onclick="activateTask({{$task->idtask}})"
+                                                                                   class="dropdown-item">Activate
+                                                                                </a>
+                                                                            @endif
                                                                         </div>
                                                                     </div>
                                                                 </td>
@@ -365,5 +376,138 @@
                 $('#maxAge').hide();
             }
         }
+
+        function deactivateTask(id) {
+            swal({
+                title: 'Deactivate this task?',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Deactivate!',
+                cancelButtonText: 'No, cancel!',
+                confirmButtonClass: 'btn btn-danger',
+                cancelButtonClass: 'btn btn-success m-l-10',
+                buttonsStyling: false
+            }).then(function () {
+
+                $.ajax({
+                    url: '{{route('deactivateTask')}}',
+                    type: 'POST',
+                    data: {id: id},
+                    success: function (data) {
+                        if (data.errors != null) {
+                            notify({
+                                type: "error", //alert | success | error | warning | info
+                                title: 'DEACTIVATE PROCESS INVALID!',
+                                autoHide: true, //true | false
+                                delay: 5000, //number ms
+                                position: {
+                                    x: "right",
+                                    y: "top"
+                                },
+                                icon: '<em class="mdi mdi-check-circle-outline"></em>',
+
+                                message: 'Something wrong with process.contact administrator..'
+                            });
+                        }
+                        if (data.success != null) {
+
+                            notify({
+                                type: "success", //alert | success | error | warning | info
+                                title: 'TASK DEACTIVATED!',
+                                autoHide: true, //true | false
+                                delay: 2500, //number ms
+                                position: {
+                                    x: "right",
+                                    y: "top"
+                                },
+                                icon: '<em class="mdi mdi-check-circle-outline"></em>',
+
+                                message: 'Task deactivated successfully.'
+                            });
+                            location.reload();
+                        }
+
+                    }
+                });
+
+            }, function (dismiss) {
+                // dismiss can be 'cancel', 'overlay',
+                // 'close', and 'timer'
+//                if (dismiss === 'cancel') {
+//                    swal(
+//                        'Cancelled',
+//                        'Process has been cancelled',
+//                        'error'
+//                    )
+//                }
+            })
+        }
+
+        function activateTask(id) {
+            swal({
+                title: 'Activate this task?',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Activate!',
+                cancelButtonText: 'No, cancel!',
+                confirmButtonClass: 'btn btn-danger',
+                cancelButtonClass: 'btn btn-success m-l-10',
+                buttonsStyling: false
+            }).then(function () {
+
+                $.ajax({
+                    url: '{{route('activateTask')}}',
+                    type: 'POST',
+                    data: {id: id},
+                    success: function (data) {
+                        if (data.errors != null) {
+                            notify({
+                                type: "error", //alert | success | error | warning | info
+                                title: 'ACTIVATE PROCESS INVALID!',
+                                autoHide: true, //true | false
+                                delay: 5000, //number ms
+                                position: {
+                                    x: "right",
+                                    y: "top"
+                                },
+                                icon: '<em class="mdi mdi-check-circle-outline"></em>',
+
+                                message: 'Something wrong with process.contact administrator..'
+                            });
+                        }
+                        if (data.success != null) {
+
+                            notify({
+                                type: "success", //alert | success | error | warning | info
+                                title: 'TASK ACTIVATED!',
+                                autoHide: true, //true | false
+                                delay: 2500, //number ms
+                                position: {
+                                    x: "right",
+                                    y: "top"
+                                },
+                                icon: '<em class="mdi mdi-check-circle-outline"></em>',
+
+                                message: 'Task activated successfully.'
+                            });
+                            location.reload();
+                        }
+
+                    }
+                });
+
+            }, function (dismiss) {
+                // dismiss can be 'cancel', 'overlay',
+                // 'close', and 'timer'
+//                if (dismiss === 'cancel') {
+//                    swal(
+//                        'Cancelled',
+//                        'Process has been cancelled',
+//                        'error'
+//                    )
+//                }
+            })
+        }
+
     </script>
 @endsection

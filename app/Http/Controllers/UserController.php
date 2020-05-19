@@ -222,11 +222,11 @@ class UserController extends Controller
         }
 
         if(Auth::user()->iduser_role <= 2){
-            $users = $query->where('status', 1)->latest()->paginate(10);
+            $users = $query->latest()->paginate(10);
             $offices = Office::where('status',1)->get();
         }
         else{
-            $users = $query->where('status', 1)->where('idoffice', intval(Auth::user()->idoffice))->latest()->paginate(10);
+            $users = $query->where('idoffice', intval(Auth::user()->idoffice))->latest()->paginate(10);
             $offices = null;
         }
         $userTitles = UserTitle::where('status', '1')->get();
@@ -522,15 +522,69 @@ class UserController extends Controller
 
     public function disable(Request $request){
         $user = User::find(intval($request['id']));
-        $user->status = 0;
-        $user->save();
+        if($user != null){
+            if($user->status == 1){
+                $user->status = 0;
+                $user->save();
+            }
+        }
+        else{
+            return response()->json(['errors' => ['error'=>'User invalid!']]);
+        }
 
         if($user->iduser_role == 3){
-           $office = Office::find($user->idoffice);
-           $office->status = 0;
-           $office->save();
+            $office = Office::find(intval($user->idoffice));
+            if ($office != null) {
+                $office->status = 0;
+                $office->save();
+
+                $office->users()->each(function ($item, $key) {
+                    if($item->status == 1){
+                        $item->status = 0;
+                        $item->save();
+                    }
+                });
+                return response()->json(['success' => 'Office enabled!']);
+            } else {
+                return response()->json(['errors' => ['error'=>'Office invalid!']]);
+
+            }
 
         }
         return response()->json(['success' => 'disabled']);
+    }
+
+    public function enable(Request $request){
+        $user = User::find(intval($request['id']));
+        if($user != null){
+            if($user->status == 0){
+                $user->status = 1;
+                $user->save();
+            }
+        }
+        else{
+            return response()->json(['errors' => ['error'=>'User invalid!']]);
+        }
+
+        if($user->iduser_role == 3){
+            $office = Office::find(intval($user->idoffice));
+            if ($office != null) {
+                $office->status = 1;
+                $office->save();
+
+                $office->users()->each(function ($item, $key) {
+                    if($item->status == 0){
+                        $item->status = 1;
+                        $item->save();
+                    }
+                });
+                return response()->json(['success' => 'Office enabled!']);
+            } else {
+                return response()->json(['errors' => ['error'=>'Office invalid!']]);
+
+            }
+
+        }
+        return response()->json(['success' => 'enabled']);
     }
 }

@@ -75,7 +75,7 @@ class TaskController extends Controller
 
             $query = $query->whereBetween('created_at', [$startDate, $endDate]);
         }
-        $tasks = $query->where('assigned_by', Auth::user()->idUser)->where('status', 1)->latest()->paginate(10);
+        $tasks = $query->where('assigned_by', Auth::user()->idUser)->latest()->paginate(10);
 
         return view('task.view_tasks', ['title' =>  __('View Tasks'), 'tasks' => $tasks]);
     }
@@ -229,4 +229,37 @@ class TaskController extends Controller
         return response()->json(['success' => 'dfd']);
 
     }
+
+    public function deactivate(Request $request){
+        $id = $request['id'];
+        $task = Task::find(intval($id));
+        if ($task != null) {
+            if($task->status == 1){
+                $task->status = 0;
+                $task->save();
+            }
+
+            return response()->json(['success' => 'Task deactivated!']);
+        } else {
+            return response()->json(['errors' => ['error'=>'Task invalid!']]);
+
+        }
+    }
+
+    public function activate(Request $request){
+        $id = $request['id'];
+        $task = Task::find(intval($id));
+        if ($task != null) {
+            if($task->status == 0){
+                $task->status = 1;
+                $task->save();
+            }
+
+            return response()->json(['success' => 'Task activated!']);
+        } else {
+            return response()->json(['errors' => ['error'=>'Task invalid!']]);
+
+        }
+    }
+
 }

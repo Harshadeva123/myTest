@@ -101,7 +101,7 @@ class PollingBoothController extends Controller
         $booth->name_en = $request['pollingBooth'];
         $booth->name_si = $request['pollingBooth_si'];
         $booth->name_ta = $request['pollingBooth_ta'];
-        $booth->status = 1;
+        $booth->status = 2;
         $booth->idUser = Auth::user()->idUser;
         $booth->save();
         return response()->json(['success' => 'Polling Booth saved']);

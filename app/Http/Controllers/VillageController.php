@@ -103,7 +103,7 @@ class VillageController extends Controller
         $division->name_en = $request['village'];
         $division->name_si = $request['village_si'];
         $division->name_ta = $request['village_ta'];
-        $division->status = 1;
+        $division->status = 2;
         $division->idUser = Auth::user()->idUser;
         $division->save();
         return response()->json(['success' => 'Village saved']);

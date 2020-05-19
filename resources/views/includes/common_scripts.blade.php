@@ -60,6 +60,11 @@
         $(":radio").not('.noClear').attr('checked', false).trigger('change');
         $('select').not('.noClear').val('').trigger('change');
     }
+
+
+    $(document).on("wheel", "input[type=number]", function (e) {
+        $(this).blur();
+    });
 </script>
 
 
