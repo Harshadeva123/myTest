@@ -572,8 +572,16 @@
 
         function clearAll() {
             $('input').not(':checkbox').val('');
+            $('textarea').val('');
             $(":checkbox").attr('checked', false).trigger('change');
+            $(":radio").attr('checked', false).trigger('change');
             $('select').val('').trigger('change');
+            $('#englishToggle').click();
+            $('#previewCard').html('');
+            $('#responsePanel').val(1).trigger('change');
+            $('html, body').animate({
+                scrollTop: $("body").offset().top
+            }, 1000);
         }
 
         $('.toggleBtn').change(function () {
@@ -786,7 +794,8 @@
 
                                 message: 'Post published successfully.'
                             });
-//                            clearAll();
+                            clearAll();
+                            goFirstPage();
                         }
                     }
 

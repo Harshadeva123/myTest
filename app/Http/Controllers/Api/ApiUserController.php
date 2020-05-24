@@ -433,26 +433,26 @@ class ApiUserController extends Controller
             $lang = 'name_en';
         }
         $titles = UserTitle::where('status', 1)->select(['iduser_title', $lang, 'name_en', 'gender'])->get();
-        $titles = $this->filterLanguage($titles, $lang, $fallBack);
+        $titles = $this->filterLanguage($titles, $lang, $fallBack,'iduser_title');
 
 
         $careers = Career::where('status', 1)->select(['idcareer', $lang, 'name_en'])->get();
-        $careers = $this->filterLanguage($careers, $lang, $fallBack);
+        $careers = $this->filterLanguage($careers, $lang, $fallBack,'idcareer');
 
         $ethnicities = Ethnicity::where('status', 1)->select(['idethnicity', $lang, 'name_en'])->get();
-        $ethnicities = $this->filterLanguage($ethnicities, $lang, $fallBack);
+        $ethnicities = $this->filterLanguage($ethnicities, $lang, $fallBack,'ethnicity');
 
         $religions = Religion::where('status', 1)->select(['idreligion', $lang, 'name_en'])->get();
-        $religions = $this->filterLanguage($religions, $lang, $fallBack);
+        $religions = $this->filterLanguage($religions, $lang, $fallBack,'idreligion');
 
         $educationQualifications = EducationalQualification::where('status', 1)->select(['ideducational_qualification', $lang, 'name_en'])->get();
-        $educationQualifications = $this->filterLanguage($educationQualifications, $lang, $fallBack);
+        $educationQualifications = $this->filterLanguage($educationQualifications, $lang, $fallBack,'ideducational_qualification');
 
         $natureOfIncomes = NatureOfIncome::where('status', 1)->select(['idnature_of_income', $lang, 'name_en'])->get();
-        $natureOfIncomes = $this->filterLanguage($natureOfIncomes, $lang, $fallBack);
+        $natureOfIncomes = $this->filterLanguage($natureOfIncomes, $lang, $fallBack,'idnature_of_income');
 
         $electionDivisions = ElectionDivision::where('status', 1)->select(['idelection_division', $lang, 'name_en'])->get();
-        $electionDivisions = $this->filterLanguage($electionDivisions, $lang, $fallBack);
+        $electionDivisions = $this->filterLanguage($electionDivisions, $lang, $fallBack,'idelection_division');
 
         $officeAdmin = OfficeAdmin::where('referral_code', $referral)->where('status', 1)->first();
 
@@ -490,22 +490,22 @@ class ApiUserController extends Controller
         $agent = Agent::where('referral_code', $referral)->where('status', 1)->first();
 
         $titles = UserTitle::where('status', 1)->select(['iduser_title', 'name_en', $lang, 'gender'])->get();
-        $titles = $this->filterLanguage($titles, $lang, $fallBack);
+        $titles = $this->filterLanguage($titles, $lang, $fallBack,'iduser_title');
 
         $careers = Career::where('status', 1)->select(['idcareer', 'name_en', $lang])->get();
-        $careers = $this->filterLanguage($careers, $lang, $fallBack);
+        $careers = $this->filterLanguage($careers, $lang, $fallBack,'idcareer');
 
         $ethnicities = Ethnicity::where('status', 1)->select(['idethnicity', 'name_en', $lang])->get();
-        $ethnicities = $this->filterLanguage($ethnicities, $lang, $fallBack);
+        $ethnicities = $this->filterLanguage($ethnicities, $lang, $fallBack,'idethnicity');
 
         $religions = Religion::where('status', 1)->select(['idreligion', 'name_en', $lang])->get();
-        $religions = $this->filterLanguage($religions, $lang, $fallBack);
+        $religions = $this->filterLanguage($religions, $lang, $fallBack,'idreligion');
 
         $educationQualifications = EducationalQualification::where('status', 1)->select(['ideducational_qualification', 'name_en', $lang])->get();
-        $educationQualifications = $this->filterLanguage($educationQualifications, $lang, $fallBack);
+        $educationQualifications = $this->filterLanguage($educationQualifications, $lang, $fallBack,'ideducational_qualification');
 
         $natureOfIncomes = NatureOfIncome::where('status', 1)->select(['idnature_of_income', 'name_en', $lang])->get();
-        $natureOfIncomes = $this->filterLanguage($natureOfIncomes, $lang, $fallBack);
+        $natureOfIncomes = $this->filterLanguage($natureOfIncomes, $lang, $fallBack,'idnature_of_income');
 
         if ($agent != null) {
             return response()->json(['success' =>
@@ -523,12 +523,14 @@ class ApiUserController extends Controller
         }
     }
 
-    public function filterLanguage($collection, $lang, $fallBack)
+    public function filterLanguage($collection, $lang, $fallBack,$id)
     {
         foreach ($collection as $item) {
-            $item['name'] = $item[$lang] != null ? $item[$lang] : $item[$fallBack];
+            $item['label'] = $item[$lang] != null ? $item[$lang] : $item[$fallBack];
+            $item['id'] = $item[$id];
             unset($item->name_en);
             unset($item->$lang);
+            unset($item->$id);
         }
         return $collection;
     }

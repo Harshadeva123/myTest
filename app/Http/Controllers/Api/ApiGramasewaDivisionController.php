@@ -23,6 +23,8 @@ class ApiGramasewaDivisionController extends Controller
         $results = GramasewaDivision::where('idpolling_booth', $id)->latest()->select(['idgramasewa_division', $lang, $fallBack])->where('status', 1)->get();
         foreach ($results as $result) {
             $result['label'] = $result[$lang] != null ? $result[$lang] : $result[$fallBack];
+            $result['id'] = $result['idgramasewa_division'];
+            unset($result->idgramasewa_division);
             unset($result->name_en);
             unset($result->name_si);
             unset($result->name_ta);

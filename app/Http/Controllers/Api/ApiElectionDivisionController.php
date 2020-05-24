@@ -24,6 +24,8 @@ class ApiElectionDivisionController extends Controller
         $results = ElectionDivision::where('iddistrict',$id)->latest()->select(['idelection_division',$lang,$fallBack])->where('status',1)->get();
         foreach ($results as $result) {
             $result['label'] = $result[$lang] != null ? $result[$lang] : $result[$fallBack];
+            $result['id'] = $result['idelection_division'];
+            unset($result->idelection_division);
             unset($result->name_en);
             unset($result->name_si);
             unset($result->name_ta);

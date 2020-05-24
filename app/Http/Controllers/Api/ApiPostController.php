@@ -67,11 +67,12 @@ class ApiPostController extends Controller
             $q->where('minAge', 0)->orWhere('minAge','<=',$user->age);
         })->where(function ($q) use ($user) {
             $q->where('maxAge', 120)->orWhere('maxAge','>=',$user->age);
-        })->where('expire_date','>',date('Y-m-d'))->select(['idPost','title_en','title_si','title_ta','text_en','text_si','text_ta'])->paginate(15);
+        })->where('expire_date','>',date('Y-m-d'))->select(['idPost','title_en','title_si','title_ta','text_en','text_si','text_ta','post_no'])->paginate(15);
 
         foreach ($posts as $post) {
             $post['title'] = $post[$lang] != null ? $post[$lang] : $post[$fallBack];
             $post['text'] = $post[$langText] != null ? $post[$langText] : $post[$fallBackText];
+
             unset($post->title_en);
             unset($post->title_si);
             unset($post->title_ta);

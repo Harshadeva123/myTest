@@ -25,6 +25,8 @@ class ApiVillageController extends Controller
             foreach ($results as $result) {
 
                 $result['label'] = $result[$lang] != null ? $result[$lang] : $result[$fallBack];
+                $result['id'] = $result['idvillage'];
+                unset($result->idvillage);
                 unset($result->name_en);
                 unset($result->name_si);
                 unset($result->name_ta);

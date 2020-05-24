@@ -23,6 +23,8 @@ class ApiPollingBoothController extends Controller
         $results = PollingBooth::where('idelection_division', $id)->latest()->select(['idpolling_booth', $lang, $fallBack])->where('status', 1)->get();
         foreach ($results as $result) {
             $result['label'] = $result[$lang] != null ? $result[$lang] : $result[$fallBack];
+            $result['id'] = $result['idpolling_booth'];
+            unset($result->idpolling_booth);
             unset($result->name_en);
             unset($result->name_si);
             unset($result->name_ta);
