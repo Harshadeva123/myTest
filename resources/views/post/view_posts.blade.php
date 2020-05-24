@@ -28,30 +28,49 @@
                                     @if(isset($posts))
                                         @if(count($posts) > 0)
                                             @foreach($posts as $post)
-                                                <div onclick="showPostContent({{$post->idPost}})"
-                                                     class="row postContainer m-2 p-5">
-                                                    <div class="col-md-12">
-                                                        <div class="row">
-                                                            <div class="col-md-12">
-                                                                <h4>{{$post->title_en}}</h4>
-                                                                <div class="row">
-                                                                    <small class="float-left col-md-4">
-                                                                        {{round($post->getSize() / 1000000,2)}} MB
-                                                                    </small>
-
-                                                                    <small onclick="event.stopPropagation();"
-                                                                           class="float-left col-md-4">
-                                                                        <a href="{{route('viewComments',['post_no'=>$post->post_no])}}">Comments</a>&nbsp;<span
-                                                                                class="badge badge-info">4</span>&nbsp
-                                                                    </small>
-                                                                    <small class="float-right col-md-4">
-                                                                        - {{$post->user->office->office_name}}
-                                                                    </small>
+                                                <form action="{{route('viewComments')}}" id="form-{{$post->idPost}}"
+                                                      method="POST">
+                                                    {{csrf_field()}}
+                                                    <div onclick="showPostContent({{$post->idPost}})"
+                                                         class="row postContainer m-2 p-3">
+                                                        <div class="col-md-12">
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <h4>{{$post->title_en}}</h4>
+                                                                    <div class="row">
+                                                                        <small class="float-left col-md-3">
+                                                                            {{round($post->getSize() / 1000000,2)}} MB
+                                                                        </small>
+                                                                        <input type="hidden" name="post_no"
+                                                                               value="{{$post->post_no}}">
+                                                                        @if($post->responses()->count() >0)
+                                                                            <p onclick="event.stopPropagation();"
+                                                                                   class="float-left col-md-3">
+                                                                                <a href="#"
+                                                                                   onclick="$('#form-{{$post->idPost}}').submit()">Comments</a>&nbsp;<span
+                                                                                        class="badge badge-info">{{$post->responses()->count()}}</span>&nbsp
+                                                                            </p>
+                                                                        @else
+                                                                            <p onclick="event.stopPropagation();"
+                                                                                   class="float-left col-md-3">
+                                                                                <a href="#"
+                                                                                   onclick="$('#form-{{$post->idPost}}').submit()">Comments</a>&nbsp;<span
+                                                                                        class="badge badge-secondary">{{$post->responses()->count()}}</span>&nbsp
+                                                                            </p>
+                                                                        @endif
+                                                                        <small style="text-align: center"  class="float-right col-md-3">
+                                                                            - {{$post->user->office->office_name}}
+                                                                        </small>
+                                                                        <small style="text-align: right;" class="float-right col-md-3">
+                                                                            {{$post->created_at}}
+                                                                        </small>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </form>
+
                                                 {{--@if($post->attachments != null)--}}
                                                 {{--@foreach($post->attachments as $postAttachment)--}}
                                                 {{--@if($postAttachment->file_type == 1)--}}

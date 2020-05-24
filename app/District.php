@@ -17,5 +17,7 @@ class District extends Model
         return $this->hasMany(Office::class,'iddistrict');
     }
 
-
+    public function beneficialDistricts(){
+        return $this->hasMany(BeneficialDistrict::class,'iddistrict');
+    }
 }

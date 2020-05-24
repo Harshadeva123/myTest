@@ -3,9 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\BeneficialCat;
-use App\BeneficialMain;
-use App\BeneficialSub;
+use App\BeneficialDistrict;
+use App\BeneficialElectionDivision;
+use App\BeneficialGramasewaDivision;
+use App\BeneficialPollingBooth;
+use App\BeneficialVillage;
 use App\Career;
+use App\Category;
 use App\EducationalQualification;
 use App\ElectionDivision;
 use App\Ethnicity;
@@ -50,7 +54,8 @@ class PostController extends Controller
         $incomes = NatureOfIncome::where('status', 1)->get();
         $educations = EducationalQualification::where('status', 1)->get();
         $ethnicities = Ethnicity::where('status', 1)->get();
-        return view('post.create_post', ['title' => __('Create Post'), 'electionDivisions' => $electionDivisions, 'careers' => $careers, 'religions' => $religions, 'incomes' => $incomes, 'educations' => $educations, 'ethnicities' => $ethnicities]);
+        $categories = Category::where('status',1)->get();
+        return view('post.create_post', ['title' => __('Create Post'),'categories'=>$categories,'electionDivisions' => $electionDivisions, 'careers' => $careers, 'religions' => $religions, 'incomes' => $incomes, 'educations' => $educations, 'ethnicities' => $ethnicities]);
     }
 
     public function store(Request $request)
@@ -58,7 +63,7 @@ class PostController extends Controller
         $validationMessages = [
             'title_en.required' => 'Title in english should be provided!',
             'text_en.required' => 'Post text in english should be provided!',
-            'mainCat.required' => 'Main category should be provided!',
+            'cats.*.required' => 'Category should be provided!',
             'expireDate.required' => 'Expire date should be provided!',
             'expireDate.date' => 'Expire date format invalid!',
             'responsePanel.required' => 'Response panel should be provided!',
@@ -67,19 +72,17 @@ class PostController extends Controller
             'imageFiles.*.mimes' => 'Image file format invalid!',
             'imageFiles.*.max' => 'Image file should less than 5MB!',
             'videoFiles.*.file' => 'Video file invalid!',
-            'videoFiles.*.image' => 'Video file invalid!',
             'videoFiles.*.mimes' => 'Video file format invalid!',
             'videoFiles.*.max' => 'Video file should less than 20MB!',
             'audioFiles.*.file' => 'Audio file invalid!',
-            'audioFiles.*.image' => 'Audio file invalid!',
             'audioFiles.*.mimes' => 'Audio file format invalid!',
-            'audioFiles.*.max' => 'Audio file should less than 20MB!',
+            'audioFiles.*.max' => 'Audio file should less than 10MB!',
         ];
 
         $validator = \Validator::make($request->all(), [
             'title_en' => 'required',
             'text_en' => 'required',
-            'mainCat' => 'required',
+            'cats.*' => 'required',
             'gender' => 'nullable',
             'expireDate' => 'required|date',
             'onlyOnce' => 'nullable',
@@ -103,19 +106,10 @@ class PostController extends Controller
 
         //category validation
 
-        $subCat = $request['subCat'];
-        if ($subCat == null) {
-            $mainAll = 1;
-        } else {
-            $mainAll = 0;
-        }
-
-        $cats = $request['cats'];
-        if ($cats[0] == null) {
-            $subAll = 1;
-        } else {
-            $subAll = 0;
-        }
+        $districtAll = false;
+        $boothAll = false;
+        $electionAll = false;
+        $gramasewaAll = false;
 
         //category validation end
 
@@ -130,6 +124,8 @@ class PostController extends Controller
                     return response()->json(['errors' => ['error' => 'Villages Invalid!']]);
                 }
             }
+        } else {
+            $gramasewaAll = true;
         }
         //village level validation end
 
@@ -144,6 +140,8 @@ class PostController extends Controller
                     return response()->json(['errors' => ['error' => 'Gramasewa divisions Invalid!']]);
                 }
             }
+        } else {
+            $boothAll = true;
         }
         //Gramasewa level validation end
 
@@ -158,8 +156,17 @@ class PostController extends Controller
                     return response()->json(['errors' => ['error' => 'Polling booths Invalid!']]);
                 }
             }
+        } else {
+            $electionAll = true;
         }
         //Polling booth level validation end
+
+        //Election division level validation
+        $electionDivisions = $request['electionDivisions'];
+        if ($electionDivisions == null) {
+            $districtAll = true;
+        }
+        //Election division level validation end
 
         //-------------------------------------------Validation end---------------------------------------------------//
 
@@ -278,9 +285,9 @@ class PostController extends Controller
                 }
                 $postCareer->status = 1;
                 $postCareer->save();
-
             }
-        } else {
+        }
+        else{
             $postDistrict = new PostDistrict();
             $postDistrict->idPost = $post->idPost;
             $postDistrict->iddistrict = Auth::user()->office->iddistrict;
@@ -394,23 +401,7 @@ class PostController extends Controller
         //save audio end
 
         //save in beneficial category tables
-
-        $mainCategory = new BeneficialMain();
-        $mainCategory->idPost = $post->idPost;
-        $mainCategory->idmain_category = $request['mainCat'];
-        $mainCategory->allChiled = $mainAll;
-        $mainCategory->status = 1;//default
-        $mainCategory->save();
-
-        if ($subCat != null) {
-            $subCategory = new BeneficialSub();
-            $subCategory->idPost = $post->idPost;
-            $subCategory->idsub_category = $subCat;
-            $subCategory->allChild = $subAll;
-            $subCategory->status = 1;//default
-            $subCategory->save();
-        }
-
+        $cats = $request['cats'];
         if ($cats != null) {
             foreach ($cats as $cat) {
                 $subCategory = new BeneficialCat();
@@ -421,7 +412,61 @@ class PostController extends Controller
             }
         }
 
-        //save in category tables end
+        //save in beneficial category tables end
+
+        //save in beneficial location tables
+
+        $beniDistrict = new BeneficialDistrict();
+        $beniDistrict->idPost = $post->idPost;
+        $beniDistrict->iddistrict = Auth::user()->office->iddistrict;
+        $beniDistrict->allChild = $districtAll;
+        $beniDistrict->status = 1;
+        $beniDistrict->save();
+
+        if($electionDivisions != null) {
+            foreach ($electionDivisions as $electionDivision) {
+                $beniElectional = new BeneficialElectionDivision();
+                $beniElectional->idPost = $post->idPost;
+                $beniElectional->idelection_division = $electionDivision;
+                $beniElectional->allChild = $electionAll;
+                $beniElectional->status = 1;
+                $beniElectional->save();
+            }
+        }
+
+        if($pollingBooths != null) {
+            foreach ($pollingBooths as $pollingBooth) {
+                $beniPollingBooth = new BeneficialPollingBooth();
+                $beniPollingBooth->idPost = $post->idPost;
+                $beniPollingBooth->idpolling_booth = $pollingBooth;
+                $beniPollingBooth->allChild = $boothAll;
+                $beniPollingBooth->status = 1;
+                $beniPollingBooth->save();
+            }
+        }
+
+        if($gramasewaDivisions != null) {
+            foreach ($gramasewaDivisions as $gramasewaDivision) {
+                $beniGramasewa = new BeneficialGramasewaDivision();
+                $beniGramasewa->idPost = $post->idPost;
+                $beniGramasewa->idgramasewa_division = $gramasewaDivision;
+                $beniGramasewa->allChild = $gramasewaAll;
+                $beniGramasewa->status = 1;
+                $beniGramasewa->save();
+            }
+        }
+
+        if($villages != null) {
+            foreach ($villages as $village) {
+                $beniVillage = new BeneficialVillage();
+                $beniVillage->idPost = $post->idPost;
+                $beniVillage->idvillage = $village;
+                $beniVillage->status = 1;
+                $beniVillage->save();
+            }
+        }
+
+        //save in beneficial location tables end
 
 
         //save post attachment end
@@ -431,7 +476,7 @@ class PostController extends Controller
 
     public function view(Request $request)
     {
-        $posts = Post::where('status', 1)->latest()->get();
+        $posts = Post::where('status', 1)->where('idoffice', Auth::user()->idoffice)->latest()->get();
         return view('post.view_posts', ['title' => __('View Posts'), 'posts' => $posts]);
 
     }
@@ -444,4 +489,15 @@ class PostController extends Controller
         return response()->json(['success' => $post]);
 
     }
+
+    public function viewByCategory(Request $request)
+    {
+        $category = intval($request['category']);
+        $posts = Post::where('status', 1)->whereHas('beneficialCategory', function ($q) use ($category) {
+            $q->where('idcategory', $category);
+        })->latest()->get();
+        return view('post.view_posts', ['title' => __('View Posts'), 'posts' => $posts]);
+
+    }
+
 }

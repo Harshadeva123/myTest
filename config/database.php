@@ -53,6 +53,7 @@ return [
             'collation' => 'utf8_unicode_ci',
             'prefix' => '',
             'strict' => false,
+            'sticky' => true,
             'engine' => null,
 //            'modes' => [
 //                'NO_ZERO_DATE',

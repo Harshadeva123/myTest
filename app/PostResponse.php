@@ -32,4 +32,19 @@ class PostResponse extends Model
             return '';
         }
     }
+
+    public function getResponseTextAttribute()
+    {
+        if ($this->response_type == 1) {
+            return 'TEXT';
+        }else if ($this->response_type == 2) {
+            return 'IMAGE';
+        } else if ($this->response_type == 3) {
+            return 'VIDEO';
+        } else if ($this->response_type == 4) {
+            return 'AUDIO';
+        } else {
+            return 'UNKNOWN';
+        }
+    }
 }

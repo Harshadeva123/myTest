@@ -324,7 +324,7 @@
                             }, 1000);
                         }
                         if (data.success != null) {
-                            $('#' + id).find("td").eq(1).html(data.count);
+                            $('#' + id).find("td").eq(1).html(data.count + ' GRAMASEWA DIVISIONS');
                             notify({
                                 type: "success", //alert | success | error | warning | info
                                 title: 'STAFF ASSIGNED!',

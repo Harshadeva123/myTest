@@ -72,17 +72,37 @@
                                     @if(isset($commenters))
                                         @if(count($commenters) > 0)
                                             @foreach($commenters as $key=>$item)
-                                                <form action="{{route('viewComment',['user'=>$key,'post_no'=>$item[0]->post->post_no])}}" id="form-{{$key}}" method="POST">
-                                                <a href="#" onclick="$('#form-{{$key}}').submit()">
+                                                <form action="{{route('viewUserComments')}}" id="form-{{$key}}" method="POST">
+                                                    <input type="hidden" name="user" value="{{$key}}">
+                                                    <input type="hidden" name="post_no" value="{{$item[0]->post->post_no}}">
+
+                                                    <a href="#" onclick="$('#form-{{$key}}').submit()">
 
                                                     {{csrf_field()}}
-                                                <div class="row  commenterBox m-2 p-5">
+                                                <div class="row  commenterBox m-2 p-2">
 
                                                     <div class="col-md-12">
 
                                                         <div class="row">
                                                             <div class="col-md-12">
-                                                               {{$item[0]->user->fName}}
+                                                                <div class="row">
+                                                                <h5 class="text-white col-md-7"><em class="fa fa fa-user-o"></em> {{$item[0]->user->fName}} </h5>
+                                                                <p class="text-white ml-auto">{{$item[0]->created_at}}</p>
+                                                                </div>
+                                                                <div class="row">
+                                                                @if($item[0]->response_type == 1)
+                                                                <p class="text-white col-md-7">&nbsp;- Has commented some texts.</p>
+                                                                    @elseif($item[0]->response_type == 2)
+                                                                        <p class="text-white col-md-7">&nbsp;- Has commented some image content.</p>
+                                                                @elseif($item[0]->response_type == 3)
+                                                                    <p class="text-white col-md-7">&nbsp;- Has commented some video content.</p>
+                                                                @elseif($item[0]->response_type == 4)
+                                                                    <p class="text-white col-md-7">&nbsp;- Has commented some audio content.</p>
+                                                                    @else
+                                                                    <p class="text-white col-md-7">&nbsp;- Has commented some unknown content.</p>
+                                                                @endif
+                                                                    <p class="text-white ml-auto">{{ucwords(strtolower($item[0]->user->userRole->role))}}&nbsp;</p>
+                                                                </div>
                                                             </div>
                                                         </div>
 

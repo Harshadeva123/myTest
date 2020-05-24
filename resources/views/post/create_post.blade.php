@@ -390,8 +390,8 @@
                                 <div class="form-group col-md-6">
                                     <label style="margin-left: 5px;" class="control-label">{{ __('Gender') }}</label>
                                     <span class="multi-range">
-                                        <input type="range" min="15" max="120" name="minAge" value="15" id="minAge">
-                                        <input type="range" min="15" max="120" name="maxAge" value="120" id="maxAge">
+                                        <input type="range" min="0" max="120" name="minAge" value="0" id="minAge">
+                                        <input type="range" min="0" max="120" name="maxAge" value="120" id="maxAge">
                                     </span>
                                 </div>
                                 <div class="form-group col-md-6">
@@ -509,31 +509,19 @@
                                                 <option value="3">5 Ratings</option>
                                             </select>
                                         </div>
-
-                                        <div class="col-md-4  form-group">
-                                            <label for="mainCat">{{ __('Main Category') }}</label>
-                                            <select onchange="mainCategoryChanged(this.value)" id="mainCat" class="form-control" name="mainCat">
-                                                <option value="" selected disabled>Select Main Category</option>
-                                                <option value="1">PRIVATE</option>
-                                                <option value="2">PUBLIC</option>
-                                                <option value="3">GROUP</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-4 form-group ">
-                                            <label for="subCat">{{ __('Sub Category') }}</label>
-                                            <select id="subCat"  onchange="subCategoryChanged(this.value)" class="form-control" name="subCat">
-                                                <option value="" disabled selected>Select Sub Category</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-12 form-group ">
-                                            <label for="cats">{{ __('Category') }}</label>
+                                        <div class="col-md-8 form-group ">
+                                            <label for="cats">{{ __('Categories') }}</label>
                                             <select name="cats[]" id="cats"
-                                                    class="select2 form-control select2-multiple" multiple="multiple" multiple
+                                                    class="select2 form-control select2-multiple" multiple="multiple"
+                                                    multiple
                                                     data-placeholder="Choose ...">
-                                                <option value="" disabled selected>Select Category</option>
+                                                @if($categories != null)
+                                                    @foreach($categories as $category)
+                                                        <option value="{{$category->idcategory}}">{{$category->category}}</option>
+                                                    @endforeach
+                                                @endif
                                             </select>
                                         </div>
-
                                     </div>
                                 </div>
                             </div>
@@ -562,10 +550,8 @@
                         </div><!-- /card body -->
                     </div><!-- /card -->
                 </div>
-        </div>
-    </div>
-    </form> <!-- /form -->
-    </div> <!-- ./container -->
+            </form> <!-- /form -->
+        </div> <!-- ./container -->
     </div><!-- ./wrapper -->
 
 @endsection
@@ -817,7 +803,7 @@
         });
 
         function mainCategoryChanged(id) {
-            if(id) {
+            if (id) {
                 $('.notify').empty();
                 $('.alert').hide();
                 $('.alert').html("");
@@ -854,7 +840,7 @@
             $.ajax({
                 url: '{{route('getCatBySub')}}',
                 type: 'POST',
-                data: {id:id},
+                data: {id: id},
                 success: function (data) {
                     if (data.errors != null) {
                         $('#errorAlert').show();

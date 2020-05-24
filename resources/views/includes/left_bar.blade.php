@@ -30,8 +30,8 @@
                         <a href="{{ url('/') }}" class="waves-effect"><i
                                     class="dripicons-device-desktop"></i><span>{{ __('Dashboard') }} </span></a>
                     </li>
-
                     @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3)
+
                         <li class="menu-title">{{ __('HIERARCHY') }}</li>
                         <li class="has_sub">
                             <a href="javascript:void(0);" class="waves-effect"><i class="dripicons-suitcase"></i><span>{{ __('Hierarchy') }}
@@ -46,55 +46,103 @@
                         </li>
                     @endif
 
-                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role <= 3)
+                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role <= 4)
+
                         <li class="menu-title">{{ __('ANALYSIS') }}</li>
-                        @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3)
-                            <li class="has_sub">
-                                <a href="javascript:void(0);" class="waves-effect"><i
-                                            class="dripicons-suitcase"></i><span>{{ __('Post') }}
-                                        <span
-                                                class="pull-right"><i class="mdi mdi-chevron-right"></i></span> </span></a>
-                                <ul class="list-unstyled">
-                                    <li><a href="{{route('createPost')}}">{{ __('Create Post') }}</a></li>
-                                    <li><a href="{{route('viewPosts')}}">{{ __('View Posts') }}</a></li>
-                                </ul>
-                            </li>
-                        @endif
-                        @if(\Illuminate\Support\Facades\Auth::user()->iduser_role <= 2)
-                            <li class="has_sub">
-                                <a href="javascript:void(0);" class="waves-effect"><i
-                                            class="dripicons-suitcase"></i><span>{{ __('Category') }}
-                                        <span
-                                                class="pull-right"><i class="mdi mdi-chevron-right"></i></span> </span></a>
-                                <ul class="list-unstyled">
-                                    <li><a href="{{route('addCategory')}}">{{ __('Add Category') }}</a></li>
-                                    <li><a href="{{route('viewCategory')}}">{{ __('View Category') }}</a></li>
-                                </ul>
-                            </li>
-                        @endif
                     @endif
 
-                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role ==3 || \Illuminate\Support\Facades\Auth::user()->iduser_role == 4)
-                        @if(\Illuminate\Support\Facades\Auth::user()->iduser_role ==3 )
-                            <li class="has_sub">
-                                <a href="javascript:void(0);" class="waves-effect">
-                                    <i class="dripicons-suitcase"></i>
-                                    <span>{{ __('Staff') }}
-                                        <span class="pull-right">
-                                            <i class="mdi mdi-chevron-right"></i>
-                                        </span>
-                                    </span>
-                                </a>
-                                <ul class="list-unstyled">
-                                    <li><a href="{{route('assignStaff')}}">{{ __('Assign Staff') }}</a></li>
-                                </ul>
-                            </li>
-                        @endif
+
+                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3)
+                        <li class="has_sub">
+                            <a href="javascript:void(0);" class="waves-effect">
+                                <i class="dripicons-suitcase"></i>
+                                <span>{{ __('Staff') }}
+                                    <span class="pull-right">
+                                   <i class="mdi mdi-chevron-right"></i>
+                               </span>
+                           </span>
+                            </a>
+                            <ul class="list-unstyled">
+                                <li><a href="{{route('assignStaff')}}">{{ __('Assign Staff') }}</a></li>
+                            </ul>
+                        </li>
                     @endif
+                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3 || \Illuminate\Support\Facades\Auth::user()->iduser_role == 4)
+                        <li class="has_sub">
+                            <a href="javascript:void(0);" class="waves-effect"><i
+                                        class="dripicons-suitcase"></i><span>{{ __('Post') }}
+                                    <span
+                                            class="pull-right"><i class="mdi mdi-chevron-right"></i></span> </span></a>
+                            <ul class="list-unstyled">
+                                @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3 )
+                                    <li><a href="{{route('createPost')}}">{{ __('Create Post') }}</a></li>
+                                @endif
+                                <li><a href="{{route('viewPosts')}}">{{ __('View Posts') }}</a></li>
+                            </ul>
+                        </li>
+                    @endif
+                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3)
+
+                        <li>
+                            <a href="{{route('directMessages')}}" class="waves-effect"><i
+                                        class="dripicons-suitcase"></i><span>{{ __('Direct Messages') }} </span></a>
+                        </li>
+
+                    @endif
+                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 2)
+                        <li class="has_sub">
+                            <a href="javascript:void(0);" class="waves-effect"><i
+                                        class="dripicons-suitcase"></i><span>{{ __('Category') }}
+                                    <span
+                                            class="pull-right"><i class="mdi mdi-chevron-right"></i></span> </span></a>
+                            <ul class="list-unstyled">
+                                <li><a href="{{route('addCategory')}}">{{ __('Add Category') }}</a></li>
+                                <li><a href="{{route('viewCategory')}}">{{ __('View Category') }}</a></li>
+                            </ul>
+                        </li>
+                    @endif
+
+
+                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 5)
+
+                        <li class="has_sub">
+                            <a href="javascript:void(0);" class="waves-effect">
+                                <i class="dripicons-suitcase"></i>
+                                <span>{{ __('Pending Works') }}
+                                    <span class="pull-right">
+                                       <i class="mdi mdi-chevron-right"></i>
+                                   </span>
+                               </span>
+                            </a>
+                            <ul class="list-unstyled">
+                                <li><a href="{{route('pendingResponse')}}">{{ __('Post Response') }}</a></li>
+                                <li><a href="{{route('assignStaff')}}">{{ __('Direct Messages') }}</a></li>
+                            </ul>
+                        </li>
+                    @endif
+                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 4)
+
+                        <li class="has_sub">
+                            <a href="javascript:void(0);" class="waves-effect">
+                                <i class="dripicons-suitcase"></i>
+                                <span>{{ __('Reports') }}
+                                    <span class="pull-right">
+                                       <i class="mdi mdi-chevron-right"></i>
+                                   </span>
+                               </span>
+                            </a>
+                            <ul class="list-unstyled">
+                                <li><a href="{{route('report-categoryWise')}}">{{ __('Category Wise') }}</a></li>
+                                <li><a href="{{route('report-locationWise')}}">{{ __('Location Wise') }}</a></li>
+                            </ul>
+                        </li>
+                    @endif
+                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role <= 3)
 
                     <li class="menu-title">{{ __('ADMINISTRATION') }}</li>
+                    @endif
 
-                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role <= 2)
+                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 2)
                         <li class="has_sub">
                             <a href="javascript:void(0);" class="waves-effect"><i
                                         class="dripicons-suitcase"></i><span>{{ __('Payments') }}
@@ -120,6 +168,7 @@
                         </li>
                     @endif
                     @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3)
+
                         <li class="has_sub">
                             <a href="javascript:void(0);" class="waves-effect"><i
                                         class="dripicons-suitcase"></i><span>{{ __('Task') }}
@@ -131,8 +180,8 @@
                             </ul>
                         </li>
                     @endif
-                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role <= 3)
 
+                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role <=3)
                         <li class="has_sub">
                             <a href="javascript:void(0);" class="waves-effect"><i
                                         class="dripicons-suitcase"></i><span>{{ __('Users') }}
@@ -140,12 +189,15 @@
                                             class="pull-right"><i class="mdi mdi-chevron-right"></i></span> </span></a>
                             <ul class="list-unstyled">
                                 <li><a href="{{route('addUser')}}">{{ __('Add Users') }}</a></li>
+                                @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3)
+
                                 <li><a href="{{route('pendingAgents')}}">{{ __('Pending Users') }}</a></li>
+                                @endif
                                 <li><a href="{{route('viewUser')}}">{{ __('View Users') }}</a></li>
                             </ul>
                         </li>
-                    @endif
 
+                    @endif
                 </ul>
             </div>
             <div class="clearfix"></div>

@@ -324,9 +324,9 @@
                         <hr/>
                         <input type="hidden" name="updateId" id="updateId">
                         <div class="row">
-                            <div class="form-group col-md-2">
+                            <div class="form-group col-md-3">
                                 <button type="submit"
-                                        class="btn btn-primary btn-block ">{{ __('Add Office') }}</button>
+                                        class="btn btn-primary btn-block ">{{ __('Update Office') }}</button>
                             </div>
                             <div class="form-group col-md-2">
                                 <button type="submit" onclick="clearAll();event.preventDefault();"

@@ -107,9 +107,9 @@
     </div>
 
     <div class="m-t-40 text-center">
-        <p> © <?php echo date('Y') ?> Developed By<a href="http://webdeveloersl.com" target="_blank"> Harshadeva priyankara</a> in <img
-                    style="padding-bottom: 3px;min-height: 15px;"
-                    src="{{ URL::asset('assets/images/resources/flag.png') }}"/></p>
+        <p> © <?php echo date('Y') ?> Developed By <img
+                    style="padding-bottom: 3px;height: 20px;"
+                    src="{{ URL::asset('assets/images/resources/logo.svg') }}"/></p>
 
     </div>
 

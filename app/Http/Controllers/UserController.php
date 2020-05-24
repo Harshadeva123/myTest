@@ -7,6 +7,7 @@ use App\District;
 use App\ElectionDivision;
 use App\Office;
 use App\OfficeAdmin;
+use App\OfficeStaff;
 use App\PollingBooth;
 use App\User;
 use App\UserRole;
@@ -166,6 +167,14 @@ class UserController extends Controller
             $officeAdmin->save();
 
         }
+        if($user->iduser_role == 5){
+
+            $officeAdmin = new OfficeStaff();
+            $officeAdmin->idUser = $user->idUser;
+            $officeAdmin->status = 1;
+            $officeAdmin->save();
+
+        }
         //save in selected user role table end
 
         return response()->json(['success' => 'User Registered Successfully!']);
@@ -222,11 +231,11 @@ class UserController extends Controller
         }
 
         if(Auth::user()->iduser_role <= 2){
-            $users = $query->latest()->paginate(10);
+            $users = $query->where('iduser_role','!=',2)->latest()->paginate(10);
             $offices = Office::where('status',1)->get();
         }
         else{
-            $users = $query->where('idoffice', intval(Auth::user()->idoffice))->latest()->paginate(10);
+            $users = $query->where('idoffice', intval(Auth::user()->idoffice))->where('iduser_role','!=',2)->latest()->paginate(10);
             $offices = null;
         }
         $userTitles = UserTitle::where('status', '1')->get();

@@ -12,4 +12,8 @@ class MainCategory extends Model
     public function subCategories(){
         return $this->hasMany(SubCategory::class,'idmain_category');
     }
+
+    public function analysis(){
+        return $this->hasMany(Analysis::class,'idcategory');
+    }
 }

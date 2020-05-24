@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Passport\HasApiTokens;
 
@@ -51,6 +52,27 @@ class User extends Authenticatable
     public function userRole()
     {
         return $this->belongsTo(UserRole::class, 'iduser_role');
+    }
+
+    public function getType(){
+        if($this->iduser_role  == 6){
+            return $this->agent();
+        }
+        else if($this->iduser_role  == 7){
+            return $this->member();
+        }
+        else if($this->iduser_role  == 4){
+            return false;
+        }
+    }
+
+    public function getAgeAttribute() {
+        $d1 = new Carbon(date('Y-m-d', strtotime($this->bday)));
+        $d2 = new Carbon(date('Y-m-d', strtotime(date('y-m-d'))));
+
+        $diff = $d2->diff($d1);
+        return intval($diff->y);
+
     }
 
     public function office()
@@ -101,5 +123,15 @@ class User extends Authenticatable
     public function responses()
     {
         return $this->hasMany(PostResponse::class, 'idUser');
+    }
+
+    public function messageToUsers()
+    {
+        return $this->hasMany(DirectMessage::class, 'to_idUser');
+    }
+
+    public function messageFromUsers()
+    {
+        return $this->hasMany(DirectMessage::class, 'from_idUser');
     }
 }

@@ -8,4 +8,9 @@ class PostEducation extends Model
 {
     protected $table = 'post_education';
     protected $primaryKey = 'idpost_education';
+
+    public function post()
+    {
+        return $this->belongsTo(Post::class, 'idPost');
+    }
 }

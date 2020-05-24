@@ -12,4 +12,12 @@ class Category extends Model
     public function subCategory(){
         return $this->belongsTo(SubCategory::class,'idsub_category');
     }
+
+    public function analysis(){
+        return $this->hasMany(Analysis::class,'idcategory');
+    }
+
+    public function beneficialCat(){
+        return $this->hasMany(BeneficialCat::class,'idcategory');
+    }
 }

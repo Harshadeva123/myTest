@@ -1,7 +1,6 @@
 @extends('layouts.main')
 @section('psStyle')
     <style>
-
         .commentsContainer {
             border: solid 1px black;
             border-radius: 10px;
@@ -91,22 +90,39 @@
     <div class="page-content-wrapper">
         <div class="container-fluid">
 
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="card m-b-20">
-                        <div class="card-body ">
-                            <div class="row ">
-                                <div id="commenterBox" class="col-md-12 commenterBox ">
+            <div class="card">
+                <div class="card-body">
+
+                    <div class="row">
+                        <div class="col-md-2" id="users">
+                            <div class="row">
+                                <div onclick="userSelected(this)" class="col-md-12 bg-secondary">
+                                    <h5 class="text-white col-md-7"></h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-10">
+                            <div class="row">
+                                <div class="col-md-12 bg-info">
 
                                 </div>
                             </div>
-                            <form class="form-horizontal" id="form1" role="form">
+                            <div class="row">
+                                <div class="col-md-12 commenterBox" id="commenterBox">
 
-                                <input type="hidden" class="noClear" name="user_id" value="{{$_REQUEST['user']}}">
-                                <input type="hidden" class="noClear" name="post_no" value="{{$_REQUEST['post_no']}}">
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div style="display: none;" class="row controllers">
+                        <div class="col-md-10 ml-auto">
+                            <form class="form-horizontal" id="form1" role="form">
+                                <input type="hidden" class="noClear user_id" name="user_id" value="">
                                 <div class="row ">
-                                <textarea title="Write your message here" class="form-control col-md-12" id="comment"
-                                          name="comment" rows="3"></textarea>
+                                <textarea title="Write your message here" class="form-control col-md-12" id="message"
+                                          name="message" rows="3"></textarea>
                                     <div class="col-md-12">
                                         <div class="row my-1">
                                             <em onclick="$('#imageFiles').click()"
@@ -117,15 +133,13 @@
                                                 class="text-success mediaIcon fa fa-microphone fa-3x mx-2"></em>
                                             <button type="submit" class="btn btn-primary ml-auto  float-right">Send
                                             </button>
-
                                         </div>
                                     </div>
                                 </div>
                             </form>
                             <form class="form-horizontal" id="formAttachments" role="form"
                                   enctype="multipart/form-data">
-                                <input type="hidden" class="noClear" name="user_id" value="{{$_REQUEST['user']}}">
-                                <input type="hidden" class="noClear" name="post_no" value="{{$_REQUEST['post_no']}}">
+                                <input type="hidden" class="noClear user_id" id="user_id" name="user_id" value="">
                                 <input class="" type="file" style="display: none" id="imageFiles"
                                        onchange="$('#formAttachments').submit();"
                                        name="imageFiles[]" multiple accept="image/*">
@@ -139,11 +153,10 @@
                                        accept="audio/*">
                             </form>
                         </div>
-
                     </div>
-                    <br/>
                 </div>
             </div>
+
         </div> <!-- ./container -->
     </div><!-- ./wrapper -->
 @endsection
@@ -156,9 +169,84 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-            refreshComments();
+            loadUsers();
         });
 
+        function loadUsers() {
+            $.ajax({
+                url: '{{route('loadMessageUsers')}}',
+                type: 'POST',
+                success: function (data) {
+                    console.log(data);
+                    $.each(data, function (key, item) {
+                        $('#users').append(" <div class='row'>" +
+                            "<div onclick='userSelected(" + item.id + ")' class='col-md-12 bg-secondary'>" +
+                            "<h5 class='text-white col-md-7'> " + item.userName + " </h5>" +
+                            " </div>" +
+                            "</div>");
+                    });
+                }
+            });
+        }
+
+        function userSelected(id) {
+            $('.user_id').val(id);
+            $('.controllers').show();
+            $.ajax({
+                url: '{{route('getMessagesByUser')}}',
+                type: 'POST',
+                data: {id: id},
+                success: function (data) {
+                    let messages = data.success;
+                    console.log(messages);
+                    $('#commenterBox').html('');
+                    $.each(messages, function (key, value) {
+                        console.log(value);
+                        if (value.is_admin == 1) {
+
+                            if (value.response_type == 1) {
+                                $('#commenterBox').append(
+                                    "<div class='ownComment col-md-8 p-2 m-2 ml-auto '>" + value.message + "" +
+                                    "</div>"
+                                );
+                            } else if (value.message_type == 2) {
+                                $('#commenterBox').append(
+                                    "<div class='ownComment col-md-5 p-2 m-2 ml-auto '>" +
+                                    "<img src='{{ asset('')}}" + value.full_path + "' width='200px'>' " +
+                                    "</div>"
+                                );
+                            } else if (value.message_type == 3) {
+                                $('#commenterBox').append(
+                                    "<div class='ownComment col-md-5 p-2 m-2 ml-auto '>" +
+                                    " <video width='100%' controls controlsList='nodownload'>" +
+                                    "<source src='{{ asset('')}}" + value.full_path + "'  type='video/mp4'> " +
+                                    "<source src='{{ asset('')}}" + value.full_path + "' type='video/ogg'>" +
+                                    " Your browser does not support HTML video." +
+                                    " </video> " +
+                                    "</div>");
+                            } else if (value.message_type == 4) {
+                                $('#commenterBox').append(
+                                    "<div class='ownComment col-md-5 p-2 m-2 ml-auto '>" +
+                                    " <audio width='100%' controls  controlsList='nofullscreen nodownload noremoteplayback'>" +
+                                    "<source src='{{ asset('')}}" + value.full_path + "'  type='audio/ogg'> " +
+                                    "<source src='{{ asset('')}}" + value.full_path + "' type='audio/mpeg'>" +
+                                    " Your browser does not support HTML audio." +
+                                    " </audio> " +
+                                    "</div>");
+                            } else {
+                                $('#commenterBox').append("");
+                            }
+                        }
+                        else {
+                            $('#commenterBox').append(
+                                "<div class='receivedComment  col-md-8 m-2 p-2 '>" + value.message + "" +
+                                "</div>"
+                            );
+                        }
+                    });
+                }
+            });
+        }
 
         $("#formAttachments").on("submit", function (event) {
             event.preventDefault();
@@ -178,7 +266,7 @@
             if (completed) {
 
                 $.ajax({
-                    url: '{{route('saveCommentAttachments')}}',
+                    url: '{{route('saveMessageAttachments')}}',
                     type: 'POST',
                     data: new FormData(this),
                     dataType: 'JSON',
@@ -209,7 +297,7 @@
 
                             notify({
                                 type: "success", //alert | success | error | warning | info
-                                title: 'POST PUBLISHED SUCCESSFULLY.',
+                                title: 'MESSAGE SEND SUCCESSFULLY.',
                                 autoHide: true, //true | false
                                 delay: 2500, //number ms
                                 position: {
@@ -220,8 +308,8 @@
 
                                 message: 'Post published successfully.'
                             });
-                          $("input[type='file']").val('');
-                            refreshComments();
+                            $("input[type='file']").val('');
+                            refreshTable();
                         }
                     }
 
@@ -255,7 +343,7 @@
             if (completed) {
 
                 $.ajax({
-                    url: '{{route('saveComment')}}',
+                    url: '{{route('saveMessage')}}',
                     type: 'POST',
                     data: $(this).serialize(),
                     success: function (data) {
@@ -264,7 +352,7 @@
                             $.each(data.errors, function (key, value) {
                                 notify({
                                     type: "error", //alert | success | error | warning | info
-                                    title: 'COMMENT SENDING FAILED.',
+                                    title: 'MESSAGE SENDING FAILED.',
                                     autoHide: true, //true | false
                                     delay: 5000, //number ms
                                     position: {
@@ -278,8 +366,9 @@
                             });
                         }
                         if (data.success != null) {
-                            clearAll();
-                            refreshComments();
+
+                            $('#message').val('');
+                            refreshTable();
                         }
                     }
 
@@ -295,63 +384,64 @@
             }
         });
 
-        function refreshComments() {
-            let postNo = "{{$_REQUEST['post_no']}}";
-            let userId = "{{$_REQUEST['user']}}";
+        function refreshTable() {
+            let id = $('#user_id').val();
             $.ajax({
-                url: '{{route('getCommentByUserAndPost')}}',
+                url: '{{route('getMessagesByUser')}}',
                 type: 'POST',
-                data: {user_id: userId, post_no: postNo},
+                data: {id: id},
                 success: function (data) {
-                    let result = data.success;
-                    console.log(data);
+                    let messages = data.success;
                     $('#commenterBox').html('');
-                    $.each(result, function (key, value) {
+                    $.each(messages, function (key, value) {
                         if (value.is_admin == 1) {
-                            if(value.response_type == 1){
+                            $('#commenterBox').append(
+                                "<div class='ownComment  col-md-8 ml-auto p-2 '>" + value.message + "" +
+                                "</div>"
+                            );
+
+                            if (value.response_type == 1) {
                                 $('#commenterBox').append(
-                                    "<div class='ownComment col-md-8 p-2 m-2 ml-auto '>" + value.response + "" +
+                                    "<div class='ownComment col-md-8 p-2 m-2 ml-auto '>" + value.message + "" +
                                     "</div>"
                                 );
-                            }else if(value.response_type == 2){
+                            } else if (value.message_type == 2) {
                                 $('#commenterBox').append(
                                     "<div class='ownComment col-md-5 p-2 m-2 ml-auto '>" +
-                                    "<img src='{{ asset('')}}"+value.full_path+"' width='200px'>' " +
+                                    "<img src='{{ asset('')}}" + value.full_path + "' width='200px'>' " +
                                     "</div>"
                                 );
-                            }else if(value.response_type == 3){
+                            } else if (value.message_type == 3) {
                                 $('#commenterBox').append(
                                     "<div class='ownComment col-md-5 p-2 m-2 ml-auto '>" +
-                                        " <video width='100%' controls controlsList='nodownload'>" +
-                                        "<source src='{{ asset('')}}"+value.full_path+"'  type='video/mp4'> " +
-                                        "<source src='{{ asset('')}}"+value.full_path+"' type='video/ogg'>" +
-                                            " Your browser does not support HTML video." +
-                                        " </video> " +
+                                    " <video width='100%' controls controlsList='nodownload'>" +
+                                    "<source src='{{ asset('')}}" + value.full_path + "'  type='video/mp4'> " +
+                                    "<source src='{{ asset('')}}" + value.full_path + "' type='video/ogg'>" +
+                                    " Your browser does not support HTML video." +
+                                    " </video> " +
                                     "</div>");
-                            }else if(value.response_type == 4){
+                            } else if (value.message_type == 4) {
                                 $('#commenterBox').append(
                                     "<div class='ownComment col-md-5 p-2 m-2 ml-auto '>" +
-                                        " <audio width='100%' controls  controlsList='nofullscreen nodownload noremoteplayback'>" +
-                                        "<source src='{{ asset('')}}"+value.full_path+"'  type='audio/ogg'> " +
-                                        "<source src='{{ asset('')}}"+value.full_path+"' type='audio/mpeg'>" +
-                                            " Your browser does not support HTML audio." +
-                                        " </audio> " +
+                                    " <audio width='100%' controls  controlsList='nofullscreen nodownload noremoteplayback'>" +
+                                    "<source src='{{ asset('')}}" + value.full_path + "'  type='audio/ogg'> " +
+                                    "<source src='{{ asset('')}}" + value.full_path + "' type='audio/mpeg'>" +
+                                    " Your browser does not support HTML audio." +
+                                    " </audio> " +
                                     "</div>");
-                            }else{
+                            } else {
                                 $('#commenterBox').append("");
                             }
                         }
                         else {
                             $('#commenterBox').append(
-                                "<div class='receivedComment  col-md-8 m-2 p-2 '>" + value.response + "" +
+                                "<div class='receivedComment  col-md-8 m-2 p-2 '>" + value.message + "" +
                                 "</div>"
                             );
                         }
                     });
-                    $('#commenterBox').scrollTop($('#commenterBox')[0].scrollHeight);
                 }
             });
         }
-
     </script>
 @endsection

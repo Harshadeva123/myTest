@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Agent;
 use App\Career;
@@ -20,12 +20,12 @@ use App\Village;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use PhpOffice\PhpSpreadsheet\Chart\Title;
+use App\Http\Controllers\Controller;
 
 class ApiUserController extends Controller
 {
-
-    public function login(Request $request){
+    public function login(Request $request)
+    {
         //validation start
         $validator = \Validator::make($request->all(), [
             'username' => 'required|string',
@@ -33,22 +33,22 @@ class ApiUserController extends Controller
         ], [
             'username.required' => 'Username should be provided!',
             'username.string' => 'Username must be a string!',
-            'password.required'=>'Password should be provided!',
-            'password.string'=>'Password should be a string!'
+            'password.required' => 'Password should be provided!',
+            'password.string' => 'Password should be a string!'
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()->all()]);
+            return response()->json(['error' => $validator->errors()->first(),'statusCode'=>-99]);
         }
 
-        if (!Auth::attempt($request->all())){
-            return response()->json(['error' => 'Username or Password Incorrect!']);
+        if (!Auth::attempt($request->all())) {
+            return response()->json(['error' => 'Username or Password Incorrect!','statusCode'=>-99]);
         }
 
         $token = Auth::user()->createToken('authToken')->accessToken; //generate access token
         $name = Auth::user()->fName;
 
-        return response()->json(['success' => 'User logged in Successfully!'.$name,'accessToken'=>$token]);
+        return response()->json(['success' => ['accessToken' => $token], 'statusCode' => 0]);
 
     }
 
@@ -57,7 +57,6 @@ class ApiUserController extends Controller
      */
     public function store(Request $request)
     {
-
         //validation start
         $validator = \Validator::make($request->all(), [
             'userRole' => 'required|exists:user_role,iduser_role',
@@ -66,7 +65,8 @@ class ApiUserController extends Controller
             'title' => 'required|numeric',
             'firstName' => 'required',
             'lastName' => 'required',
-            'gender' => 'required|boolean',
+            'isGovernment' => 'required',
+            'gender' => 'required|numeric',
             'nic' => 'required|max:15|unique:usermaster',
             'email' => 'nullable|email|max:255',
             'phone' => 'nullable|numeric',
@@ -95,6 +95,7 @@ class ApiUserController extends Controller
             'username.unique' => 'Username already taken!',
             'email.email' => 'Email format invalid!',
             'email.max' => 'Email must be less than 255 characters!',
+            'isGovernment.required' => 'Job sector should be provided!',
             'password.required' => 'Password should be provided!',
             'password.confirmed' => 'Passwords didn\'t match!',
             'phone.numeric' => 'Phone number can only contain numbers!',
@@ -104,7 +105,7 @@ class ApiUserController extends Controller
             'dob.date' => 'Date of birth format invalid!',
             'dob.before' => 'Date of birth should be a valid birthday!',
             'gender.required' => 'Gender should be provided!',
-            'gender.boolean' => 'Gender invalid!',
+            'gender.numeric' => 'Gender invalid!',
             'ethnicity.required' => 'Ethnicity should be provided!',
             'ethnicity.exists' => 'Ethnicity invalid!',
             'religion.required' => 'Religion should be provided!',
@@ -118,57 +119,57 @@ class ApiUserController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()->all()]);
+            return response()->json(['error' => $validator->errors()->first(), 'statusCode' => -99]);
         }
 
         if ($request['userRole'] == 6) {
             if ($request['referral_code'] == null) {
-                return response()->json(['errors' => ['referral_code' => 'Office referral code should be provided!']]);
+                return response()->json(['error' => 'Office referral code should be provided!','statusCode'=>-99]);
             }
             $officeAdmin = OfficeAdmin::where('referral_code', $request['referral_code'])->whereIn('status', [1, 2])->first();
             if ($officeAdmin == null) {
-                return response()->json(['errors' => ['referral_code' => 'Referral code invalid!']]);
+                return response()->json(['error' => 'Referral code invalid!','statusCode'=>-99]);
             }
             $office = $officeAdmin->user->idoffice;
             $district = Office::find(intval($office))->iddistrict;
 
             if ($request['electionDivision'] == null) {
-                return response()->json(['errors' => ['electionDivision' => 'Election division should be provided!']]);
+                return response()->json(['error' => 'Election division should be provided!','statusCode'=>-99]);
             } else if (ElectionDivision::where('idelection_division', $request['electionDivision'])->where('iddistrict', $district)->first() == null) {
-                return response()->json(['errors' => ['electionDivision' => 'Election division invalid!']]);
+                return response()->json(['error' => ['electionDivision' => 'Election division invalid!']]);
             }
             if ($request['pollingBooth'] == null) {
-                return response()->json(['errors' => ['pollingBooth' => 'Polling booth should be provided!']]);
+                return response()->json(['error' =>  'Polling booth should be provided!','statusCode'=>-99]);
             } else if (PollingBooth::where('idpolling_booth', $request['pollingBooth'])->where('iddistrict', $district)->first() == null) {
-                return response()->json(['errors' => ['pollingBooth' => 'Polling booth invalid!']]);
+                return response()->json(['error' =>  'Polling booth invalid!','statusCode'=>-99]);
             }
             if ($request['gramasewaDivision'] == null) {
-                return response()->json(['errors' => ['gramasewaDivision' => 'Gramasewa division should be provided!']]);
+                return response()->json(['error'=> 'Gramasewa division should be provided!','statusCode'=>-99]);
             } else if (GramasewaDivision::where('idgramasewa_division', $request['gramasewaDivision'])->where('iddistrict', $district)->first() == null) {
-                return response()->json(['errors' => ['gramasewaDivision' => 'Gramasewa division invalid!']]);
+                return response()->json(['error' => 'Gramasewa division invalid!','statusCode'=>-99]);
             }
             if ($request['village'] == null) {
-                return response()->json(['errors' => ['gramasewaDivision' => 'Village should be provided!']]);
+                return response()->json(['error'  => 'Village should be provided!','statusCode'=>-99]);
             } else if (Village::where('idvillage', $request['village'])->where('iddistrict', $district)->first() == null) {
-                return response()->json(['errors' => ['village' => 'Village invalid!']]);
+                return response()->json(['error' => 'Village invalid!','statusCode'=>-99]);
             }
         } else if ($request['userRole'] == 7) {
             if ($request['referral_code'] == null) {
-                return response()->json(['errors' => ['referral_code' => 'Agent referral code should be provided!']]);
+                return response()->json(['error' => 'Agent referral code should be provided!','statusCode'=>-99]);
             }
             $agent = Agent::where('referral_code', $request['referral_code'])->whereIn('status', [1, 2])->first();
             if ($agent == null) {
-                return response()->json(['errors' => ['referral_code' => 'Referral code invalid!']]);
+                return response()->json(['error' =>  'Referral code invalid!','statusCode'=>-99]);
             }
 
             $office = User::find(intval($agent->idUser))->idoffice;
             $district = Office::find(intval($office))->iddistrict;
         } else {
-            return response()->json(['errors' => ['userRole' => 'User role unknown!']]);
+            return response()->json(['error' =>  'User role unknown!','statusCode'=>-99]);
         }
 
         if (isset(UserTitle::find(intval($request['title']))->gender) && UserTitle::find(intval($request['title']))->gender != $request['gender']) {
-            return response()->json(['errors' => ['title' => 'Please re-check title and gender!']]);
+            return response()->json(['error' => 'Please re-check title and gender!','statusCode'=>-99]);
         }
 
         //validation end
@@ -189,7 +190,7 @@ class ApiUserController extends Controller
         $user->username = $request['username'];
         $user->password = Hash::make($request['password']);
         $user->bday = date('Y-m-d', strtotime($request['dob']));
-        $user->system_language = 1; // default value for english
+        $user->system_language = $request['lang']; // default value for english
         $user->status = 2; // value for pending user
         $user->save();
         //save in user table  end
@@ -238,8 +239,7 @@ class ApiUserController extends Controller
 
         $token = $user->createToken('authToken')->accessToken; //generate access token
 
-        return response()->json(['success' => 'User Registered Successfully!','accessToken'=>$token]);
-
+        return response()->json(['success' => ['accessToken' => $token],'statusCode'=>0]);
     }
 
 
@@ -248,7 +248,6 @@ class ApiUserController extends Controller
      */
     public function update(Request $request)
     {
-
         //validation start
         $validationMessages = [
             'nic.required' => 'NIC No should be provided!',
@@ -292,7 +291,7 @@ class ApiUserController extends Controller
 
 
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()->all()]);
+            return response()->json(['error' => $validator->errors()->first(),'statusCode'=>-99]);
         }
         if ($request['userRole'] == 2 || $request['userRole'] == 3 || $request['userRole'] == 5 || $request['userRole'] == 6 || $request['userRole'] == 7) {
 
@@ -306,11 +305,11 @@ class ApiUserController extends Controller
 
 
             if ($validator->fails()) {
-                return response()->json(['errors' => $validator->errors()->all()]);
+                return response()->json(['error' => $validator->errors()->first(),'statusCode'=>-99]);
             }
 
             if (User::where('nic', $request['nic'])->where('idUser', '!=', $request['userId'])->first() != null) {
-                return response()->json(['errors' => ['nic' => 'NIC No already exist!']]);
+                return response()->json(['error' => 'NIC No already exist!','statusCode'=>-99]);
             }
         }
 
@@ -318,20 +317,20 @@ class ApiUserController extends Controller
             if ($request['office'] != null) {
                 $office = $request['office'];
             } else {
-                return response()->json(['errors' => ['office' => 'Office should be provided!']]);
+                return response()->json(['error' =>'Office should be provided!','statusCode'=>-99]);
             }
         } else {
             $office = Auth::user()->idoffice;
         }
 
         if (User::where('username', $request['username'])->where('idUser', '!=', $request['userId'])->first() != null) {
-            return response()->json(['errors' => ['username' => 'Username already exist!']]);
+            return response()->json(['error' =>'Username already exist!','statusCode'=>-99]);
         }
 
 
         if ($request['password'] != null) {
             if (User::find(intval($request['userId']))->password != Hash::make($request['oldPassword'])) {
-                return response()->json(['errors' => ['oldPassword' => 'Old password incorrect!']]);
+                return response()->json(['error' =>  'Old password incorrect!','statusCode'=>-99]);
             }
 
         }
@@ -339,13 +338,13 @@ class ApiUserController extends Controller
         if ($request['userRole'] == 3) {
             $exist = User::where('idoffice', $office)->where('iduser_role', 3)->where('idUser', '!=', $request['userId'])->first();
             if ($exist != null) {
-                return response()->json(['errors' => ['error' => 'Office admin has been already created!']]);
+                return response()->json(['error' => 'Office admin has been already created!','statusCode'=>-99]);
             }
         }
 
         if (isset(UserTitle::find(intval($request['title']))->gender) && UserTitle::find(intval($request['title']))->gender != $request['gender']) {
 
-            return response()->json(['errors' => ['title' => 'Please re-check title and gender!']]);
+            return response()->json(['error' =>'Please re-check title and gender!','statusCode'=>-99]);
 
         }
 
@@ -377,13 +376,12 @@ class ApiUserController extends Controller
 
         //update in selected user role details end
 
-        return response()->json(['success' => 'User Registered Successfully!']);
+        return response()->json(['success' => 'User Registered Successfully!','statusCode'=>0]);
 
     }
 
     public function generateReferral($uid)
     {
-
         $user = User::find(intval($uid));
         $name = $user->fName;
         $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -415,39 +413,123 @@ class ApiUserController extends Controller
 
         $user = User::with(['officeAdmin', 'userRole', 'userTitle', 'agent.electionDivision', 'agent.pollingBooth', 'agent.gramasewaDivision', 'agent.village'])->where('idUser', intval($request['id']))->where('idoffice', Auth::user()->idoffice)->first();
         if ($user != null) {
-            return response()->json(['success' => $user]);
+            return response()->json(['success' => $user,'statusCode'=>0]);
         } else {
-            return response()->json(['errors' => ['error' => 'The user you are trying to view is invalid!']]);
+            return response()->json(['error' => 'The user you are trying to view is invalid!','statusCode'=>-99]);
         }
     }
 
     public function getOfficeAdminByReferral(Request $request)
     {
+        $apiLang = $request['lang'];
+        $fallBack = 'name_en';
         $referral = $request['referral_code'];
+
+        if ($apiLang == 'si') {
+            $lang = 'name_si';
+        } elseif ($apiLang == 'ta') {
+            $lang = 'name_ta';
+        } else {
+            $lang = 'name_en';
+        }
+        $titles = UserTitle::where('status', 1)->select(['iduser_title', $lang, 'name_en', 'gender'])->get();
+        $titles = $this->filterLanguage($titles, $lang, $fallBack);
+
+
+        $careers = Career::where('status', 1)->select(['idcareer', $lang, 'name_en'])->get();
+        $careers = $this->filterLanguage($careers, $lang, $fallBack);
+
+        $ethnicities = Ethnicity::where('status', 1)->select(['idethnicity', $lang, 'name_en'])->get();
+        $ethnicities = $this->filterLanguage($ethnicities, $lang, $fallBack);
+
+        $religions = Religion::where('status', 1)->select(['idreligion', $lang, 'name_en'])->get();
+        $religions = $this->filterLanguage($religions, $lang, $fallBack);
+
+        $educationQualifications = EducationalQualification::where('status', 1)->select(['ideducational_qualification', $lang, 'name_en'])->get();
+        $educationQualifications = $this->filterLanguage($educationQualifications, $lang, $fallBack);
+
+        $natureOfIncomes = NatureOfIncome::where('status', 1)->select(['idnature_of_income', $lang, 'name_en'])->get();
+        $natureOfIncomes = $this->filterLanguage($natureOfIncomes, $lang, $fallBack);
+
+        $electionDivisions = ElectionDivision::where('status', 1)->select(['idelection_division', $lang, 'name_en'])->get();
+        $electionDivisions = $this->filterLanguage($electionDivisions, $lang, $fallBack);
+
         $officeAdmin = OfficeAdmin::where('referral_code', $referral)->where('status', 1)->first();
-        $titles = UserTitle::where('status', 1)->select(['iduser_title', 'name_en','name_si','name_ta', 'gender'])->get();
-        $careers = Career::where('status',1)->select(['idcareer',  'name_en','name_si','name_ta'])->get();
-        $ethnicities = Ethnicity::where('status',1)->select(['idethnicity','name_en','name_si','name_ta'])->get();
-        $religions = Religion::where('status',1)->select(['idreligion', 'name_en','name_si','name_ta'])->get();
-        $educationQualifications = EducationalQualification::where('status',1)->select(['ideducational_qualification', 'name_en','name_si','name_ta'])->get();
-        $natureOfIncomes = NatureOfIncome::where('status',1)->select(['idnature_of_income', 'name_en','name_si','name_ta'])->get();
-        $electionDivisions = ElectionDivision::where('status',1)->select(['idelection_division', 'name_en','name_si','name_ta'])->get();
 
         if ($officeAdmin != null) {
-            return response()->json(['sucess' =>
+            return response()->json(['success' =>
                 ['referral_code' => $referral,
-                 'titles' => $titles,
-                    'careers'=>$careers,
-                    'ethnicities'=>$ethnicities,
-                    'religions'=>$religions,
-                    'educationQualifications'=>$educationQualifications,
-                    'natureOfIncomes'=>$natureOfIncomes,
-                    'electionDivisions'=>$electionDivisions
-                ]], 200, ['Content-Type' => 'application/json;charset=UTF-8', 'Charset' => 'utf-8'],
+                    'titles' => $titles,
+                    'careers' => $careers,
+                    'ethnicities' => $ethnicities,
+                    'religions' => $religions,
+                    'educationQualifications' => $educationQualifications,
+                    'natureOfIncomes' => $natureOfIncomes,
+                    'electionDivisions' => $electionDivisions
+                ],'statusCode'=>0], 200, ['Content-Type' => 'application/json;charset=UTF-8', 'Charset' => 'utf-8'],
                 JSON_UNESCAPED_UNICODE);
         } else {
-            return response()->json(['errors' => ['referral_code' => 'Office admin referral code invalid!']]);
+            return response()->json(['error' => 'Office admin referral code invalid!','statusCode'=>-99]);
         }
     }
 
+    public function getAgentByReferral(Request $request)
+    {
+        $apiLang = $request['lang'];
+        $fallBack = 'name_en';
+        $referral = $request['referral_code'];
+
+        if ($apiLang == 'si') {
+            $lang = 'name_si';
+        } elseif ($apiLang == 'ta') {
+            $lang = 'name_ta';
+        } else {
+            $lang = 'name_en';
+        }
+
+        $agent = Agent::where('referral_code', $referral)->where('status', 1)->first();
+
+        $titles = UserTitle::where('status', 1)->select(['iduser_title', 'name_en', $lang, 'gender'])->get();
+        $titles = $this->filterLanguage($titles, $lang, $fallBack);
+
+        $careers = Career::where('status', 1)->select(['idcareer', 'name_en', $lang])->get();
+        $careers = $this->filterLanguage($careers, $lang, $fallBack);
+
+        $ethnicities = Ethnicity::where('status', 1)->select(['idethnicity', 'name_en', $lang])->get();
+        $ethnicities = $this->filterLanguage($ethnicities, $lang, $fallBack);
+
+        $religions = Religion::where('status', 1)->select(['idreligion', 'name_en', $lang])->get();
+        $religions = $this->filterLanguage($religions, $lang, $fallBack);
+
+        $educationQualifications = EducationalQualification::where('status', 1)->select(['ideducational_qualification', 'name_en', $lang])->get();
+        $educationQualifications = $this->filterLanguage($educationQualifications, $lang, $fallBack);
+
+        $natureOfIncomes = NatureOfIncome::where('status', 1)->select(['idnature_of_income', 'name_en', $lang])->get();
+        $natureOfIncomes = $this->filterLanguage($natureOfIncomes, $lang, $fallBack);
+
+        if ($agent != null) {
+            return response()->json(['success' =>
+                ['referral_code' => $referral,
+                    'titles' => $titles,
+                    'careers' => $careers,
+                    'ethnicities' => $ethnicities,
+                    'religions' => $religions,
+                    'educationQualifications' => $educationQualifications,
+                    'natureOfIncomes' => $natureOfIncomes,
+                ],'statusCode'=>0], 200, ['Content-Type' => 'application/json;charset=UTF-8', 'Charset' => 'utf-8'],
+                JSON_UNESCAPED_UNICODE);
+        } else {
+            return response()->json(['error' => 'Agent referral code invalid!','statusCode'=>-99]);
+        }
+    }
+
+    public function filterLanguage($collection, $lang, $fallBack)
+    {
+        foreach ($collection as $item) {
+            $item['name'] = $item[$lang] != null ? $item[$lang] : $item[$fallBack];
+            unset($item->name_en);
+            unset($item->$lang);
+        }
+        return $collection;
+    }
 }

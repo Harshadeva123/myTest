@@ -23,7 +23,8 @@ class PostResponseController extends Controller
         }
     }
 
-    public function viewComment(Request $request){
+    public function viewUserComments(Request $request){
+        $responseId = $request['responseId'];
         $user = $request['user'];
         $postNo = $request['post_no'];
         $post = Post::where('idoffice',Auth::user()->idoffice)->where('post_no',$postNo)->first();
@@ -32,7 +33,7 @@ class PostResponseController extends Controller
         }
         else{
             $commenters = $post->responses()->where('idUser',$user)->where('status',1)->get();
-            return view('post.comment')->with(['title'=>'View Comment','commenters'=>$commenters]);
+            return view('post.user_comments')->with(['title'=>'View User Comments','commenters'=>$commenters,'user'=>$user,'post_no'=>$postNo,'responseId'=>$responseId]);
         }
     }
 
@@ -66,7 +67,6 @@ class PostResponseController extends Controller
 
         $response = new PostResponse();
         $response->idPost = $post->idPost;
-        $response->idUser = $request['user'];
         $response->idUser = $request['user_id'];
         $response->response = $request['comment'];
         $response->categorized = 0;// uncategorized when creating
@@ -220,7 +220,7 @@ class PostResponseController extends Controller
 
         //validation end
 
-       $responses =  $post->responses()->with('post')->where('idPost',1)->where('idUser',$request['user_id'])->where('status',1)->orderBy('created_at')->get();
+       $responses =  $post->responses()->with('post')->where('idPost',$post->idPost)->where('idUser',$request['user_id'])->where('status',1)->orderBy('created_at')->get();
        return response()->json(['success' =>$responses]);
     }
 }

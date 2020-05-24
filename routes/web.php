@@ -50,7 +50,6 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
         Route::post('disable_office', 'OfficeController@disable')->name('disableOffice');
         Route::post('enable_office', 'OfficeController@enable')->name('enableOffice');
 
-
         //category management
         Route::get('add_category', 'CategoryController@index')->name('addCategory');
         Route::get('view_category', 'CategoryController@view')->name('viewCategory');
@@ -108,6 +107,7 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
         Route::post('save_post', 'PostController@store')->name('savePost');
         Route::get('view_posts', 'PostController@view')->name('viewPosts');
         Route::post('view_posts_admin', 'PostController@showAdmin')->name('viewPostAdmin');
+        Route::get('view_posts_by_category', 'PostController@viewByCategory')->name('viewPostsByCategory');
 
         //Task
         Route::get('assign_task', 'TaskController@index')->name('assignTask');
@@ -118,8 +118,8 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
         Route::post('activate_task', 'TaskController@activate')->name('activateTask');
 
         //Post Response
-        Route::get('view_comments', 'PostResponseController@viewComments')->name('viewComments');
-        Route::post('view_comment', 'PostResponseController@viewComment')->name('viewComment');
+        Route::post('view_comments', 'PostResponseController@viewComments')->name('viewComments');
+        Route::post('view_user_comments', 'PostResponseController@viewUserComments')->name('viewUserComments');
         Route::post('save_comment', 'PostResponseController@store')->name('saveComment');
         Route::post('save_comment_attachments', 'PostResponseController@storeAttachments')->name('saveCommentAttachments');
         Route::post('get_comment_by_user_and_post', 'PostResponseController@getCommentByUserAndPost')->name('getCommentByUserAndPost');
@@ -128,6 +128,26 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
         Route::get('assign_staff', 'StaffController@index')->name('assignStaff');
         Route::post('assign_staff', 'StaffController@store')->name('assignStaff');
         Route::post('view_assigned_division', 'StaffController@viewAssignedDivision')->name('viewAssignedDivision');
+
+        //Analysis management
+        Route::get('pending_response', 'ResponseAnalysisController@index')->name('pendingResponse');
+        Route::post('analyse_response', 'ResponseAnalysisController@analyse')->name('analyseResponse');
+        Route::post('save_response_analysis', 'ResponseAnalysisController@store')->name('saveResponseAnalysis');
+
+        //Direct Messages
+        Route::get('direct_messages', 'DirectMessageController@index')->name('directMessages');
+        Route::post('load_message_users', 'DirectMessageController@loadUsers')->name('loadMessageUsers');
+        Route::post('get_messages_by_user', 'DirectMessageController@getByUser')->name('getMessagesByUser');
+        Route::post('save_message_attachments', 'DirectMessageController@storeAttachments')->name('saveMessageAttachments');
+        Route::post('save_message', 'DirectMessageController@store')->name('saveMessage');
+        Route::post('get_message_by_user', 'DirectMessageController@getMessageByUser')->name('getMessageByUser');
+
+        //Report management
+        Route::get('report_category_wise', 'ReportController@categoryWise')->name('report-categoryWise');
+        Route::post('report_category_wise', 'ReportController@categoryWiseChart')->name('report-categoryWise');
+        Route::get('report_location_wise', 'ReportController@locationWise')->name('report-locationWise');
+        Route::post('report_location_wise', 'ReportController@locationWiseChart')->name('report-locationWise');
+
 
     });
 
