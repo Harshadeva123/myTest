@@ -75,7 +75,7 @@
                                             <span class="input-group-text">TA</span>
                                         </div>
                                         <input autocomplete="off" type="text" class="form-control"
-                                               oninput="setCustomValidity('')" required
+                                               oninput="setCustomValidity('')"  required
                                                oninvalid="this.setCustomValidity('Please enter election division name')"
                                                placeholder="Election division name in tamil" name="electionDivision_ta"
                                                id="electionDivision_ta">
@@ -258,6 +258,7 @@
             $('input').not(".noClear").val('');
             $(":checkbox").attr('checked', false).trigger('change');
             $('select').val('').trigger('change');
+            $('#updateModal').modal('hide');
         }
 
         function showTableData() {

@@ -16,4 +16,8 @@ class EducationalQualification extends Model
     public function taskEducation(){
         return $this->hasMany(TaskEducation::class,'ideducational_qualification');
     }
+
+    public function member(){
+        return $this->hasMany(Member::class,'ideducational_qualification');
+    }
 }

@@ -811,68 +811,7 @@
             }
         });
 
-        function mainCategoryChanged(id) {
-            if (id) {
-                $('.notify').empty();
-                $('.alert').hide();
-                $('.alert').html("");
-                $.ajax({
-                    url: '{{route('getSubCatByMain')}}',
-                    type: 'POST',
-                    data: {id: id},
-                    success: function (data) {
-                        if (data.errors != null) {
-                            $('#errorAlert').show();
-                            $.each(data.errors, function (key, value) {
-                                $('#errorAlert').append('<p>' + value + '</p>');
-                            });
-                            $('html, body').animate({
-                                scrollTop: $("body").offset().top
-                            }, 1000);
-                        }
-                        if (data.success != null) {
 
-                            let array = data.success;
-                            $('#subCat').html("<option value=''>Select Sub Category</option>");
-                            $('#cat').html("<option value=''>Select Category</option>");
-                            $.each(array, function (index, value) {
-                                $('#subCat').append(new Option(value.categroy, value.idsub_category));
-                            });
-                        }
-                    }
-                });
-            }
-        }
-
-        function subCategoryChanged() {
-            id = $('#subCat').val();
-            $.ajax({
-                url: '{{route('getCatBySub')}}',
-                type: 'POST',
-                data: {id: id},
-                success: function (data) {
-                    if (data.errors != null) {
-                        $('#errorAlert').show();
-                        $.each(data.errors, function (key, value) {
-                            $('#errorAlert').append('<p>' + value + '</p>');
-                        });
-                        $('html, body').animate({
-                            scrollTop: $("body").offset().top
-                        }, 1000);
-                    }
-                    if (data.success != null) {
-                        let array = data.success;
-                        $('#cats').html("<option value=''>Select Category</option>");
-                        console.log(array);
-                        $.each(array, function (index, value) {
-                            $('#cats').append(new Option(value.category, value.idcategory));
-                        });
-                    }
-                }
-
-
-            });
-        }
 
     </script>
 @endsection

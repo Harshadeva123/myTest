@@ -201,6 +201,5 @@ class ReportController extends Controller
         }
 
         return response()->json(['success' => $questions, 'posts' => $posts]);
-
     }
 }

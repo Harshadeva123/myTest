@@ -18,4 +18,7 @@ class PollingBooth extends Model
     public function agents(){
         return $this->hasMany(Agent::class,'idpolling_booth');
     }
+    public function member(){
+        return $this->hasMany(Member::class,'idpolling_booth');
+    }
 }

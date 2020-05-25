@@ -20,46 +20,6 @@
                         {{--<h6 class="text-secondary">New Category</h6>--}}
                         <div class="row">
 
-                            <div class="form-group col-md-3">
-                                <label for="mainCat" class="control-label">{{ __('Main Category') }}</label>
-                                <div>
-                                    <div class="input-group">
-                                        <div class="input-group-append">
-                                            <span class="input-group-text"><em class="mdi mdi-dice-1"></em></span>
-                                        </div>
-                                        <select id="mainCat" name="mainCat" class="form-control"
-                                                onchange="setCustomValidity('');mainCategoryChanged(this.value)"
-                                                oninvalid="this.setCustomValidity('Please select main category')"
-                                                required>
-                                            <option value="" disabled selected>Select Main Category</option>
-                                            @if($mainCats != null)
-                                                @foreach($mainCats as $mainCat)
-                                                    <option value="{{$mainCat->idmain_category}}">{{$mainCat->category}}</option>
-                                                @endforeach
-                                            @endif
-
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-group col-md-3">
-                                <label for="subCat" class="control-label">{{ __('Sub Category') }}</label>
-                                <div>
-                                    <div class="input-group">
-                                        <div class="input-group-append">
-                                            <span class="input-group-text"><em class="mdi mdi-dice-2"></em></span>
-                                        </div>
-                                        <select id="subCat" name="subCat" class="form-control"
-                                                onchange="setCustomValidity('');subCategoryChanged()"
-                                                oninvalid="this.setCustomValidity('Please select sub category')"
-                                                required>
-                                            <option value="" disabled selected>Select Sub Category</option>
-
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
                             <div class="form-group col-md-6">
                                 <label for="newCat">{{ __('New Category') }}</label>
                                 <div>
@@ -74,20 +34,18 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="form-group  col-md-2">
+                            <div  style="margin-top: 27px;" class="form-group  col-md-2">
                                 <button type="submit"
                                         class="btn btn-primary btn-block ">{{ __('Save Category') }}</button>
                             </div>
-                            <div class="form-group  col-md-2">
+                            <div style="margin-top: 27px;" class="form-group  col-md-2">
                                 <button type="submit" onclick="clearAll();event.preventDefault();"
                                         class="btn btn-danger btn-block ">{{ __('Cancel') }}</button>
                             </div>
                         </div>
                         <hr/>
 
-                        <h6 class="text-secondary">Existing Categories</h6>
+                        <h6 class="text-secondary">Recently Added</h6>
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="table-rep-plugin">
@@ -126,6 +84,7 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
+            getExistingCategories();
         });
 
         function clearAll() {
@@ -134,58 +93,13 @@
             $('select').val('').trigger('change');
         }
 
-        function mainCategoryChanged(id) {
-            if(id) {
-                $('.notify').empty();
-                $('.alert').hide();
-                $('.alert').html("");
-                $.ajax({
-                    url: '{{route('getSubCatByMain')}}',
-                    type: 'POST',
-                    data: {id: id},
-                    success: function (data) {
-                        if (data.errors != null) {
-                            $('#errorAlert').show();
-                            $.each(data.errors, function (key, value) {
-                                $('#errorAlert').append('<p>' + value + '</p>');
-                            });
-                            $('html, body').animate({
-                                scrollTop: $("body").offset().top
-                            }, 1000);
-                        }
-                        if (data.success != null) {
-
-                            let array = data.success;
-                            $('#subCat').html("<option value=''>Select Sub Category</option>");
-                            $('#categoryTBody').html('');
-                            $.each(array, function (index, value) {
-                                $('#subCat').append(new Option(value.categroy, value.idsub_category));
-                            });
-                        }
-                    }
-                });
-            }
-        }
-
-        function subCategoryChanged() {
-            id = $('#subCat').val();
+        function getExistingCategories() {
             $.ajax({
-                url: '{{route('getCatBySub')}}',
+                url: '{{route('loadCategoryRecent')}}',
                 type: 'POST',
-                data: {id:id},
                 success: function (data) {
-                    if (data.errors != null) {
-                        $('#errorAlert').show();
-                        $.each(data.errors, function (key, value) {
-                            $('#errorAlert').append('<p>' + value + '</p>');
-                        });
-                        $('html, body').animate({
-                            scrollTop: $("body").offset().top
-                        }, 1000);
-                    }
-                    if (data.success != null) {
-
-                        let array = data.success;
+                    if (data != null) {
+                        let array = data;
                         $('#categoryTBody').html('');
                         let tbody = "";
                         $.each(array, function (index, value) {
@@ -193,11 +107,15 @@
                             $('#categoryTBody').html(tbody);
                         });
                     }
+                    else{
+                        $('#categoryTBody').html("<tr><td class='text-center'>No category added yet.</td></tr>");
+                    }
                 }
 
 
             });
         }
+
 
         $("#form1").on("submit", function (event) {
             event.preventDefault();
@@ -246,7 +164,7 @@
                                 message: 'Category details saved successfully.'
                             });
                             $('#newCat').val('');
-                            subCategoryChanged();
+                            getExistingCategories();
                         }
                     }
 

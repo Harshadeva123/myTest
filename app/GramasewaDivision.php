@@ -21,4 +21,7 @@ class GramasewaDivision extends Model
     public function officeGramasewa(){
         return $this->hasMany(StaffGramasewaDivision::class,'idgramasewa_division');
     }
+    public function member(){
+        return $this->hasMany(Member::class,'idgramasewa_division');
+    }
 }

@@ -54,7 +54,8 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
         Route::get('add_category', 'CategoryController@index')->name('addCategory');
         Route::get('view_category', 'CategoryController@view')->name('viewCategory');
         Route::post('get_sub_cat_by_main', 'CategoryController@getSubCatByMain')->name('getSubCatByMain');
-        Route::post('get_cat_by_sub', 'CategoryController@getCatBySub')->name('getCatBySub');
+        Route::post('load_category_recent', 'CategoryController@loadRecent')->name('loadCategoryRecent');
+        Route::post('view_categories', 'CategoryController@getCatBySub')->name('viewCategories');
         Route::post('save_category', 'CategoryController@store')->name('saveCategory');
         Route::post('update_category', 'CategoryController@update')->name('updateCategory');
         Route::post('deactivate_category', 'CategoryController@deactivate')->name('deactivateCategory');
@@ -148,6 +149,9 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
         Route::get('report_location_wise', 'ReportController@locationWise')->name('report-locationWise');
         Route::post('report_location_wise', 'ReportController@locationWiseChart')->name('report-locationWise');
 
+        //Generic Reports
+        Route::get('agents_report', 'GenericReportController@agents')->name('report-agents');
+        Route::get('members_report', 'GenericReportController@members')->name('report-members');
 
     });
 

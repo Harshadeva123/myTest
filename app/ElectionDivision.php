@@ -20,4 +20,8 @@ class ElectionDivision extends Model
     public function agents(){
         return $this->hasMany(Agent::class,'idelection_division');
     }
+
+    public function member(){
+        return $this->hasMany(Member::class,'idelection_division');
+    }
 }

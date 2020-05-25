@@ -219,9 +219,7 @@ class UserController extends Controller
             }
             else if($searchCol == 4){
                 $query = $query->where('username', $searchText);
-
             }
-
         }
         if (!empty($startDate) && !empty($endDate)) {
             $startDate = date('Y-m-d', strtotime($request['start']));
@@ -231,11 +229,23 @@ class UserController extends Controller
         }
 
         if(Auth::user()->iduser_role <= 2){
-            $users = $query->where('iduser_role','!=',2)->latest()->paginate(10);
+            $users = $query->where('iduser_role','!=',2)->where(function ($q) use ($request){
+                $q->whereIn('iduser_role',[3,4,5,6])->orWhereHas('member', function ($q)  use ($request) {
+                    $q->whereHas('memberAgents', function ($q)  use ($request) {
+                        $q->where('idoffice', $request['office']);
+                    });
+                });
+            })->latest()->paginate(10);
             $offices = Office::where('status',1)->get();
         }
         else{
-            $users = $query->where('idoffice', intval(Auth::user()->idoffice))->where('iduser_role','!=',2)->latest()->paginate(10);
+            $users = $query->where('idoffice', intval(Auth::user()->idoffice))->where(function ($q){
+                $q->whereIn('iduser_role',[3,4,5,6])->orWhereHas('member', function ($q)  {
+                    $q->whereHas('memberAgents', function ($q)  {
+                        $q->where('idoffice', Auth::user()->idoffice);
+                    });
+                });
+            })->latest()->paginate(10);
             $offices = null;
         }
         $userTitles = UserTitle::where('status', '1')->get();
@@ -454,7 +464,6 @@ class UserController extends Controller
         }
     }
 
-
     public function viewPendingAgents(Request $request){
         $searchCol = $request['searchCol'];
         $searchText = $request['searchText'];
@@ -498,10 +507,10 @@ class UserController extends Controller
 
     public function getById(Request $request){
         if(Auth::user()->iduser_role <= 2){
-            $user =  User::with(['office','officeAdmin','userRole','userTitle','agent.electionDivision','agent.pollingBooth','agent.gramasewaDivision','agent.village'])->find(intval($request['id']));
+            $user =  User::with(['office','officeAdmin','userRole','userTitle','userTitle','agent.electionDivision','agent.pollingBooth','agent.gramasewaDivision','agent.village','agent.religion','agent.ethnicity','agent.career','agent.educationalQualification','agent.natureOfIncome','member.electionDivision','member.pollingBooth','member.gramasewaDivision','member.village','member.religion','member.ethnicity','member.career','member.educationalQualification','member.natureOfIncome'])->find(intval($request['id']));
         }
         else{
-            $user =  User::with(['officeAdmin','userRole','userTitle','agent.electionDivision','agent.pollingBooth','agent.gramasewaDivision','agent.village','agent.religion','agent.ethnicity','agent.career','agent.educationalQualification','agent.natureOfIncome'])->where('idUser',intval($request['id']))->where('idoffice',Auth::user()->idoffice)->first();
+            $user =  User::with(['officeAdmin','userRole','userTitle','agent.electionDivision','agent.pollingBooth','agent.gramasewaDivision','agent.village','agent.religion','agent.ethnicity','agent.career','agent.educationalQualification','agent.natureOfIncome','member.electionDivision','member.pollingBooth','member.gramasewaDivision','member.village','member.religion','member.ethnicity','member.career','member.educationalQualification','member.natureOfIncome'])->where('idUser',intval($request['id']))->where('idoffice',Auth::user()->idoffice)->first();
         }
         if($user != null){
             return response()->json(['success' => $user]);
@@ -532,9 +541,24 @@ class UserController extends Controller
     public function disable(Request $request){
         $user = User::find(intval($request['id']));
         if($user != null){
-            if($user->status == 1){
-                $user->status = 0;
-                $user->save();
+            if($user->iduser_role == 7){
+                $link = $user->member->memberAgents()->where('idoffice',\Illuminate\Support\Facades\Auth::user()->idoffice)->first();
+                if($link != null) {
+                    if ($link->status == 1) {
+                        $link->status = 0;
+                        $link->save();
+                    }
+                }
+                else{
+                    return response()->json(['errors' => ['error'=>'User invalid!']]);
+                }
+
+            }
+            else {
+                if ($user->status == 1) {
+                    $user->status = 0;
+                    $user->save();
+                }
             }
         }
         else{
@@ -566,9 +590,24 @@ class UserController extends Controller
     public function enable(Request $request){
         $user = User::find(intval($request['id']));
         if($user != null){
-            if($user->status == 0){
-                $user->status = 1;
-                $user->save();
+            if($user->iduser_role == 7){
+                $link = $user->member->memberAgents()->where('idoffice',\Illuminate\Support\Facades\Auth::user()->idoffice)->first();
+                if($link != null) {
+                    if ($link->status == 0) {
+                        $link->status = 1;
+                        $link->save();
+                    }
+                }
+                else{
+                    return response()->json(['errors' => ['error'=>'User invalid!']]);
+                }
+
+            }
+            else {
+                if ($user->status == 0) {
+                    $user->status = 1;
+                    $user->save();
+                }
             }
         }
         else{

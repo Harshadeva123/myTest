@@ -67,7 +67,7 @@
                                             <span class="input-group-text">SI</span>
                                         </div>
                                         <input autocomplete="off" type="text" class="form-control"
-                                               oninput="setCustomValidity('')" required
+                                               oninput="setCustomValidity('')"
                                                oninvalid="this.setCustomValidity('Please enter polling booth name')"
                                                placeholder="Enter polling booth name in sinhala" name="pollingBooth_si"
                                                id="pollingBooth_si">
@@ -83,7 +83,7 @@
                                             <span class="input-group-text">TA</span>
                                         </div>
                                         <input autocomplete="off" type="text" class="form-control"
-                                               oninput="setCustomValidity('')" required
+                                               oninput="setCustomValidity('')"
                                                oninvalid="this.setCustomValidity('Please enter polling booth name')"
                                                placeholder="Enter polling booth name in tamil" name="pollingBooth_ta"
                                                id="pollingBooth_ta">
@@ -273,6 +273,8 @@
             $('input').not(".noClear").val('');
             $(":checkbox").attr('checked', false).trigger('change');
             $('select').not(".noClear").val('').trigger('change');
+            $('#updateModal').modal('hide');
+
         }
 
         function showTableData() {

@@ -417,5 +417,10 @@
                 }
             });
         });
+
+        $('.modal').on('hidden.bs.modal', function () {
+            $('select').val('').trigger('change') ;
+        });
+
     </script>
 @endsection

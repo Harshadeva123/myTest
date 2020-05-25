@@ -16,4 +16,7 @@ class Religion extends Model
     public function taskReligion(){
         return $this->belongsTo(TaskReligion::class,'idreligion');
     }
+    public function member(){
+        return $this->hasMany(Member::class,'idreligion');
+    }
 }

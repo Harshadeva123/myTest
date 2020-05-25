@@ -16,4 +16,8 @@ class Ethnicity extends Model
     public function taskEthnicity(){
         return $this->hasMany(TaskEthnicity::class,'idethnicity');
     }
+
+    public function member(){
+        return $this->hasMany(Member::class,'idethnicity');
+    }
 }

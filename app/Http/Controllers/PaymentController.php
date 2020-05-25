@@ -139,7 +139,7 @@ class PaymentController extends Controller
             $query = $query->where('idoffice', $office);
         }
 
-        $payableOffices = $query->where('status', 1)->where('payment_date','<=',date('Y-m-d'))->where('monthly_payment','>',0)->latest()->get();
+        $payableOffices = $query->where('status', 1)->where('payment_date','<=',date('Y-m-d'))->where('monthly_payment','>',0)->latest()->paginate(10);
 
         $payableOffices->each(function ($item, $key) use($payableOffices){
             $lastPayment = $this->getLastPaymentByOffice($item->idoffice);

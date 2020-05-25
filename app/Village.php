@@ -15,4 +15,7 @@ class Village extends Model
     public function agents(){
         return $this->hasMany(Agent::class,'idvillage');
     }
+    public function member(){
+        return $this->hasMany(Member::class,'idvillage');
+    }
 }

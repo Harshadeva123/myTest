@@ -22,27 +22,6 @@
                                                id="category"
                                                name="category">
                                     </div>
-                                    <div class="form-group col-md-3">
-                                        <label for="mainCat">By Main Category</label>
-
-                                        <select class="form-control select2" name="mainCat"
-                                                onchange="mainCategoryChanged(this.value,'subCat')"
-                                                id="mainCat">
-                                            <option value="" disabled selected>Select main category
-                                            </option>
-                                            @if($mainCategories != null)
-                                                @foreach($mainCategories as $mainCategory)
-                                                    <option value="{{$mainCategory->idmain_category}}">{{$mainCategory->category}}</option>
-                                                @endforeach
-                                            @endif
-                                        </select>
-                                    </div>
-                                    <div class="form-group col-md-3">
-                                        <label for="subCat" class="control-label">{{ __('Sub Category') }}</label>
-                                        <select id="subCat" name="subCat" class="form-control">
-                                            <option value="" disabled selected>Select Sub Category</option>
-                                        </select>
-                                    </div>
 
                                     <div class="form-group col-md-4">
                                         <label>By Created Date</label>
@@ -76,8 +55,6 @@
                                                 <thead>
                                                 <tr>
                                                     <th>CATEGORY</th>
-                                                    <th>SUB CATEGORY</th>
-                                                    <th>MAIN CATEGORY</th>
                                                     <th>STATUS</th>
                                                     <th>CREATED AT</th>
                                                     <th>OPTION</th>
@@ -87,10 +64,8 @@
                                                 @if(isset($categories))
                                                     @if(count($categories) > 0)
                                                         @foreach($categories as $category)
-                                                            <tr data-sub="{{$category->idsub_category}}" data-main="{{$category->subCategory->idmain_category}}" id="{{$category->idcategory}}">
+                                                            <tr  id="{{$category->idcategory}}">
                                                                 <td>{{strtoupper($category->category)}} </td>
-                                                                <td>{{strtoupper($category->subCategory->categroy)}} </td>
-                                                                <td>{{strtoupper($category->subCategory->mainCategory->category)}} </td>
                                                                 @if($category->status)
                                                                     <td nowrap><p><em  class="mdi mdi-checkbox-blank-circle text-success "></em> ACTIVE</p></td>
                                                                 @else
@@ -181,47 +156,6 @@
                         </div>
                     <div class="row">
 
-                        <div class="form-group col-md-6">
-                            <label for="mainCatU" class="control-label">{{ __('Main Category') }}</label>
-                            <div>
-                                <div class="input-group">
-                                    <div class="input-group-append">
-                                        <span class="input-group-text"><em class="mdi mdi-dice-1"></em></span>
-                                    </div>
-                                    <select id="mainCatU" name="mainCatU" class="form-control"
-                                            onchange="setCustomValidity('');mainCategoryChanged(this.value,'subCatU')"
-                                            oninvalid="this.setCustomValidity('Please select main category')"
-                                            required>
-                                        <option value="" disabled selected>Select Main Category</option>
-                                        @if($mainCats != null)
-                                            @foreach($mainCats as $mainCat)
-                                                <option value="{{$mainCat->idmain_category}}">{{$mainCat->category}}</option>
-                                            @endforeach
-                                        @endif
-
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <input type="hidden" class="noClear" id="updateId" name="updateId">
-                        <div class="form-group col-md-6">
-                            <label for="subCatU" class="control-label">{{ __('Sub Category') }}</label>
-                            <div>
-                                <div class="input-group">
-                                    <div class="input-group-append">
-                                        <span class="input-group-text"><em class="mdi mdi-dice-2"></em></span>
-                                    </div>
-                                    <select id="subCatU" name="subCat" class="form-control"
-                                            onchange="setCustomValidity('')"
-                                            oninvalid="this.setCustomValidity('Please select sub category')"
-                                            required>
-                                        <option value="" disabled selected>Select Sub Category</option>
-
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
                         <div class="form-group col-md-12">
                             <label for="newCatU">{{ __('New Category') }}</label>
                             <div>
@@ -274,37 +208,7 @@
             $('#updateModal').modal('show');
         }
 
-        function mainCategoryChanged(id, el) {
-            if (id) {
-                $('.notify').empty();
-                $('.alert').hide();
-                $('.alert').html("");
-                $.ajax({
-                    url: '{{route('getSubCatByMain')}}',
-                    type: 'POST',
-                    data: {id: id},
-                    success: function (data) {
-                        if (data.errors != null) {
-                            $('#errorAlertU').show();
-                            $.each(data.errors, function (key, value) {
-                                $('#errorAlertU').append('<p>' + value + '</p>');
-                            });
-                            $('html, body').animate({
-                                scrollTop: $("body").offset().top
-                            }, 1000);
-                        }
-                        if (data.success != null) {
 
-                            let array = data.success;
-                            $('#' + el).html("<option value=''>Select Sub Category</option>");
-                            $.each(array, function (index, value) {
-                                $('#' + el).append(new Option(value.categroy, value.idsub_category));
-                            });
-                        }
-                    }
-                });
-            }
-        }
 
         $("#form1").on("submit", function (event) {
             event.preventDefault();

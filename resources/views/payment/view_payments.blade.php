@@ -43,7 +43,7 @@
                                     <div class="form-group col-md-2">
                                         <button type="submit"
                                                 class="btn form-control text-white btn-info waves-effect waves-light"
-                                                style="margin-top: 21px;">Search
+                                                style="margin-top: 28px;">Search
                                         </button>
                                     </div>
 
@@ -63,9 +63,9 @@
                                                     <th style="text-align: right;">MONTHLY PAYMENT</th>
                                                     <th style="text-align: right;">DISCOUNT</th>
                                                     <th style="text-align: right;">PAYMENT AMOUNT</th>
-                                                    <th>PAYMENT DATE</th>
+                                                    <th>MONTH</th>
                                                     <th>CREATED AT</th>
-                                                    <th>OPTION</th>
+                                                    {{--<th>OPTION</th>--}}
                                                 </tr>
                                                 </thead>
                                                 <tbody>
@@ -77,27 +77,27 @@
                                                                 <td style="text-align: right;">{{number_format($payment->office->total_payment,2)}} </td>
                                                                 <td style="text-align: right;">{{number_format($payment->discount,2)}} </td>
                                                                 <td style="text-align: right;">{{number_format($payment->payment,2)}} </td>
-                                                                <td>{{$payment->paid_date}}</td>
+                                                                <td>{{date('M-Y', strtotime($payment->for_month))}}</td>
                                                                 <td>{{$payment->created_at}}</td>
-                                                                <td>
-                                                                    <div class="dropdown">
-                                                                        <button class="btn btn-secondary btn-sm dropdown-toggle"
-                                                                                type="button" id="dropdownMenuButton"
-                                                                                data-toggle="dropdown"
-                                                                                aria-haspopup="true"
-                                                                                aria-expanded="false">
-                                                                            Option
-                                                                        </button>
+                                                                {{--<td>--}}
+                                                                    {{--<div class="dropdown">--}}
+                                                                        {{--<button class="btn btn-secondary btn-sm dropdown-toggle"--}}
+                                                                                {{--type="button" id="dropdownMenuButton"--}}
+                                                                                {{--data-toggle="dropdown"--}}
+                                                                                {{--aria-haspopup="true"--}}
+                                                                                {{--aria-expanded="false">--}}
+                                                                            {{--Option--}}
+                                                                        {{--</button>--}}
 
-                                                                        <div class="dropdown-menu"
-                                                                             aria-labelledby="dropdownMenuButton">
-                                                                            <a href="#" class="dropdown-item">Edit
-                                                                            </a>
-                                                                        </div>
+                                                                        {{--<div class="dropdown-menu"--}}
+                                                                             {{--aria-labelledby="dropdownMenuButton">--}}
+                                                                            {{--<a href="#" class="dropdown-item">Edit--}}
+                                                                            {{--</a>--}}
+                                                                        {{--</div>--}}
 
 
-                                                                    </div>
-                                                                </td>
+                                                                    {{--</div>--}}
+                                                                {{--</td>--}}
                                                             </tr>
 
                                                         @endforeach

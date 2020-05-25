@@ -125,10 +125,44 @@
                                                                     <td>{{strtoupper($user->office->office_name)}}</td>
                                                                 @endif
                                                                 <td>{{$user->userRole->role}}</td>
-                                                                @if($user->status)
-                                                                    <td nowrap><p><em  class="mdi mdi-checkbox-blank-circle text-success "></em> ENABLED</p></td>
+                                                                @if($user->iduser_role != 7)
+                                                                    @if($user->status == 1)
+                                                                        <td nowrap><p><em
+                                                                                        class="mdi mdi-checkbox-blank-circle text-success "></em>
+                                                                                ACTIVATED</p></td>
+                                                                    @elseif($user->status == 2)
+                                                                        <td nowrap><p><em
+                                                                                        class="mdi mdi-checkbox-blank-circle text-warning "></em>
+                                                                                PENDING</p></td>
+                                                                    @elseif($user->status == 0)
+                                                                        <td nowrap><p><em
+                                                                                        class="mdi mdi-checkbox-blank-circle text-danger "></em>
+                                                                                DEACTIVATED</p></td>
+                                                                    @else
+                                                                        <td nowrap><em
+                                                                                    class="mdi mdi-checkbox-blank-circle text-black"></em>
+                                                                            UNKNOWN
+                                                                        </td>
+                                                                    @endif
                                                                 @else
-                                                                    <td nowrap><em class="mdi mdi-checkbox-blank-circle text-danger"></em> DISABLED</td>
+                                                                    @if($user->member->memberAgents()->where('idoffice',\Illuminate\Support\Facades\Auth::user()->idoffice)->first()->status == 1)
+                                                                        <td nowrap><p><em
+                                                                                        class="mdi mdi-checkbox-blank-circle text-success "></em>
+                                                                                ACTIVATED</p></td>
+                                                                    @elseif($user->member->memberAgents()->where('idoffice',\Illuminate\Support\Facades\Auth::user()->idoffice)->first()->status == 2)
+                                                                        <td nowrap><p><em
+                                                                                        class="mdi mdi-checkbox-blank-circle text-warning "></em>
+                                                                                PENDING</p></td>
+                                                                    @elseif($user->member->memberAgents()->where('idoffice',\Illuminate\Support\Facades\Auth::user()->idoffice)->first()->status == 0)
+                                                                        <td nowrap><p><em
+                                                                                        class="mdi mdi-checkbox-blank-circle text-danger "></em>
+                                                                                DEACTIVATED</p></td>
+                                                                    @else
+                                                                        <td nowrap><em
+                                                                                    class="mdi mdi-checkbox-blank-circle text-black"></em>
+                                                                            UNKNOWN
+                                                                        </td>
+                                                                    @endif
                                                                 @endif
                                                                 @if($user->gender == 0)
                                                                     <td>MALE</td>
@@ -174,20 +208,37 @@
                                                                             </a>
                                                                             @if( \Illuminate\Support\Facades\Auth::user()->iduser_role <= 3)
                                                                                 {{--<a href="#"--}}
-                                                                                   {{--onclick="disableUser({{$user->idUser}})"--}}
-                                                                                   {{--class="dropdown-item">Disable--}}
+                                                                                {{--onclick="disableUser({{$user->idUser}})"--}}
+                                                                                {{--class="dropdown-item">Disable--}}
                                                                                 {{--</a>--}}
-                                                                                    @if($user->status == 1)
-                                                                                        <a href="#"
-                                                                                           onclick="disableUser({{$user->idUser}})"
-                                                                                           class="dropdown-item">Disable
-                                                                                        </a>
-                                                                                    @else
-                                                                                        <a href="#"
-                                                                                           onclick="enableUser({{$user->idUser}})"
-                                                                                           class="dropdown-item">Enable
-                                                                                        </a>
-                                                                                    @endif
+                                                                                @if($user->iduser_role == 7)
+                                                                                        @if($user->member->memberAgents()->where('idoffice',\Illuminate\Support\Facades\Auth::user()->idoffice)->first()->status == 1)
+                                                                                            <a href="#"
+                                                                                               onclick="disableUser({{$user->idUser}})"
+                                                                                               class="dropdown-item">Disable
+                                                                                            </a>
+                                                                                        @elseif($user->member->memberAgents()->where('idoffice',\Illuminate\Support\Facades\Auth::user()->idoffice)->first()->status == 0)
+                                                                                            <a href="#"
+                                                                                               onclick="enableUser({{$user->idUser}})"
+                                                                                               class="dropdown-item">Enable
+                                                                                            </a>
+                                                                                        @else
+                                                                                        @endif
+                                                                                @else
+                                                                                        @if($user->status == 1)
+                                                                                            <a href="#"
+                                                                                               onclick="disableUser({{$user->idUser}})"
+                                                                                               class="dropdown-item">Disable
+                                                                                            </a>
+                                                                                        @elseif($user->status == 0)
+                                                                                            <a href="#"
+                                                                                               onclick="enableUser({{$user->idUser}})"
+                                                                                               class="dropdown-item">Enable
+                                                                                            </a>
+                                                                                        @else
+                                                                                        @endif
+                                                                                @endif
+
                                                                             @endif
 
 
@@ -567,6 +618,7 @@
                 type: 'POST',
                 data: {id: id},
                 success: function (data) {
+                    console.log(data);
                     if (data.errors != null) {
                         $('#errorAlert').show();
                         $.each(data.errors, function (key, value) {
@@ -577,7 +629,6 @@
                         }, 1000);
                     }
                     if (data.success != null) {
-                        console.log(data.success);
                         @if(\Illuminate\Support\Facades\Auth::user()->iduser_role <= 2)
                             $('#officeV').val(data.success.office.office_name);
                         @endif
@@ -610,7 +661,7 @@
                             }
                             else {
 
-                                $('#referralV').val(data.success.agent.refferal_code);
+                                $('#referralV').val(data.success.agent.referral_code);
                             }
                         }
                         else {
@@ -636,6 +687,11 @@
                                 $('#incomeV').val(data.success.member.nature_of_income != null ? data.success.member.nature_of_income.name_en : '');
                                 $('#religionV').val(data.success.member.religion != null ? data.success.member.religion.name_en : '');
                                 $('#ethnicityV').val(data.success.member.ethnicity != null ? data.success.member.ethnicity.name_en : '');
+                                $('#electionDivisionV').val(data.success.member.election_division.name_en);
+                                $('#pollingBoothV').val(data.success.member.polling_booth.name_en);
+                                $('#gramasewaDivisionV').val(data.success.member.gramasewa_division.name_en);
+                                $('#villageV').val(data.success.member.village != null ? data.success.member.village.name_en : '');
+
                             }
                         }
                         else {

@@ -66,7 +66,7 @@
                                             <span class="input-group-text">SI</span>
                                         </div>
                                         <input autocomplete="off" type="text" class="form-control"
-                                               oninput="setCustomValidity('')" required
+                                               oninput="setCustomValidity('')"
                                                oninvalid="this.setCustomValidity('Please enter gramasewa division name')"
                                                placeholder="Enter gramasewa division name in sinhala" name="gramasewaDivision_si"
                                                id="gramasewaDivision_si">
@@ -82,7 +82,7 @@
                                             <span class="input-group-text">TA</span>
                                         </div>
                                         <input autocomplete="off" type="text" class="form-control"
-                                               oninput="setCustomValidity('')" required
+                                               oninput="setCustomValidity('')"
                                                oninvalid="this.setCustomValidity('Please enter gramasewa division name')"
                                                placeholder="Enter gramasewa division name in tamil" name="gramasewaDivision_ta"
                                                id="gramasewaDivision_ta">
@@ -270,11 +270,11 @@
             $('input').not(".noClear").val('');
             $(":checkbox").attr('checked', false).trigger('change');
             $('select').not(".noClear").val('').trigger('change');
+            $('#updateModal').modal('hide');
+
         }
 
         function showTableData() {
-
-
             $.ajax({
                 url: '{{route('getGramasewaDivisionByAuth')}}',
                 type: 'POST',

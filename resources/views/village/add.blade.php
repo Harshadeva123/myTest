@@ -66,7 +66,7 @@
                                             <span class="input-group-text">SI</span>
                                         </div>
                                         <input autocomplete="off" type="text" class="form-control"
-                                               oninput="setCustomValidity('')" required
+                                               oninput="setCustomValidity('')"
                                                oninvalid="this.setCustomValidity('Please enter village name')"
                                                placeholder="Enter village name in sinhala" name="village_si"
                                                id="village_si">
@@ -82,7 +82,7 @@
                                             <span class="input-group-text">TA</span>
                                         </div>
                                         <input autocomplete="off" type="text" class="form-control"
-                                               oninput="setCustomValidity('')" required
+                                               oninput="setCustomValidity('')"
                                                oninvalid="this.setCustomValidity('Please enter village name')"
                                                placeholder="Enter village name in tamil" name="village_ta"
                                                id="village_ta">
@@ -269,6 +269,8 @@
             $('input').not(".noClear").val('');
             $(":checkbox").attr('checked', false).trigger('change');
             $('select').not(".noClear").val('').trigger('change');
+            $('#updateModal').modal('hide');
+
         }
 
         function showTableData() {

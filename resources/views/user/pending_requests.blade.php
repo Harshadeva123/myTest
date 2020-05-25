@@ -564,84 +564,56 @@
             //initialize alert and variables end
 
             $.ajax({
-                url: '{{route('getUserById')}}',
-                type: 'POST',
-                data: {id: id},
-                success: function (data) {
-                    if (data.errors != null) {
-                        $('#errorAlert').show();
-                        $.each(data.errors, function (key, value) {
-                            $('#errorAlert').append('<p>' + value + '</p>');
-                        });
-                        $('html, body').animate({
-                            scrollTop: $("body").offset().top
-                        }, 1000);
-                    }
-                    if (data.success != null) {
-                        console.log(data.success);
-                        @if(\Illuminate\Support\Facades\Auth::user()->iduser_role <= 2)
-                            $('#officeV').val(data.success.office.office_name);
-                        @endif
-                        $('.onlyAppLevel').hide();
-
-                        $('#userTitleV').val(data.success.user_title.name_en);
-                        $('#firstNameV').val(data.success.fName);
-                        $('#lastNameV').val(data.success.lName);
-                        $('#usernameV').val(data.success.username);
-                        $("input:radio[value=" + data.success.gender + "]").prop('checked', true);
-
-                        $('#userRoleV').val(data.success.user_role.role);
-                        if (data.success.iduser_role == 4) {
-                            $('.hideManagement').hide();
+                    url: '{{route('getUserById')}}',
+                    type: 'POST',
+                    data: {id: id},
+                    success: function (data) {
+                        if (data.errors != null) {
+                            $('#errorAlert').show();
+                            $.each(data.errors, function (key, value) {
+                                $('#errorAlert').append('<p>' + value + '</p>');
+                            });
+                            $('html, body').animate({
+                                scrollTop: $("body").offset().top
+                            }, 1000);
                         }
-                        else {
+                        if (data.success != null) {
+                            console.log(data.success);
+                            @if(\Illuminate\Support\Facades\Auth::user()->iduser_role <= 2)
+                                $('#officeV').val(data.success.office.office_name);
+                            @endif
                             $('.hideManagement').show();
-
+                            $('.hierarchy').show();
+                            $('.onlyAppLevel').show();
+                            $('#userTitleV').val(data.success.user_title.name_en);
+                            $('#firstNameV').val(data.success.fName);
+                            $('#lastNameV').val(data.success.lName);
+                            $('#usernameV').val(data.success.username);
+                            $("input:radio[value=" + data.success.gender + "]").prop('checked', true);
+                            $('#userRoleV').val(data.success.user_role.role);
                             $('#nicV').val(data.success.nic);
                             $('#emailV').val(data.success.email);
                             $('#phoneV').val(data.success.contact_no1);
                             $('#addressV').val(data.success.address);
                             $('#dobV').val(data.success.bday);
-
+                            $('#referralV').val(data.success.agent.referral_code);
+                            $('#electionDivisionV').val(data.success.agent.election_division.name_en);
+                            $('#pollingBoothV').val(data.success.agent.polling_booth.name_en);
+                            $('#gramasewaDivisionV').val(data.success.agent.gramasewa_division.name_en);
+                            $('#villageV').val(data.success.agent.village != null ? data.success.agent.village.name_en : '');
+                            $('#careerV').val(data.success.agent.career != null ? data.success.agent.career.name_en : '');
+                            $('#educationV').val(data.success.agent.educational_qualification != null ? data.success.agent.educational_qualification.name_en : '');
+                            $('#incomeV').val(data.success.agent.nature_of_income != null ? data.success.agent.nature_of_income.name_en : '');
+                            $('#religionV').val(data.success.agent.religion != null ? data.success.agent.religion.name_en : '');
+                            $('#ethnicityV').val(data.success.agent.ethnicity != null ? data.success.agent.ethnicity.name_en : '');
+                            $('#viewModal').modal('show');
                         }
-                        if (data.success.iduser_role == 3 || data.success.iduser_role == 6) {
-                            $('.toggleOfficeAdmin').show();
-                            if (data.success.iduser_role == 3) {
-                                $('#referralV').val(data.success.office_admin.referral_code);
-                            }
-                            else {
-
-                                $('#referralV').val(data.success.agent.refferal_code);
-                            }
-                        }
-                        else {
-                            $('.toggleOfficeAdmin').hide();
-                        }
-                        if (data.success.iduser_role == 6 || data.success.iduser_role == 7) {
-                            $('.hierarchy').show();
-                            $('.onlyAppLevel').show();
-                            if (data.success.iduser_role == 6) {
-                                $('#electionDivisionV').val(data.success.agent.election_division.name_en);
-                                $('#pollingBoothV').val(data.success.agent.polling_booth.name_en);
-                                $('#gramasewaDivisionV').val(data.success.agent.gramasewa_division.name_en);
-                                $('#villageV').val(data.success.agent.village != null ? data.success.agent.village.name_en : '');
-                                $('#careerV').val(data.success.agent.career != null ? data.success.agent.career.name_en : '');
-                                $('#educationV').val(data.success.agent.educational_qualification != null ? data.success.agent.educational_qualification.name_en : '');
-                                $('#incomeV').val(data.success.agent.nature_of_income != null ? data.success.agent.nature_of_income.name_en : '');
-                                $('#religionV').val(data.success.agent.religion != null ? data.success.agent.religion.name_en : '');
-                                $('#ethnicityV').val(data.success.agent.ethnicity != null ? data.success.agent.ethnicity.name_en : '');
-                            }
-                        }
-                        else {
-                            $('.hierarchy').hide();
-                        }
-
-                        $('#viewModal').modal('show');
                     }
+
+
                 }
-
-
-            });
+            )
+            ;
 
 
         }

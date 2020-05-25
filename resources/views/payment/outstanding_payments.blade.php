@@ -51,7 +51,7 @@
                                                     <th style="text-align: right;">MONTHLY PAYMENT</th>
                                                     <th>LAST PAID MONTH</th>
                                                     <th style="text-align: right;">TOTAL OUTSTANDING</th>
-                                                    <th>OPTION</th>
+                                                    {{--<th>OPTION</th>--}}
                                                 </tr>
                                                 </thead>
                                                 <tbody>
@@ -63,25 +63,25 @@
                                                                 <td style="text-align: right;">{{number_format($office->monthly_payment,2)}} </td>
                                                                 <td>{{$office->last_payment_date}}</td>
                                                                 <td style="text-align: right;">{{number_format($office->outstanding_total,2)}}</td>
-                                                                <td>
-                                                                    <div class="dropdown">
-                                                                        <button class="btn btn-secondary btn-sm dropdown-toggle"
-                                                                                type="button" id="dropdownMenuButton"
-                                                                                data-toggle="dropdown"
-                                                                                aria-haspopup="true"
-                                                                                aria-expanded="false">
-                                                                            Option
-                                                                        </button>
+                                                                {{--<td>--}}
+                                                                    {{--<div class="dropdown">--}}
+                                                                        {{--<button class="btn btn-secondary btn-sm dropdown-toggle"--}}
+                                                                                {{--type="button" id="dropdownMenuButton"--}}
+                                                                                {{--data-toggle="dropdown"--}}
+                                                                                {{--aria-haspopup="true"--}}
+                                                                                {{--aria-expanded="false">--}}
+                                                                            {{--Option--}}
+                                                                        {{--</button>--}}
 
-                                                                        <div class="dropdown-menu"
-                                                                             aria-labelledby="dropdownMenuButton">
-                                                                            <a href="#" class="dropdown-item">Edit
-                                                                            </a>
-                                                                        </div>
+                                                                        {{--<div class="dropdown-menu"--}}
+                                                                             {{--aria-labelledby="dropdownMenuButton">--}}
+                                                                            {{--<a href="#" class="dropdown-item">Edit--}}
+                                                                            {{--</a>--}}
+                                                                        {{--</div>--}}
 
 
-                                                                    </div>
-                                                                </td>
+                                                                    {{--</div>--}}
+                                                                {{--</td>--}}
                                                             </tr>
 
                                                         @endforeach
@@ -100,9 +100,9 @@
                                     </div>
                                 </div>
                             </div>
-                            {{--@if(isset($outstandingOffices))--}}
-                                {{--{{$outstandingOffices->links()}}--}}
-                            {{--@endif--}}
+                            @if(isset($outstandingOffices))
+                                {{$outstandingOffices->links()}}
+                            @endif
                         </div>
                     </div>
                 </div>

@@ -314,24 +314,24 @@
                                                                 <td>{{$user->nic}}</td>
                                                                 <td>{{$user->email}}</td>
                                                                 <td>{{$user->contact_no1}}</td>
-                                                                <td>{{$user->agent->electionDivision->name_en}}</td>
-                                                                <td>{{$user->agent->pollingBooth->name_en}}</td>
-                                                                <td>{{$user->agent->gramasewaDivision->name_en}}</td>
-                                                                <td>{{$user->agent->village->name_en}}</td>
-                                                                <td>{{$user->agent->ethnicity->name_en}}</td>
-                                                                <td>{{$user->agent->religion->name_en}}</td>
-                                                                <td>{{$user->agent->educationalQualification->name_en}}</td>
-                                                                <td>{{$user->agent->natureOfIncome->name_en}}</td>
-                                                                <td>{{$user->agent->career->name_en}}</td>
-                                                                @if($user->agent->is_government == 1)
+                                                                <td>{{$user->member->electionDivision->name_en}}</td>
+                                                                <td>{{$user->member->pollingBooth->name_en}}</td>
+                                                                <td>{{$user->member->gramasewaDivision->name_en}}</td>
+                                                                <td>{{$user->member->village->name_en}}</td>
+                                                                <td>{{$user->member->ethnicity->name_en}}</td>
+                                                                <td>{{$user->member->religion->name_en}}</td>
+                                                                <td>{{$user->member->educationalQualification->name_en}}</td>
+                                                                <td>{{$user->member->natureOfIncome->name_en}}</td>
+                                                                <td>{{$user->member->career->name_en}}</td>
+                                                                @if($user->member->is_government == 1)
                                                                     <td>GOVERNMENT</td>
-                                                                @elseif ($user->agent->is_government == 2)
+                                                                @elseif ($user->member->is_government == 2)
                                                                     <td>PRIVATE</td>
                                                                 @else
                                                                     <td>FEMALE</td>
                                                                 @endif
-                                                                <td>{{$user->agent->referral_code}}</td>
-                                                                <td>{{$user->agent->numberOfMembers()}}</td>
+                                                                <td>{{$user->member->referral_code}}</td>
+                                                                <td>{{$user->member->numberOfMembers()}}</td>
                                                             </tr>
 
                                                         @endforeach
@@ -431,6 +431,14 @@
             "                                            <option class=\"bg-secondary  text-white\" value=\"all\">All rows</option>\n" +
             " </select>");
 
+        let rows = getUrlParameter('rows');
+        if (!rows) {
+            $('#rowsCount').val(10);
+        }
+        else {
+            $('#rowsCount').val(rows);
+
+        }
 
         function rowsChange(el) {
             let rows = el.value;

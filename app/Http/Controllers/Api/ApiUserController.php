@@ -9,6 +9,7 @@ use App\ElectionDivision;
 use App\Ethnicity;
 use App\GramasewaDivision;
 use App\Member;
+use App\MemberAgent;
 use App\NatureOfIncome;
 use App\Office;
 use App\OfficeAdmin;
@@ -213,10 +214,12 @@ class ApiUserController extends Controller
             $agent->idcareer = $request['career'];
             $agent->referral_code = $this->generateReferral($user->idUser);
             $agent->is_government = $request['isGovernment'];
-            $agent->status = 3;// value for pending user
+            $agent->status = 2;// value for pending user
             $agent->save();
 
         } else if ($user->iduser_role == 7) {
+
+            $referralAgent = Agent::where('referral_code',$request['referral_code'])->first();
 
             $member = new Member();
             $member->idUser = $user->idUser;
@@ -230,9 +233,17 @@ class ApiUserController extends Controller
             $member->ideducational_qualification = $request['educationalQualification'];
             $member->idnature_of_income = $request['natureOfIncome'];
             $member->idcareer = $request['career'];
+            $member->current_agent = $referralAgent->idagent;
             $member->is_government = $request['isGovernment'];
-            $member->status = 3;// value for pending user
+            $member->status = 1;// always 1 for member . only change member_agent table status
             $member->save();
+
+            $memberAgent = new MemberAgent();
+            $memberAgent->idmember = $user->idmember;
+            $memberAgent->idagent = $referralAgent->idagent;
+            $memberAgent->idoffice = $referralAgent->idoffice;
+            $memberAgent->status   = 2; //pending member
+            $memberAgent->save();
 
         }
 //        save in selected user role table end
@@ -440,7 +451,7 @@ class ApiUserController extends Controller
         $careers = $this->filterLanguage($careers, $lang, $fallBack,'idcareer');
 
         $ethnicities = Ethnicity::where('status', 1)->select(['idethnicity', $lang, 'name_en'])->get();
-        $ethnicities = $this->filterLanguage($ethnicities, $lang, $fallBack,'ethnicity');
+        $ethnicities = $this->filterLanguage($ethnicities, $lang, $fallBack,'idethnicity');
 
         $religions = Religion::where('status', 1)->select(['idreligion', $lang, 'name_en'])->get();
         $religions = $this->filterLanguage($religions, $lang, $fallBack,'idreligion');
