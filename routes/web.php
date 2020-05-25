@@ -152,6 +152,8 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
         //Generic Reports
         Route::get('agents_report', 'GenericReportController@agents')->name('report-agents');
         Route::get('members_report', 'GenericReportController@members')->name('report-members');
+        Route::get('age_report', 'GenericReportController@age')->name('report-age');
+        Route::post('age_report', 'GenericReportController@ageChart')->name('report-age');
 
     });
 

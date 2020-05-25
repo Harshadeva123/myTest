@@ -26,11 +26,11 @@
                                     <h6 data-toggle="collapse"
                                         href="#multiCollapseExample1" aria-expanded="false"
                                         aria-controls="multiCollapseExample1"><em class="fa fa-search"></em> Search
-                                        Agents</h6>
+                                        Members</h6>
 
                                 </div>
                             </div>
-                            <form action="{{route('report-agents')}}" id="form1" method="GET">
+                            <form action="{{route('report-members')}}" id="form1" method="GET">
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="alert alert-danger alert-dismissible " id="errorAlert"
@@ -51,7 +51,6 @@
                                                     <option value="2">LAST NAME</option>
                                                     <option value="3">NIC NO</option>
                                                     <option value="4">EMAIL</option>
-                                                    <option value="5">REFERRAL</option>
                                                 </select>
                                             </div>
                                             <input class="form-control " type="text" min="0"
@@ -246,8 +245,8 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div class="table-rep-plugin">
-                                        <div class="table-responsive b-0" data-pattern="priority-columns">
+                                    <div class="table-rep-plugin ">
+                                        <div class="table-responsive b-0 table-container" data-pattern="priority-columns">
                                             <table id="table" class="table table-striped table-bordered"
                                                    cellspacing="0"
                                                    width="100%">
@@ -270,8 +269,6 @@
                                                     <th>INCOME</th>
                                                     <th>CAREER</th>
                                                     <th>JOB SECTOR</th>
-                                                    <th>REFERRAL CODE</th>
-                                                    <th>#OF MEMBERS</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
@@ -330,14 +327,12 @@
                                                                 @else
                                                                     <td>FEMALE</td>
                                                                 @endif
-                                                                <td>{{$user->member->referral_code}}</td>
-                                                                <td>{{$user->member->numberOfMembers()}}</td>
                                                             </tr>
 
                                                         @endforeach
                                                     @else
                                                         <tr>
-                                                            <td colspan="10"
+                                                            <td colspan="25"
                                                                 style="text-align: center;font-weight: 500">Sorry No
                                                                 Results Found.
                                                             </td>
@@ -405,19 +400,19 @@
             buttons: [
                 {
                     extend: 'print',
-                    title: 'Agents Report',
+                    title: 'Members Report',
                 },
                 {
                     extend: 'excelHtml5',
                     autoFilter: true,
-                    sheetName: 'Agents Report',
-                    filename: 'Agents Report',
+                    sheetName: 'Members Report',
+                    filename: 'Members Report',
                 },
                 {
                     extend: 'pdfHtml5',
                     orientation: 'landscape',
                     pageSize: 'LEGAL',
-                    filename: 'Agents Report',
+                    filename: 'Members Report',
                     title: 'Agent Report',
                 },
             ]
@@ -431,14 +426,6 @@
             "                                            <option class=\"bg-secondary  text-white\" value=\"all\">All rows</option>\n" +
             " </select>");
 
-        let rows = getUrlParameter('rows');
-        if (!rows) {
-            $('#rowsCount').val(10);
-        }
-        else {
-            $('#rowsCount').val(rows);
-
-        }
 
         function rowsChange(el) {
             let rows = el.value;

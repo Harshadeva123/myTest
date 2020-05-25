@@ -54,18 +54,15 @@ class GenericReportController extends Controller
             $query = $query->whereHas('agent', function ($q) use ($request) {
                 $q->where('idvillage', $request['vilage']);
             });
-        }
-        else if ($request['gramasewaDivision'] != null) {
+        } else if ($request['gramasewaDivision'] != null) {
             $query = $query->whereHas('agent', function ($q) use ($request) {
                 $q->where('idgramasewa_division', $request['gramasewaDivision']);
             });
-        }
-        else if ($request['pollingBooth'] != null) {
+        } else if ($request['pollingBooth'] != null) {
             $query = $query->whereHas('agent', function ($q) use ($request) {
                 $q->where('idpolling_booth', $request['pollingBooth']);
             });
-        }
-        else if ($request['electionDivision'] != null) {
+        } else if ($request['electionDivision'] != null) {
             $query = $query->whereHas('agent', function ($q) use ($request) {
                 $q->where('idelection_division', $request['electionDivision']);
             });
@@ -148,6 +145,14 @@ class GenericReportController extends Controller
 
         $query = $query->where('idoffice', Auth::user()->idoffice)->where('iduser_role', 7);
 
+        $query = $query->where(function ($q) {
+            $q->whereHas('member', function ($q) {
+                $q->whereHas('memberAgents', function ($q) {
+                    $q->where('idoffice', Auth::user()->idoffice);
+                });
+            });
+        });
+
         if ($request['gender'] != null) {
             $query = $query->where('gender', $request['gender']);
         }
@@ -159,7 +164,6 @@ class GenericReportController extends Controller
                 $query = $query->where('lName', 'like', '%' . $request['searchText'] . '%');
             } else if ($request['searchCol'] == 3) {
                 $query = $query->where('nic', $request['searchText']);
-
             } else if ($request['searchCol'] == 4) {
                 $query = $query->where('email', 'like', '%' . $request['searchText'] . '%');
             }
@@ -168,18 +172,15 @@ class GenericReportController extends Controller
             $query = $query->whereHas('member', function ($q) use ($request) {
                 $q->where('idvillage', $request['vilage']);
             });
-        }
-        else if ($request['gramasewaDivision'] != null) {
+        } else if ($request['gramasewaDivision'] != null) {
             $query = $query->whereHas('member', function ($q) use ($request) {
                 $q->where('idgramasewa_division', $request['gramasewaDivision']);
             });
-        }
-        else if ($request['pollingBooth'] != null) {
+        } else if ($request['pollingBooth'] != null) {
             $query = $query->whereHas('member', function ($q) use ($request) {
                 $q->where('idpolling_booth', $request['pollingBooth']);
             });
-        }
-        else if ($request['electionDivision'] != null) {
+        } else if ($request['electionDivision'] != null) {
             $query = $query->whereHas('member', function ($q) use ($request) {
                 $q->where('idelection_division', $request['electionDivision']);
             });
@@ -247,4 +248,98 @@ class GenericReportController extends Controller
 
     }
 
+    public function age(Request $request)
+    {
+        $electionDivisions = ElectionDivision::where('iddistrict',Auth::user()->office->iddistrict)->where('status',1)->get();
+        return view('generic_reports.age')->with(['electionDivisions'=>$electionDivisions,'title' => 'Report : Age']);
+    }
+
+    public function ageChart(Request $request)
+    {
+        $value = $request['age'] != null ? $request['age'] : 30;
+        $agentMin = 0;
+        $agentMax = 0;
+        $agentEqual = 0;
+        $memberMin = 0;
+        $memberMax = 0;
+        $memberEqual = 0;
+        $query = User::query();
+        if($request['electionDivision'] != null){
+            $query = $query->whereHas('agent', function ($q) use ($request){
+                        $q->where('idelection_division', $request['electionDivision']);
+                });
+        }
+        if($request['pollingBooth'] != null){
+            $query = $query->whereHas('agent', function ($q) use ($request){
+                $q->where('idpolling_booth', $request['pollingBooth']);
+            });
+        }
+        if($request['gramasewaDivision'] != null){
+            $query = $query->whereHas('agent', function ($q) use ($request){
+                $q->where('idgramasewa_division', $request['gramasewaDivision']);
+            });
+        }
+        if($request['village'] != null){
+            $query = $query->whereHas('agent', function ($q) use ($request){
+                $q->where('idvillage', $request['village']);
+            });
+        }
+        $agents = $query->where('idoffice', Auth::user()->idoffice)->where('iduser_role', 6)->where('status', 1)->get();
+        if($agents != null) {
+            foreach ($agents as $agent) {
+                if ($agent->age < $value) {
+                    $agentMin += 1;
+                } elseif ($agent->age == $value) {
+                    $agentEqual += 1;
+                } else {
+                    $agentMax += 1;
+                }
+            }
+        }
+        $agentCount = count($agents);
+
+        $query1 = User::query();
+        if($request['electionDivision'] != null){
+            $query1 = $query1->whereHas('member', function ($q) use ($request){
+                $q->where('idelection_division', $request['electionDivision']);
+            });
+        }
+        if($request['pollingBooth'] != null){
+            $query1 = $query1->whereHas('member', function ($q) use ($request){
+                $q->where('idpolling_booth', $request['pollingBooth']);
+            });
+        }
+        if($request['gramasewaDivision'] != null){
+            $query1 = $query1->whereHas('member', function ($q) use ($request){
+                $q->where('idgramasewa_division', $request['gramasewaDivision']);
+            });
+        }
+        if($request['village'] != null){
+            $query1 = $query1->whereHas('member', function ($q) use ($request){
+                $q->where('idvillage', $request['village']);
+            });
+        }
+
+        $members = $query1->where('iduser_role', 7)->whereHas('member', function ($q) {
+            $q->whereHas('memberAgents', function ($q) {
+                $q->where('idoffice', Auth::user()->idoffice)->where('status', 1);
+            });
+        })->get();
+
+        if($members != null) {
+            foreach ($members as $member) {
+                if ($member->age < $value) {
+                    $memberMin += 1;
+                } elseif ($member->age == $value) {
+                    $memberEqual += 1;
+                } else {
+                    $memberMax += 1;
+                }
+            }
+        }
+        $membersCount = count($members);
+
+        return response()->json(['success' => ['agent_count'=>$agentCount,'member_count'=>$membersCount,'member_equal'=>intval($memberEqual),'agent_equal'=>intval($agentEqual),'agent_min' => intval($agentMin), 'agent_max' => intval($agentMax), 'member_min' => intval($memberMin), 'member_max' => intval($memberMax)]]);
+
+    }
 }

@@ -337,7 +337,7 @@
                                                         @endforeach
                                                     @else
                                                         <tr>
-                                                            <td colspan="10"
+                                                            <td colspan="25"
                                                                 style="text-align: center;font-weight: 500">Sorry No
                                                                 Results Found.
                                                             </td>

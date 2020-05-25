@@ -105,7 +105,6 @@
     <!--Morris Chart-->
     <script src="{{ URL::asset('assets/plugins/morris/morris.min.js')}}"></script>
     <script src="{{ URL::asset('assets/plugins/raphael/raphael-min.js')}}"></script>
-    <script src="{{ URL::asset('assets/pages/dashborad.js')}}"></script>
 
     <script language="JavaScript" type="text/javascript">
         $(document).ready(function () {

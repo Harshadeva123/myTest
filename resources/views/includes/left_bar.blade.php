@@ -154,6 +154,7 @@
                         <ul class="list-unstyled">
                             <li><a href="{{route('report-agents')}}">{{ __('Agents Report') }}</a></li>
                             <li><a href="{{route('report-members')}}">{{ __('Member Report') }}</a></li>
+                            <li><a href="{{route('report-age')}}">{{ __('Age Report') }}</a></li>
                         </ul>
                     </li>
                     @endif
