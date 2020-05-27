@@ -322,7 +322,7 @@
 
                         </div>
                         <hr/>
-                        <input type="hidden" name="updateId" id="updateId">
+                        <input type="hidden" class="noClear" name="updateId" id="updateId">
                         <div class="row">
                             <div class="form-group col-md-3">
                                 <button type="submit"
@@ -353,6 +353,7 @@
         });
 
         function showUpdateModal(id) {
+            $('.alert').html('').hide();
             $('#updateId').val(id);
             $.ajax({
                 url: '{{route('getOfficeById')}}',

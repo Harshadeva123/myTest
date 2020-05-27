@@ -565,25 +565,6 @@ class UserController extends Controller
             return response()->json(['errors' => ['error'=>'User invalid!']]);
         }
 
-        if($user->iduser_role == 3){
-            $office = Office::find(intval($user->idoffice));
-            if ($office != null) {
-                $office->status = 0;
-                $office->save();
-
-                $office->users()->each(function ($item, $key) {
-                    if($item->status == 1){
-                        $item->status = 0;
-                        $item->save();
-                    }
-                });
-                return response()->json(['success' => 'Office enabled!']);
-            } else {
-                return response()->json(['errors' => ['error'=>'Office invalid!']]);
-
-            }
-
-        }
         return response()->json(['success' => 'disabled']);
     }
 
@@ -614,25 +595,6 @@ class UserController extends Controller
             return response()->json(['errors' => ['error'=>'User invalid!']]);
         }
 
-        if($user->iduser_role == 3){
-            $office = Office::find(intval($user->idoffice));
-            if ($office != null) {
-                $office->status = 1;
-                $office->save();
-
-                $office->users()->each(function ($item, $key) {
-                    if($item->status == 0){
-                        $item->status = 1;
-                        $item->save();
-                    }
-                });
-                return response()->json(['success' => 'Office enabled!']);
-            } else {
-                return response()->json(['errors' => ['error'=>'Office invalid!']]);
-
-            }
-
-        }
         return response()->json(['success' => 'enabled']);
     }
 }

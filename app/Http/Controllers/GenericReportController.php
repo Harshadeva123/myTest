@@ -248,7 +248,7 @@ class GenericReportController extends Controller
 
     }
 
-    public function age(Request $request)
+    public function age()
     {
         $electionDivisions = ElectionDivision::where('iddistrict',Auth::user()->office->iddistrict)->where('status',1)->get();
         return view('generic_reports.age')->with(['electionDivisions'=>$electionDivisions,'title' => 'Report : Age']);
@@ -340,6 +340,361 @@ class GenericReportController extends Controller
         $membersCount = count($members);
 
         return response()->json(['success' => ['agent_count'=>$agentCount,'member_count'=>$membersCount,'member_equal'=>intval($memberEqual),'agent_equal'=>intval($agentEqual),'agent_min' => intval($agentMin), 'agent_max' => intval($agentMax), 'member_min' => intval($memberMin), 'member_max' => intval($memberMax)]]);
+
+    }
+
+    public function education()
+    {
+        $electionDivisions = ElectionDivision::where('iddistrict',Auth::user()->office->iddistrict)->where('status',1)->get();
+        return view('generic_reports.education')->with(['electionDivisions'=>$electionDivisions,'title' => 'Report : Education Qualifications']);
+    }
+
+    public function educationChart(Request $request)
+    {
+
+        $query = User::query();
+        if($request['electionDivision'] != null){
+            $query = $query->whereHas('agent', function ($q) use ($request){
+                $q->where('idelection_division', $request['electionDivision']);
+            });
+        }
+        if($request['pollingBooth'] != null){
+            $query = $query->whereHas('agent', function ($q) use ($request){
+                $q->where('idpolling_booth', $request['pollingBooth']);
+            });
+        }
+        if($request['gramasewaDivision'] != null){
+            $query = $query->whereHas('agent', function ($q) use ($request){
+                $q->where('idgramasewa_division', $request['gramasewaDivision']);
+            });
+        }
+        if($request['village'] != null){
+            $query = $query->whereHas('agent', function ($q) use ($request){
+                $q->where('idvillage', $request['village']);
+            });
+        }
+        $agents = $query->with(['agent.educationalQualification'])->where('idoffice', Auth::user()->idoffice)->where('iduser_role', 6)->where('status', 1)->get();
+
+        $agentsGroup = $agents->groupBy(['agent.ideducational_qualification']);
+        $agentCount = count($agents);
+
+        $query1 = User::query();
+        if($request['electionDivision'] != null){
+            $query1 = $query1->whereHas('member', function ($q) use ($request){
+                $q->where('idelection_division', $request['electionDivision']);
+            });
+        }
+        if($request['pollingBooth'] != null){
+            $query1 = $query1->whereHas('member', function ($q) use ($request){
+                $q->where('idpolling_booth', $request['pollingBooth']);
+            });
+        }
+        if($request['gramasewaDivision'] != null){
+            $query1 = $query1->whereHas('member', function ($q) use ($request){
+                $q->where('idgramasewa_division', $request['gramasewaDivision']);
+            });
+        }
+        if($request['village'] != null){
+            $query1 = $query1->whereHas('member', function ($q) use ($request){
+                $q->where('idvillage', $request['village']);
+            });
+        }
+
+        $members = $query1->with(['member.educationalQualification'])->where('iduser_role', 7)->whereHas('member', function ($q) {
+            $q->whereHas('memberAgents', function ($q) {
+                $q->where('idoffice', Auth::user()->idoffice)->where('status', 1);
+            });
+        })->get();
+
+        $membersGroups = $members->groupBy(['member.ideducational_qualification']);
+
+        $membersCount = count($members);
+
+        return response()->json(['success' => ['agents'=>$agentsGroup,'members'=>$membersGroups,'agent_count'=>$agentCount,'member_count'=>$membersCount]]);
+
+    }
+
+    public function income()
+    {
+        $electionDivisions = ElectionDivision::where('iddistrict',Auth::user()->office->iddistrict)->where('status',1)->get();
+        return view('generic_reports.income')->with(['electionDivisions'=>$electionDivisions,'title' => 'Report : Nature of Income']);
+    }
+
+    public function incomeChart(Request $request)
+    {
+
+        $query = User::query();
+        if($request['electionDivision'] != null){
+            $query = $query->whereHas('agent', function ($q) use ($request){
+                $q->where('idelection_division', $request['electionDivision']);
+            });
+        }
+        if($request['pollingBooth'] != null){
+            $query = $query->whereHas('agent', function ($q) use ($request){
+                $q->where('idpolling_booth', $request['pollingBooth']);
+            });
+        }
+        if($request['gramasewaDivision'] != null){
+            $query = $query->whereHas('agent', function ($q) use ($request){
+                $q->where('idgramasewa_division', $request['gramasewaDivision']);
+            });
+        }
+        if($request['village'] != null){
+            $query = $query->whereHas('agent', function ($q) use ($request){
+                $q->where('idvillage', $request['village']);
+            });
+        }
+        $agents = $query->with(['agent.natureOfIncome'])->where('idoffice', Auth::user()->idoffice)->where('iduser_role', 6)->where('status', 1)->get();
+
+        $agentsGroup = $agents->groupBy(['agent.idnature_of_income']);
+        $agentCount = count($agents);
+
+        $query1 = User::query();
+        if($request['electionDivision'] != null){
+            $query1 = $query1->whereHas('member', function ($q) use ($request){
+                $q->where('idelection_division', $request['electionDivision']);
+            });
+        }
+        if($request['pollingBooth'] != null){
+            $query1 = $query1->whereHas('member', function ($q) use ($request){
+                $q->where('idpolling_booth', $request['pollingBooth']);
+            });
+        }
+        if($request['gramasewaDivision'] != null){
+            $query1 = $query1->whereHas('member', function ($q) use ($request){
+                $q->where('idgramasewa_division', $request['gramasewaDivision']);
+            });
+        }
+        if($request['village'] != null){
+            $query1 = $query1->whereHas('member', function ($q) use ($request){
+                $q->where('idvillage', $request['village']);
+            });
+        }
+
+        $members = $query1->with(['member.natureOfIncome'])->where('iduser_role', 7)->whereHas('member', function ($q) {
+            $q->whereHas('memberAgents', function ($q) {
+                $q->where('idoffice', Auth::user()->idoffice)->where('status', 1);
+            });
+        })->get();
+
+        $membersGroups = $members->groupBy(['member.idnature_of_income']);
+
+        $membersCount = count($members);
+
+        return response()->json(['success' => ['agents'=>$agentsGroup,'members'=>$membersGroups,'agent_count'=>$agentCount,'member_count'=>$membersCount]]);
+
+    }
+
+    public function career()
+    {
+        $electionDivisions = ElectionDivision::where('iddistrict',Auth::user()->office->iddistrict)->where('status',1)->get();
+        return view('generic_reports.career')->with(['electionDivisions'=>$electionDivisions,'title' => 'Report : Career Type']);
+    }
+
+    public function careerChart(Request $request)
+    {
+
+        $query = User::query();
+        if($request['electionDivision'] != null){
+            $query = $query->whereHas('agent', function ($q) use ($request){
+                $q->where('idelection_division', $request['electionDivision']);
+            });
+        }
+        if($request['pollingBooth'] != null){
+            $query = $query->whereHas('agent', function ($q) use ($request){
+                $q->where('idpolling_booth', $request['pollingBooth']);
+            });
+        }
+        if($request['gramasewaDivision'] != null){
+            $query = $query->whereHas('agent', function ($q) use ($request){
+                $q->where('idgramasewa_division', $request['gramasewaDivision']);
+            });
+        }
+        if($request['village'] != null){
+            $query = $query->whereHas('agent', function ($q) use ($request){
+                $q->where('idvillage', $request['village']);
+            });
+        }
+        $agents = $query->with(['agent.career'])->where('idoffice', Auth::user()->idoffice)->where('iduser_role', 6)->where('status', 1)->get();
+
+        $agentsGroup = $agents->groupBy(['agent.idcareer']);
+        $agentCount = count($agents);
+
+        $query1 = User::query();
+        if($request['electionDivision'] != null){
+            $query1 = $query1->whereHas('member', function ($q) use ($request){
+                $q->where('idelection_division', $request['electionDivision']);
+            });
+        }
+        if($request['pollingBooth'] != null){
+            $query1 = $query1->whereHas('member', function ($q) use ($request){
+                $q->where('idpolling_booth', $request['pollingBooth']);
+            });
+        }
+        if($request['gramasewaDivision'] != null){
+            $query1 = $query1->whereHas('member', function ($q) use ($request){
+                $q->where('idgramasewa_division', $request['gramasewaDivision']);
+            });
+        }
+        if($request['village'] != null){
+            $query1 = $query1->whereHas('member', function ($q) use ($request){
+                $q->where('idvillage', $request['village']);
+            });
+        }
+
+        $members = $query1->with(['member.career'])->where('iduser_role', 7)->whereHas('member', function ($q) {
+            $q->whereHas('memberAgents', function ($q) {
+                $q->where('idoffice', Auth::user()->idoffice)->where('status', 1);
+            });
+        })->get();
+
+        $membersGroups = $members->groupBy(['member.idcareer']);
+
+        $membersCount = count($members);
+
+        return response()->json(['success' => ['agents'=>$agentsGroup,'members'=>$membersGroups,'agent_count'=>$agentCount,'member_count'=>$membersCount]]);
+
+    }
+
+    public function religion()
+    {
+        $electionDivisions = ElectionDivision::where('iddistrict',Auth::user()->office->iddistrict)->where('status',1)->get();
+        return view('generic_reports.religion')->with(['electionDivisions'=>$electionDivisions,'title' => 'Report : Religion']);
+    }
+
+    public function religionChart(Request $request)
+    {
+
+        $query = User::query();
+        if($request['electionDivision'] != null){
+            $query = $query->whereHas('agent', function ($q) use ($request){
+                $q->where('idelection_division', $request['electionDivision']);
+            });
+        }
+        if($request['pollingBooth'] != null){
+            $query = $query->whereHas('agent', function ($q) use ($request){
+                $q->where('idpolling_booth', $request['pollingBooth']);
+            });
+        }
+        if($request['gramasewaDivision'] != null){
+            $query = $query->whereHas('agent', function ($q) use ($request){
+                $q->where('idgramasewa_division', $request['gramasewaDivision']);
+            });
+        }
+        if($request['village'] != null){
+            $query = $query->whereHas('agent', function ($q) use ($request){
+                $q->where('idvillage', $request['village']);
+            });
+        }
+        $agents = $query->with(['agent.religion'])->where('idoffice', Auth::user()->idoffice)->where('iduser_role', 6)->where('status', 1)->get();
+
+        $agentsGroup = $agents->groupBy(['agent.idreligion']);
+        $agentCount = count($agents);
+
+        $query1 = User::query();
+        if($request['electionDivision'] != null){
+            $query1 = $query1->whereHas('member', function ($q) use ($request){
+                $q->where('idelection_division', $request['electionDivision']);
+            });
+        }
+        if($request['pollingBooth'] != null){
+            $query1 = $query1->whereHas('member', function ($q) use ($request){
+                $q->where('idpolling_booth', $request['pollingBooth']);
+            });
+        }
+        if($request['gramasewaDivision'] != null){
+            $query1 = $query1->whereHas('member', function ($q) use ($request){
+                $q->where('idgramasewa_division', $request['gramasewaDivision']);
+            });
+        }
+        if($request['village'] != null){
+            $query1 = $query1->whereHas('member', function ($q) use ($request){
+                $q->where('idvillage', $request['village']);
+            });
+        }
+
+        $members = $query1->with(['member.religion'])->where('iduser_role', 7)->whereHas('member', function ($q) {
+            $q->whereHas('memberAgents', function ($q) {
+                $q->where('idoffice', Auth::user()->idoffice)->where('status', 1);
+            });
+        })->get();
+
+        $membersGroups = $members->groupBy(['member.idreligion']);
+
+        $membersCount = count($members);
+
+        return response()->json(['success' => ['agents'=>$agentsGroup,'members'=>$membersGroups,'agent_count'=>$agentCount,'member_count'=>$membersCount]]);
+
+    }
+
+    public function ethnicity()
+    {
+        $electionDivisions = ElectionDivision::where('iddistrict',Auth::user()->office->iddistrict)->where('status',1)->get();
+        return view('generic_reports.ethnicity')->with(['electionDivisions'=>$electionDivisions,'title' => 'Report : Ethnicity']);
+    }
+
+    public function ethnicityChart(Request $request)
+    {
+
+        $query = User::query();
+        if($request['electionDivision'] != null){
+            $query = $query->whereHas('agent', function ($q) use ($request){
+                $q->where('idelection_division', $request['electionDivision']);
+            });
+        }
+        if($request['pollingBooth'] != null){
+            $query = $query->whereHas('agent', function ($q) use ($request){
+                $q->where('idpolling_booth', $request['pollingBooth']);
+            });
+        }
+        if($request['gramasewaDivision'] != null){
+            $query = $query->whereHas('agent', function ($q) use ($request){
+                $q->where('idgramasewa_division', $request['gramasewaDivision']);
+            });
+        }
+        if($request['village'] != null){
+            $query = $query->whereHas('agent', function ($q) use ($request){
+                $q->where('idvillage', $request['village']);
+            });
+        }
+        $agents = $query->with(['agent.ethnicity'])->where('idoffice', Auth::user()->idoffice)->where('iduser_role', 6)->where('status', 1)->get();
+
+        $agentsGroup = $agents->groupBy(['agent.idethnicity']);
+        $agentCount = count($agents);
+
+        $query1 = User::query();
+        if($request['electionDivision'] != null){
+            $query1 = $query1->whereHas('member', function ($q) use ($request){
+                $q->where('idelection_division', $request['electionDivision']);
+            });
+        }
+        if($request['pollingBooth'] != null){
+            $query1 = $query1->whereHas('member', function ($q) use ($request){
+                $q->where('idpolling_booth', $request['pollingBooth']);
+            });
+        }
+        if($request['gramasewaDivision'] != null){
+            $query1 = $query1->whereHas('member', function ($q) use ($request){
+                $q->where('idgramasewa_division', $request['gramasewaDivision']);
+            });
+        }
+        if($request['village'] != null){
+            $query1 = $query1->whereHas('member', function ($q) use ($request){
+                $q->where('idvillage', $request['village']);
+            });
+        }
+
+        $members = $query1->with(['member.ethnicity'])->where('iduser_role', 7)->whereHas('member', function ($q) {
+            $q->whereHas('memberAgents', function ($q) {
+                $q->where('idoffice', Auth::user()->idoffice)->where('status', 1);
+            });
+        })->get();
+
+        $membersGroups = $members->groupBy(['member.idethnicity']);
+
+        $membersCount = count($members);
+
+        return response()->json(['success' => ['agents'=>$agentsGroup,'members'=>$membersGroups,'agent_count'=>$agentCount,'member_count'=>$membersCount]]);
 
     }
 }

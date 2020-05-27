@@ -64,6 +64,11 @@ class Post extends Model
         return  $last == null ? 1 : $last->post_no + 1;
     }
 
+
+    public function getCommentsCountAttribute() {
+        return  $this->responses()->count();
+    }
+
     //Location relationships
 
     public function postVillages(){

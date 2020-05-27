@@ -13,6 +13,18 @@ use Illuminate\Support\Facades\Storage;
 class ApiPostResponseController extends Controller
 {
     public function viewComments(Request $request){
+        $validationMessages = [
+            'post_id.required' => 'Process invalid.Please refresh page and try again!',
+            'post_id.numeric' => 'Process invalid.Please refresh page and try again!',
+        ];
+
+        $validator = \Validator::make($request->all(), [
+            'post_id' => 'required|numeric',
+        ], $validationMessages);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()->first(),'statusCode'=>-99]);
+        }
         $postId = $request['post_id'];
         $post = Post::find($postId);
         if($post != null){

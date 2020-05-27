@@ -23,7 +23,7 @@
         }
 
         .commenterBox{
-            background-color: rgba(58, 80, 96, 0.61);
+            background-color: #3A5060;
             border-radius: 10px;
         }
         .commenterBox.active{

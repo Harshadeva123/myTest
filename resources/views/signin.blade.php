@@ -27,7 +27,7 @@
                         <p class="text-muted text-center">{{ __('Login_text') }}</p>
 
                         @if(\Session::has('error'))
-                            <div class="alert alert-danger alert-dismissible ">
+                            <div style="background-color: #beece7" class="alert alert-danger alert-dismissible ">
                                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -36,7 +36,7 @@
                         @endif
 
                         @if(\Session::has('warning'))
-                            <div class="alert alert-warning alert-dismissible ">
+                            <div style="background-color: #C6E5EC" class="alert alert-warning alert-dismissible ">
                                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>

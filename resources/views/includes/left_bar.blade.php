@@ -155,6 +155,11 @@
                             <li><a href="{{route('report-agents')}}">{{ __('Agents Report') }}</a></li>
                             <li><a href="{{route('report-members')}}">{{ __('Member Report') }}</a></li>
                             <li><a href="{{route('report-age')}}">{{ __('Age Report') }}</a></li>
+                            <li><a href="{{route('report-education')}}">{{ __('Education Report') }}</a></li>
+                            <li><a href="{{route('report-income')}}">{{ __('Income Report') }}</a></li>
+                            <li><a href="{{route('report-career')}}">{{ __('Career Report') }}</a></li>
+                            <li><a href="{{route('report-religion')}}">{{ __('Religion Report') }}</a></li>
+                            <li><a href="{{route('report-ethnicity')}}">{{ __('Ethnicity Report') }}</a></li>
                         </ul>
                     </li>
                     @endif

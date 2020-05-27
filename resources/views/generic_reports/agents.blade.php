@@ -254,6 +254,9 @@
                                                 <thead>
                                                 <tr>
                                                     <th>NAME</th>
+                                                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role <= 2 )
+                                                        <th>OFFICE</th>
+                                                    @endif
                                                     <th>STATUS</th>
                                                     <th>GENDER</th>
                                                     <th>DOB</th>
@@ -279,7 +282,7 @@
                                                     @if(count($users) > 0)
                                                         @foreach($users as $user)
                                                             <tr id="{{$user->idUser}}">
-                                                                <td>{{$user->userTitle->name_en}} {{$user->fName}} {{$user->lName}}</td>
+                                                                <td>{{strtoupper($user->userTitle->name_en)}} {{strtoupper($user->fName)}} {{strtoupper($user->lName)}}</td>
                                                                 @if(\Illuminate\Support\Facades\Auth::user()->iduser_role <= 2 )
                                                                     <td>{{strtoupper($user->office->office_name)}}</td>
                                                                 @endif

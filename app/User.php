@@ -44,6 +44,14 @@ class User extends Authenticatable
     ];
 
 
+    public function isActive(){
+        if($this->iduser_role > 2) {
+            if ($this->status != 1 || $this->office->status != 1) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

@@ -27,7 +27,7 @@ class ApiPostController extends Controller
         }
 
         $user = Auth::user();
-        $posts = Post::with(['apiAttachments'])->where(function ($q) use ($user) {
+        $posts = Post::where(function ($q) use ($user) {
             $q->whereHas('postVillages', function ($q) use ($user) {
                 $q->where('idvillage', $user->getType->idvillage);
             })->orWhereHas('postGramasewaDivision', function ($q) use ($user) {
@@ -67,11 +67,14 @@ class ApiPostController extends Controller
             $q->where('minAge', 0)->orWhere('minAge','<=',$user->age);
         })->where(function ($q) use ($user) {
             $q->where('maxAge', 120)->orWhere('maxAge','>=',$user->age);
-        })->where('expire_date','>',date('Y-m-d'))->select(['idPost','title_en','title_si','title_ta','text_en','text_si','text_ta','post_no'])->paginate(15);
+        })->where('expire_date','>',date('Y-m-d'))->select(['idPost','title_en','title_si','title_ta','text_en','text_si','text_ta','post_no','created_at'])->paginate(15);
 
         foreach ($posts as $post) {
             $post['title'] = $post[$lang] != null ? $post[$lang] : $post[$fallBack];
             $post['text'] = $post[$langText] != null ? $post[$langText] : $post[$fallBackText];
+            $post['id'] = $post['idPost'];
+            $post['commentsCount'] = $post->comments_count;
+            $post['post_no'] = sprintf('%06d',$post['post_no']);
 
             unset($post->title_en);
             unset($post->title_si);
@@ -79,6 +82,7 @@ class ApiPostController extends Controller
             unset($post->text_en);
             unset($post->text_si);
             unset($post->text_ta);
+            unset($post->idPost);
             unset($post->$lang);
         }
         return response()->json(['success' =>$posts,'statusCode'=>0]);
@@ -86,6 +90,22 @@ class ApiPostController extends Controller
     }
 
     public function viewPost(Request $request){
+
+        $validationMessages = [
+            'post_id.required' => 'Process invalid.Please refresh page and try again!',
+            'post_id.numeric' => 'Process invalid.Please refresh page and try again!',
+            'lang.required' => 'Please provide user language!',
+            'lang.in' => 'User language invalid!',
+        ];
+
+        $validator = \Validator::make($request->all(), [
+            'post_id' => 'required|numeric',
+            'lang' => 'required|in:en,si,ta',
+        ], $validationMessages);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()->first(),'statusCode'=>-99]);
+        }
 
         $postId  = $request['post_id'];
         $apiLang = $request['lang'];
@@ -117,15 +137,18 @@ class ApiPostController extends Controller
             $isExist->count +=1;
             $isExist->save();
         }
-        $post =   Post::with(['apiAttachments'])->select(['title_en','title_si','title_ta','text_en','text_si','text_ta','idPost'])->find(intval($postId));
+        $post =   Post::with(['apiAttachments'])->select(['title_en','title_si','title_ta','text_en','text_si','text_ta','idPost','post_no'])->find(intval($postId));
         $post['title'] = $post[$lang] != null ? $post[$lang] : $post[$fallBack];
         $post['text'] = $post[$langText] != null ? $post[$langText] : $post[$fallBackText];
+        $post['post_no'] = sprintf('%06d',$post['post_no']);
+        $post['id'] = $post['idPost'];
         unset($post->title_en);
         unset($post->title_si);
         unset($post->title_ta);
         unset($post->text_en);
         unset($post->text_si);
         unset($post->text_ta);
+        unset($post->idPost);
         unset($post->$lang);
 
         return response()->json(['success' =>$post,'statusCode'=>0]);

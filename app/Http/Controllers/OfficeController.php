@@ -237,14 +237,6 @@ class OfficeController extends Controller
         if ($office != null) {
             $office->status = 0;
             $office->save();
-
-            $office->users()->each(function ($item, $key) {
-                if($item->status == 1){
-                    $item->status = 0;
-                    $item->save();
-                }
-
-            });
             return response()->json(['success' => 'Office disabled!']);
         } else {
             return response()->json(['errors' => ['error'=>'Office invalid!']]);
@@ -255,19 +247,11 @@ class OfficeController extends Controller
 
     public function enable(Request $request)
     {
-
         $id = $request['id'];
         $office = Office::find(intval($id));
         if ($office != null) {
             $office->status = 1;
             $office->save();
-
-            $office->users()->each(function ($item, $key) {
-                if($item->status == 0){
-                    $item->status = 1;
-                    $item->save();
-                }
-            });
             return response()->json(['success' => 'Office enabled!']);
         } else {
             return response()->json(['errors' => ['error'=>'Office invalid!']]);

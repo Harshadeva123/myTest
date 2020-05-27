@@ -5,6 +5,13 @@
         .postContainer {
             border: solid 1px #b9b9b9;
             border-radius: 10px;
+            /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#ebf1f6+0,abd3ee+50,89c3eb+51,d5ebfb+100;Blue+Gloss+%234 */
+            background: #ebf1f6; /* Old browsers */
+            background: -moz-linear-gradient(-45deg,  #ebf1f6 0%, #abd3ee 50%, #89c3eb 51%, #d5ebfb 100%); /* FF3.6-15 */
+            background: -webkit-linear-gradient(-45deg,  #ebf1f6 0%,#abd3ee 50%,#89c3eb 51%,#d5ebfb 100%); /* Chrome10-25,Safari5.1-6 */
+            background: linear-gradient(135deg,  #ebf1f6 0%,#abd3ee 50%,#89c3eb 51%,#d5ebfb 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ebf1f6', endColorstr='#d5ebfb',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+
         }
 
         .postImage {
@@ -38,8 +45,9 @@
                                                                 <div class="col-md-12">
                                                                     <h4>{{$post->title_en}}</h4>
                                                                     <div class="row">
-                                                                        <small class="float-left col-md-3">
-                                                                            {{round($post->getSize() / 1000000,2)}} MB
+
+                                                                        <small title="storage" class="float-left col-md-3">
+                                                                            <em class="fa fa-database text-muted"></em> {{round($post->getSize() / 1000000,2)}} MB
                                                                         </small>
                                                                         <input type="hidden" name="post_no"
                                                                                value="{{$post->post_no}}">
@@ -58,10 +66,10 @@
                                                                                         class="badge badge-secondary">{{$post->responses()->count()}}</span>&nbsp
                                                                             </p>
                                                                         @endif
-                                                                        <small style="text-align: center"  class="float-right col-md-3">
+                                                                        <small title="author" style="text-align: center"  class="float-right col-md-3">
                                                                             - {{$post->user->office->office_name}}
                                                                         </small>
-                                                                        <small style="text-align: right;" class="float-right col-md-3">
+                                                                        <small title="created at" style="text-align: right;" class="float-right col-md-3">
                                                                             {{$post->created_at}}
                                                                         </small>
                                                                     </div>

@@ -19,34 +19,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $mainCats = MainCategory::where('status', '1')->get();
-        $subCats = SubCategory::where('status', '1')->get();
-
-        return view('category.add_category', ['title' =>  __('Add Category'),'subCats'=>$subCats, 'mainCats' => $mainCats]);
-    }
-
-    public function getSubCatByMain(Request $request){
-        $id = $request['id'];
-        $subCats  = SubCategory::where('idmain_category',$id)->where('status',1)->get();
-        if($subCats != null){
-            return response()->json(['success' => $subCats]);
-        }
-        else{
-            return response()->json(['errors' => ['subCat'=>'Sub Categories not found!']]);
-
-        }
-    }
-
-    public function getCatBySub(Request $request){
-        $id = $request['id'];
-        $categories  = Category::where('idsub_category',$id)->where('status',1)->get();
-        if($categories != null){
-            return response()->json(['success' => $categories]);
-        }
-        else{
-            return response()->json(['errors' => ['newCat'=>'Categories not found!']]);
-
-        }
+        return view('category.add_category', ['title' =>  __('Add Category')]);
     }
 
     /**
@@ -77,7 +50,7 @@ class CategoryController extends Controller
 
         //save in category table
         $category = new Category();
-        $category->category = $request['newCat'];
+        $category->category = strtoupper($request['newCat']);
         $category->status = 1;//default value for active categories
         $category->save();
         //save in category table  end
@@ -111,14 +84,11 @@ class CategoryController extends Controller
     public function update(Request $request){
         //validation start
         $validator = \Validator::make($request->all(), [
-            'subCat' => 'required|exists:sub_category,idsub_category',
             'newCat' => 'required|max:255',
             'updateId' => 'required',
 
         ], [
             'updateId.required' => 'Invalid category!',
-            'subCat.required' => 'Sub category should be provided!',
-            'subCat.exists' => 'Sub category invalid!',
             'newCat.required' => 'New category name should be provided!',
             'newCat.max' => 'New category should be less than 255 characters long!',
         ]);
@@ -127,21 +97,18 @@ class CategoryController extends Controller
             return response()->json(['errors' => $validator->errors()->all()]);
         }
 
-        $exist = Category::where('idsub_category',$request['subCat'])->where('idcategory','=!',$request['updateId'])->where('category',$request['newCat'])->first();
+        $exist = Category::where('idcategory','=!',$request['updateId'])->where('category',$request['newCat'])->first();
         if($exist != null){
             return response()->json(['errors' => ['newCat'=>'Categories already exist!']]);
-//
         }
         //validation end
 
 
         //save in category table
         $category = Category::find(intval($request['updateId']));
-        $category->idsub_category = $request['subCat'];
-        $category->category = $request['newCat'];
+        $category->category = strtoupper($request['newCat']);
         $category->save();
         //save in category table  end
-
 
         return response()->json(['success' => 'Category updated Successfully!']);
 

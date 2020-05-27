@@ -31,25 +31,26 @@ class ApiUserController extends Controller
         $validator = \Validator::make($request->all(), [
             'username' => 'required|string',
             'password' => 'required|string',
+            'lang'=>'required'
         ], [
             'username.required' => 'Username should be provided!',
             'username.string' => 'Username must be a string!',
             'password.required' => 'Password should be provided!',
-            'password.string' => 'Password should be a string!'
+            'password.string' => 'Password should be a string!',
+            'lang.required' => 'Please provide user language!'
         ]);
 
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()->first(),'statusCode'=>-99]);
         }
 
-        if (!Auth::attempt($request->all())) {
+        if (!Auth::attempt(['username'=>$request->username,'password'=>$request->password])) {
             return response()->json(['error' => 'Username or Password Incorrect!','statusCode'=>-99]);
         }
 
         $token = Auth::user()->createToken('authToken')->accessToken; //generate access token
-        $name = Auth::user()->fName;
 
-        return response()->json(['success' => ['accessToken' => $token], 'statusCode' => 0]);
+        return response()->json(['success' => ['userRole' => Auth::user()->iduser_role,'accessToken' => $token], 'statusCode' => 0]);
 
     }
 
@@ -239,18 +240,18 @@ class ApiUserController extends Controller
             $member->save();
 
             $memberAgent = new MemberAgent();
-            $memberAgent->idmember = $user->idmember;
+            $memberAgent->idmember = $member->idmember;
             $memberAgent->idagent = $referralAgent->idagent;
-            $memberAgent->idoffice = $referralAgent->idoffice;
+            $memberAgent->idoffice = User::find($referralAgent->idUser)->idoffice;
             $memberAgent->status   = 2; //pending member
             $memberAgent->save();
 
         }
 //        save in selected user role table end
 
-        $token = $user->createToken('authToken')->accessToken; //generate access token
+//        $token = $user->createToken('authToken')->accessToken; //generate access token
 
-        return response()->json(['success' => ['accessToken' => $token],'statusCode'=>0]);
+        return response()->json(['success' =>'User registered successfully!','statusCode'=>0]);
     }
 
 
