@@ -35,6 +35,16 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('view_post', 'Api\ApiPostController@viewPost')->name('viewPost');
 //Post management end
 
+//Agent Switch
+    Route::post('get_agents', 'Api\ApiUserController@getAgents')->name('getAgents');
+//Agent Switch
+
+////Get members by agent
+    Route::post('get_pending_members', 'Api\ApiUserController@getPendingMembers')->name('getPendingMembers');
+    Route::post('get_approved_members', 'Api\ApiUserController@getApprovedMembers')->name('getApprovedMembers');
+    Route::post('approve_member', 'Api\ApiUserController@approveMember')->name('approveMember');
+//Get members by agent end
+
 });
 
 Route::post('get_polling_booths_by_election_division', 'Api\ApiPollingBoothController@getByElectionDivision')->name('getPollingBoothByElectionDivision');

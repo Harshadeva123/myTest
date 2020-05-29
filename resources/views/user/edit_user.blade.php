@@ -379,6 +379,7 @@
 
                                 message: 'User details updated successfully.'
                             });
+                            window.location.replace("{{route('viewUser')}}");
 //                            clearAll();
                         }
                     }

@@ -13,9 +13,11 @@
             <div class="row d-flex justify-content-center">
                 <div  class="col-xl-6 col-lg-6 col-md-12 col-xm-12 col-xs-12">
                     <div class="text-center m-0">
-                        <img  style="border-radius: 20px;" draggable="false" src="{{\Illuminate\Support\Facades\URL::asset('assets/images/resources/login3.jpg')}}" width="100%"
+                        <img  style="border-radius: 20px;" draggable="false" src="{{\Illuminate\Support\Facades\URL::asset('assets/images/resources/deplogo.svg')}}" width="100%"
                                                                      alt="Lock">
                     </div>
+                    <h3 style="color: #127991" class="font-18 m-b-5 text-center">{{ __('Login_title') }}</h3>
+
 
                 </div>
 
@@ -23,7 +25,6 @@
 
 
                     <div class="p-3">
-                        <h4 class="text-muted font-18 m-b-5 text-center">{{ __('Login_title') }}</h4>
                         <p class="text-muted text-center">{{ __('Login_text') }}</p>
 
                         @if(\Session::has('error'))

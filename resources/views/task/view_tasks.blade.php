@@ -78,7 +78,7 @@
                                                     @if(count($tasks) > 0)
                                                         @foreach($tasks as $task)
                                                             <tr id="{{$task->idtask}}">
-                                                                <td>{{strtoupper($task->user->userTitle->name_en)}}{{strtoupper($task->user->fNmae)}} {{strtoupper($task->user->lName)}} </td>
+                                                                <td>{{strtoupper($task->user->userTitle->name_en)}}{{strtoupper($task->user->fName)}} {{strtoupper($task->user->lName)}} </td>
                                                                 <td>{{strtoupper($task->user->agent->village->name_en)}} </td>
                                                                 <td>{{strtoupper($task->target)}} </td>
                                                                 <td>{{strtoupper($task->completed_amount)}} </td>

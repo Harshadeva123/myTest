@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Agent;
+use App\MemberAgent;
 use App\Post;
 use App\PostView;
+use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -27,6 +30,19 @@ class ApiPostController extends Controller
         }
 
         $user = Auth::user();
+        if($user->iduser_role == 7){
+            $agent = Agent::find(intval($request['agent']));
+            if($agent == null){
+                return response()->json(['error' => 'Agent not found!','statusCode'=>-99]);
+            }
+            elseif(MemberAgent::where('idmember',$user->member->idmember)->where('idagent',$agent->idagent)->first() == null || MemberAgent::where('idmember',$user->member->idmember)->where('idagent',$agent->idagent)->first()->status != 1){
+                return response()->json(['error' => 'Agent invalid!','statusCode'=>-99]);
+            }
+            $office = User::find($agent->idUser)->idoffice;
+        }
+        else{
+            $office = $user->idoffice;
+        }
         $posts = Post::where(function ($q) use ($user) {
             $q->whereHas('postVillages', function ($q) use ($user) {
                 $q->where('idvillage', $user->getType->idvillage);
@@ -67,6 +83,8 @@ class ApiPostController extends Controller
             $q->where('minAge', 0)->orWhere('minAge','<=',$user->age);
         })->where(function ($q) use ($user) {
             $q->where('maxAge', 120)->orWhere('maxAge','>=',$user->age);
+        })->where(function ($q) use ($office) {
+            $q->where('idoffice', $office);
         })->where('expire_date','>',date('Y-m-d'))->select(['idPost','title_en','title_si','title_ta','text_en','text_si','text_ta','post_no','created_at'])->paginate(15);
 
         foreach ($posts as $post) {
@@ -86,7 +104,6 @@ class ApiPostController extends Controller
             unset($post->$lang);
         }
         return response()->json(['success' =>$posts,'statusCode'=>0]);
-
     }
 
     public function viewPost(Request $request){
@@ -132,7 +149,8 @@ class ApiPostController extends Controller
         }
         else{
             if(Post::find($postId)->isOnce == 1){
-                return response()->json(['errors' => ['error' => 'Sorry! This post content can only view once!']]);
+                return response()->json(['error' => 'Sorry! This post content can only view once!','statusCode'=>-99]);
+
             }
             $isExist->count +=1;
             $isExist->save();

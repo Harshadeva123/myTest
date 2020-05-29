@@ -11,6 +11,9 @@
 |
 */
 
+//Route::get('/linkstorage', function () {
+//    Artisan::call('storage:link')
+//});
 
 Auth::routes();
 
@@ -165,6 +168,11 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
             Route::post('religion_report', 'GenericReportController@religionChart')->name('report-religion');
             Route::get('ethnicity_report', 'GenericReportController@ethnicity')->name('report-ethnicity');
             Route::post('ethnicity_report', 'GenericReportController@ethnicityChart')->name('report-ethnicity');
+
+            //Attendance management
+            Route::get('create_event', 'EventController@index')->name('create-event');
+            Route::get('view_events', 'EventController@view')->name('view-events');
+            Route::post('save_event', 'EventController@store')->name('save-event');
 
         });
     });

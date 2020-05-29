@@ -451,7 +451,7 @@
                                 },
                                 icon: '<em class="mdi mdi-check-circle-outline"></em>',
 
-                                message: 'Division details saved successfully.'
+                                message: 'Division details updated successfully.'
                             });
                             clearAll();
                             $('#updateModal').modal('hide');

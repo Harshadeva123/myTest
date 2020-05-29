@@ -465,7 +465,7 @@
                                 },
                                 icon: '<em class="mdi mdi-check-circle-outline"></em>',
 
-                                message: 'Polling booth details saved successfully.'
+                                message: 'Polling booth details updated successfully.'
                             });
                             clearAll();
                             $('#updateModal').modal('hide');

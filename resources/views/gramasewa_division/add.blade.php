@@ -460,7 +460,7 @@
                                 },
                                 icon: '<em class="mdi mdi-check-circle-outline"></em>',
 
-                                message: 'Gramasewa division details saved successfully.'
+                                message: 'Gramasewa division details updated successfully.'
                             });
                             clearAll();
                             $('#updateModal').modal('hide');

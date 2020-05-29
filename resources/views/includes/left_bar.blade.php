@@ -16,7 +16,7 @@
         <div class="topbar-left">
             <div class="">
                 {{--<a href="" class="logo"><img src="{{ URL::asset('assets/images/resources/leftBar.jpg')}}" height="45" alt="logo"></a>--}}
-                <a href="" class="logo"><h2>-SYSTEM-</h2></a>
+                <a href="" class="logo text-center"><img width="80%" src="{{ \Illuminate\Support\Facades\URL::asset('assets/images/resources/deplogo.svg')}}"></a>
             </div>
         </div>
         <br/>
@@ -134,6 +134,27 @@
                             <ul class="list-unstyled">
                                 <li><a href="{{route('report-categoryWise')}}">{{ __('Category Wise') }}</a></li>
                                 <li><a href="{{route('report-locationWise')}}">{{ __('Location Wise') }}</a></li>
+                            </ul>
+                        </li>
+                    @endif
+                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role <= 4)
+
+                        <li class="menu-title">{{ __('ATTENDANCE') }}</li>
+                    @endif
+                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role <= 4)
+
+                        <li class="has_sub">
+                            <a href="javascript:void(0);" class="waves-effect">
+                                <i class="dripicons-suitcase"></i>
+                                <span>{{ __('Event') }}
+                                    <span class="pull-right">
+                                       <i class="mdi mdi-chevron-right"></i>
+                                   </span>
+                               </span>
+                            </a>
+                            <ul class="list-unstyled">
+                                <li><a href="{{route('create-event')}}">{{ __('Create Event') }}</a></li>
+                                <li><a href="{{route('view-events')}}">{{ __('View Events') }}</a></li>
                             </ul>
                         </li>
                     @endif

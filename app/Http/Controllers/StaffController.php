@@ -69,9 +69,8 @@ class StaffController extends Controller
 
     public function viewAssignedDivision(Request $request)
     {
-
         $id = User::find(intval($request['id']))->officeStaff->idoffice_staff;
-        $officeGramasewa = StaffGramasewaDivision::with(['gramasewa', 'gramasewa.pollingBooth', 'gramasewa.pollingBooth.electionDivision'])->where('idoffice_staff', $id)->where('status', 1)->select(['idoffice_staff', 'idgramasewa_division'])->get();
+        $officeGramasewa = StaffGramasewaDivision::with(['gramasewa', 'gramasewa.pollingBooth', 'gramasewa.pollingBooth.electionDivision'])->where('idoffice_staff', $id)->where('status', 1)->select(['idoffice_staff', 'idgramasewa_division'])->latest()->get();
         if ($officeGramasewa != null) {
             return response()->json(['success' => $officeGramasewa]);
         } else {

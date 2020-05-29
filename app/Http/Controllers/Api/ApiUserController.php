@@ -546,4 +546,97 @@ class ApiUserController extends Controller
         }
         return $collection;
     }
+
+    public function getAgents(Request $request){
+        if(Auth::user()->iduser_role != 7){
+            return response()->json(['error' => 'You are not a member','statusCode'=>-99]);
+        }
+        $memberAgents = MemberAgent::where('idmember',Auth::user()->member->idmember)->get();
+        foreach ($memberAgents as $memberAgent) {
+            $memberAgent['id'] = Agent::find($memberAgent->idagent)->idUser;
+            $memberAgent['name'] = User::find(Agent::find($memberAgent->idagent)->idUser)->fName.' '.User::find(Agent::find($memberAgent->idagent)->idUser)->lName;
+            $memberAgent['office'] = User::find(Agent::find($memberAgent->idagent)->idUser)->office->office_name;
+            $memberAgent['availability'] = $memberAgent->status;
+            unset($memberAgent->idmember_agent);
+            unset($memberAgent->idmember);
+            unset($memberAgent->idagent);
+            unset($memberAgent->idoffice);
+            unset($memberAgent->status);
+            unset($memberAgent->created_at);
+            unset($memberAgent->updated_at);
+
+        }
+        return response()->json(['success' => $memberAgents,'statusCode'=>0]);
+
+    }
+
+    public function getPendingMembers(){
+        if(Auth::user()->iduser_role != 6){
+            return response()->json(['error' => 'You are not an agent','statusCode'=>-99]);
+        }
+        $memberAgents = MemberAgent::where('idagent',Auth::user()->agent->idagent)->where('status',2)->get();
+        foreach ($memberAgents as $memberAgent) {
+            $memberAgent['id'] = $memberAgent->idmember_agent;
+            $memberAgent['name'] = User::find(Member::find($memberAgent->idmember)->idUser)->fName.' '.User::find(Member::find($memberAgent->idmember)->idUser)->lName;
+            $memberAgent['requested'] = $memberAgent->created_at->format('Y-m-d');
+            unset($memberAgent->idmember_agent);
+            unset($memberAgent->idmember);
+            unset($memberAgent->idagent);
+            unset($memberAgent->idoffice);
+            unset($memberAgent->status);
+            unset($memberAgent->updated_at);
+            unset($memberAgent->created_at);
+
+        }
+        return response()->json(['success' => $memberAgents,'statusCode'=>0]);
+
+    }
+
+    public function getApprovedMembers(){
+        if(Auth::user()->iduser_role != 6){
+            return response()->json(['error' => 'You are not an agent','statusCode'=>-99]);
+        }
+        $memberAgents = MemberAgent::where('idagent',Auth::user()->agent->idagent)->where('status',1)->get();
+        foreach ($memberAgents as $memberAgent) {
+            $memberAgent['id'] = $memberAgent->idmember_agent;
+            $memberAgent['name'] = User::find(Member::find($memberAgent->idmember)->idUser)->fName.' '.User::find(Member::find($memberAgent->idmember)->idUser)->lName;
+            $memberAgent['requested'] = $memberAgent->created_at->format('Y-m-d');
+            unset($memberAgent->idmember_agent);
+            unset($memberAgent->idmember);
+            unset($memberAgent->idagent);
+            unset($memberAgent->idoffice);
+            unset($memberAgent->status);
+            unset($memberAgent->updated_at);
+            unset($memberAgent->created_at);
+
+        }
+        return response()->json(['success' => $memberAgents,'statusCode'=>0]);
+
+    }
+
+    public function approveMember(Request $request){
+        $validationMessages = [
+            'id.required' => 'Record id required!',
+            'id.numeric' => 'Record id invalid!',
+        ];
+
+        $validator = \Validator::make($request->all(), [
+            'id' => 'required|numeric',
+        ], $validationMessages);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()->first(),'statusCode'=>-99]);
+        }
+
+        $memberAgent = MemberAgent::where('idmember_agent',$request['id'])->where('idagent',Auth::user()->agent->idagent)->first();
+        if($memberAgent == null){
+            return response()->json(['error' => 'Record invalid','statusCode'=>-99]);
+        }
+
+        $memberAgent->status = 1;
+        $memberAgent->save();
+
+        return response()->json(['success' => 'Member Approved!','statusCode'=>0]);
+
+    }
 }

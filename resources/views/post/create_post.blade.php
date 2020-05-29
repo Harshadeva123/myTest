@@ -531,7 +531,7 @@
                     <div class="card thirdPage">
                         <div class="card-body">
                             <hr/>
-                            <div class="row">
+                            <div class="row" id="publishBtns">
                                 <div class="col-md-8 .d-sm-none ">
                                 </div>
                                 <div class="col-md-2  p-sm-2">
@@ -544,6 +544,14 @@
                                 <div class="col-md-2  p-sm-2">
                                     <button type="submit" form="form1"
                                             class="btn btn-success btn-block ">{{ __('Publish Post') }}</button>
+                                </div>
+
+                            </div>
+                            <div class="row" style="display: none;" id="uploadingBtn">
+                                <div style="color: #2d8ac7" class="col-md-4 ml-auto p-sm-2">
+                                    <h6><em
+                                                style="color: #2d8ac7"
+                                                class="fa fa-spin fa-spinner"></em> Uploading your files</h6>
                                 </div>
 
                             </div>
@@ -745,6 +753,8 @@
 
         $("#form1").on("submit", function (event) {
             event.preventDefault();
+            $('#publishBtns').hide();
+            $('#uploadingBtn').show();
 
             //initialize alert and variables
             $('.notify').empty();
@@ -769,7 +779,8 @@
                     cache: false,
                     processData: false,
                     success: function (data) {
-                        console.log(data);
+                        $('#publishBtns').show();
+                        $('#uploadingBtn').hide();
                         if (data.errors != null) {
                             $('#errorAlert3').show();
                             $.each(data.errors, function (key, value) {
