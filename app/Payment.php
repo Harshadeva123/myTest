@@ -12,4 +12,8 @@ class Payment extends Model
     public function office(){
         return $this->belongsTo(Office::class,'idoffice');
     }
+
+    public function nextDate(){
+
+    }
 }

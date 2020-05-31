@@ -40,10 +40,9 @@ class CategoryController extends Controller
             return response()->json(['errors' => $validator->errors()->all()]);
         }
 
-        $exist = Category::where('category',$request['category'])->first();
+        $exist = Category::where('category',strtoupper($request['newCat']))->first();
         if($exist != null){
             return response()->json(['errors' => ['newCat'=>'Categories already exist!']]);
-
         }
         //validation end
 

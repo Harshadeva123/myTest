@@ -21,4 +21,13 @@ class PollingBooth extends Model
     public function member(){
         return $this->hasMany(Member::class,'idpolling_booth');
     }
+
+    public function events(){
+        return $this->hasMany(Event::class,'idpolling_booth');
+    }
+
+    public function analysis()
+    {
+        return $this->hasMany(Analysis::class, 'idpolling_booth');
+    }
 }

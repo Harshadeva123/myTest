@@ -205,6 +205,17 @@ class GramasewaDivisionController extends Controller
         return response()->json(['success' => 'Gramasewa divisions confirmed']);
     }
 
+    public function deleteRecord(Request $request){
+        $id  = $request['id'];
+        $record  =  GramasewaDivision::find(intval($id));
+        if($record->status == 2){
+            $record->delete();
+            return response()->json(['success' => 'Record deleted']);
+        }
+        return response()->json(['errors' => ['error'=>'You are not able to delete this record.']]);
+
+    }
+
     /**
      * Remove the specified resource from storage.
      *

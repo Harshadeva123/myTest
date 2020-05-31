@@ -24,4 +24,8 @@ class GramasewaDivision extends Model
     public function member(){
         return $this->hasMany(Member::class,'idgramasewa_division');
     }
+
+    public function events(){
+        return $this->hasMany(Event::class,'idgramasewa_division');
+    }
 }

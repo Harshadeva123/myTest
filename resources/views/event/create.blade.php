@@ -7,10 +7,10 @@
 @section('psContent')
     <div class="page-content-wrapper">
         <div class="container-fluid">
+            <form class="form" id="form1" role="form" >
 
             <div class="card firstPage">
                 <div class="card-body">
-                    <form class="form" id="form1" role="form" >
 
 
                         <div class="row firstPage">
@@ -179,7 +179,6 @@
                                 </div>
                             </div>
                         </div>
-                    </form>
                 </div>
             </div>
             <!-------------------------------------------- FIRST PAGE END ----------------------------------------->
@@ -208,7 +207,8 @@
                                 <select name="electionDivision" id="electionDivision"
                                         class="select2 form-control "
                                         onchange="electionDivisionChanged(this)">
-                                    @if($electionDivisions != null)
+                                    <option selected  value=''>ALL</option>
+                                @if($electionDivisions != null)
                                         @foreach($electionDivisions as $electionDivision)
                                             <option value="{{$electionDivision->idelection_division}}">{{strtoupper($electionDivision->name_en)}}</option>
                                         @endforeach
@@ -222,7 +222,7 @@
                                 <select name="pollingBooth" id="pollingBooth"
                                         class="select2 form-control "
                                         onchange="pollingBoothChanged(this)">
-                                    <option value=''>ALL</option>
+                                    <option selected value=''>ALL</option>
                                 </select>
                             </div>
                             <div class="form-group col-md-12">
@@ -232,7 +232,7 @@
                                 <select name="gramasewaDivision" id="gramasewaDivision"
                                         class="select2 form-control "
                                         onchange="gramasewaDivisionChanged(this)">
-                                    <option value=''>ALL</option>
+                                    <option selected value=''>ALL</option>
                                 </select>
                             </div>
                             <div class="form-group col-md-12">
@@ -241,7 +241,7 @@
 
                                 <select name="village" id="village"
                                         class="select2 form-control ">
-                                    <option value=''>ALL</option>
+                                    <option selected value=''>ALL</option>
                                 </select>
                             </div>
 
@@ -266,6 +266,8 @@
                     </div>
                 </div>
             </div>
+            </form>
+
 
         </div> <!-- ./container -->
     </div><!-- ./wrapper -->
@@ -310,9 +312,9 @@
 
         function electionDivisionChanged(el) {
             let divisions = $(el).val();
-            $('#pollingBooth').html("<option value=''>ALL</option>");
-            $('#gramasewaDivision').html("<option value=''>ALL</option>");
-            $('#village').html("<option value=''>ALL</option>");
+            $('#pollingBooth').html("<option selected value=''>ALL</option>");
+            $('#gramasewaDivision').html("<option selected value=''>ALL</option>");
+            $('#village').html("<option selected value=''>ALL</option>");
 
             $.ajax({
                 url: '{{route('getPollingBoothByElectionDivision')}}',
@@ -329,8 +331,8 @@
 
         function pollingBoothChanged(el) {
             let booths = $(el).val();
-            $('#gramasewaDivision').html("<option value=''>ALL</option>");
-            $('#village').html("<option value=''>ALL</option>");
+            $('#gramasewaDivision').html("<option selected value=''>ALL</option>");
+            $('#village').html("<option selected value=''>ALL</option>");
 
             $.ajax({
                 url: '{{route('getGramasewaDivisionByPollingBooth')}}',
@@ -347,7 +349,7 @@
 
         function gramasewaDivisionChanged(el) {
             let division = el.value;
-            $('#village').html("<option value=''>ALL</option>");
+            $('#village').html("<option selected value=''>ALL</option>");
             $.ajax({
                 url: '{{route('getVillageByGramasewaDivision')}}',
                 type: 'POST',

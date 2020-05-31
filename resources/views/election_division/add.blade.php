@@ -75,7 +75,7 @@
                                             <span class="input-group-text">TA</span>
                                         </div>
                                         <input autocomplete="off" type="text" class="form-control"
-                                               oninput="setCustomValidity('')"  required
+                                               oninput="setCustomValidity('')" required
                                                oninvalid="this.setCustomValidity('Please enter election division name')"
                                                placeholder="Election division name in tamil" name="electionDivision_ta"
                                                id="electionDivision_ta">
@@ -114,7 +114,7 @@
                                                 <th>ENGLISH</th>
                                                 <th>SINHALA</th>
                                                 <th>TAMIL</th>
-                                                <th style='text-align:center;'>UPDATE</th>
+                                                <th style='text-align:center;'>ACTIONS</th>
                                             </tr>
                                             </thead>
                                             <tbody id="electionDivisionTBody">
@@ -125,7 +125,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-12 " >
+                            <div class="col-md-12 ">
                                 <button type="button" id="confirmBtn" onclick="confirm();event.preventDefault();"
                                         class="btn btn-primary btn-md float-right">{{ __('Confirm All Election Divisions') }}</button>
                             </div>
@@ -156,7 +156,8 @@
                     <form class="form-horizontal" id="updateForm" role="form">
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="alert alert-danger alert-dismissible " id="errorAlertUpdate" style="display:none">
+                                <div class="alert alert-danger alert-dismissible " id="errorAlertUpdate"
+                                     style="display:none">
                                 </div>
                             </div>
                         </div>
@@ -224,7 +225,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <input  type="hidden" name="updateId" id="updateId">
+                            <input type="hidden" name="updateId" id="updateId">
                             <div class="form-group col-md-6" style="margin-top: 20px;">
                                 <button type="submit" onclick="clearAll();event.preventDefault();"
                                         class="btn btn-danger btn-block ">{{ __('Cancel') }}</button>
@@ -271,16 +272,16 @@
 
                     if (data.success != null) {
                         let array = data.success;
-                        if(array.length == 0){
+                        if (array.length == 0) {
                             $('#confirmBtn').hide();
                         }
-                        else{
+                        else {
                             $('#confirmBtn').show();
                         }
                         $('#electionDivisionTBody').html('');
                         $.each(array, function (key, value) {
                             $('#electionDivisionTBody').append(
-                                "<tr id='"+value.idelection_division+"'>" +
+                                "<tr id='" + value.idelection_division + "'>" +
                                 "<td>{{ strtoupper( \Illuminate\Support\Facades\Auth::user()->office->district->name_en)}}</td>" +
                                 "<td>" + value.name_en.toUpperCase() + "</td>" +
                                 "<td>" + value.name_si.toUpperCase() + "</td>" +
@@ -291,6 +292,11 @@
                                 "class='btn btn-sm btn-warning  waves-effect waves-light'" +
                                 "onclick='showUpdateModal(" + value.idelection_division + ")'>" +
                                 " <i class='fa fa-edit'></i>" +
+                                "</button>" +
+                                " <button type='button' " +
+                                "class='btn btn-sm btn-danger  waves-effect waves-light'" +
+                                "onclick='deleteThis(" + value.idelection_division + ")'>" +
+                                " <i class='fa fa-trash'></i>" +
                                 "</button>" +
                                 " </p>" +
                                 " </td>" +
@@ -401,9 +407,9 @@
 
         function showUpdateModal(id) {
             $('#updateId').val(id);
-            $('#electionDivisionU').val($('#'+id).find("td").eq(1).html());
-            $('#electionDivision_siU').val($('#'+id).find("td").eq(2).html());
-            $('#electionDivision_taU').val($('#'+id).find("td").eq(3).html());
+            $('#electionDivisionU').val($('#' + id).find("td").eq(1).html());
+            $('#electionDivision_siU').val($('#' + id).find("td").eq(2).html());
+            $('#electionDivision_taU').val($('#' + id).find("td").eq(3).html());
             $('#updateModal').modal('show');
         }
 
@@ -474,7 +480,7 @@
         function confirm() {
             swal({
                 title: 'Confirm All?',
-                text:'You Will Need Administrator Permission To Revert This Process!',
+                text: 'You Will Need Administrator Permission To Revert This Process!',
                 type: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Yes, Confirm',
@@ -517,6 +523,72 @@
                                 icon: '<em class="mdi mdi-check-circle-outline"></em>',
 
                                 message: 'Election divisions confirmed successfully.'
+                            });
+                            showTableData();
+                        }
+
+                    }
+                });
+
+            }, function (dismiss) {
+                // dismiss can be 'cancel', 'overlay',
+                // 'close', and 'timer'
+//                if (dismiss === 'cancel') {
+//                    swal(
+//                        'Cancelled',
+//                        'Process has been cancelled',
+//                        'error'
+//                    )
+//                }
+            })
+        }
+
+        function deleteThis(id) {
+            swal({
+                title: 'Delete?',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Delete',
+                cancelButtonText: 'Keep it',
+                confirmButtonClass: 'btn btn-danger',
+                cancelButtonClass: 'btn btn-success m-l-10',
+                buttonsStyling: false
+            }).then(function () {
+
+                $.ajax({
+                    url: '{{route('deleteElectionDivision')}}',
+                    data: {id: id},
+                    type: 'POST',
+                    success: function (data) {
+                        if (data.errors != null) {
+                            notify({
+                                type: "error", //alert | success | error | warning | info
+                                title: 'PROCESS INVALID!',
+                                autoHide: true, //true | false
+                                delay: 2500, //number ms
+                                position: {
+                                    x: "right",
+                                    y: "top"
+                                },
+                                icon: '<em class="mdi mdi-check-circle-outline"></em>',
+
+                                message: 'Something wrong with process.contact administrator..'
+                            });
+                        }
+                        if (data.success != null) {
+
+                            notify({
+                                type: "success", //alert | success | error | warning | info
+                                title: 'ELECTION DIVISIONS DELETED!',
+                                autoHide: true, //true | false
+                                delay: 2500, //number ms
+                                position: {
+                                    x: "right",
+                                    y: "top"
+                                },
+                                icon: '<em class="mdi mdi-check-circle-outline"></em>',
+
+                                message: 'Election divisions deleted successfully.'
                             });
                             showTableData();
                         }

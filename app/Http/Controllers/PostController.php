@@ -493,7 +493,7 @@ class PostController extends Controller
     public function viewByCategory(Request $request)
     {
         $category = intval($request['category']);
-        $posts = Post::where('status', 1)->whereHas('beneficialCategory', function ($q) use ($category) {
+        $posts = Post::where('idoffice', Auth::user()->office->idoffice)->where('status', 1)->whereHas('beneficialCategory', function ($q) use ($category) {
             $q->where('idcategory', $category);
         })->latest()->get();
         return view('post.view_posts', ['title' => __('View Posts'), 'posts' => $posts]);

@@ -67,7 +67,7 @@
                                                                             </p>
                                                                         @endif
                                                                         <small title="author" style="text-align: center"  class="float-right col-md-3">
-                                                                            - {{$post->user->office->office_name}}
+                                                                            {{sprintf('%06d',$post->post_no)}}
                                                                         </small>
                                                                         <small title="created at" style="text-align: right;" class="float-right col-md-3">
                                                                             {{$post->created_at}}

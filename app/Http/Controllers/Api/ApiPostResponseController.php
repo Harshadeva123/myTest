@@ -28,8 +28,32 @@ class ApiPostResponseController extends Controller
         $postId = $request['post_id'];
         $post = Post::find($postId);
         if($post != null){
-            $commenters = $post->responses()->where('idUser',Auth::user()->idUser)->get();
-            return response()->json(['success' => $commenters,'statusCode'=>0]);
+            $comments = PostResponse::where('idPost',$postId)->where('idUser',Auth::user()->idUser)->where('status',1)->latest()->paginate(20);
+
+            foreach ($comments as $comment) {
+
+                if($comment->response_type == 1){
+                    $comment['content'] = $comment['response'];
+                }
+                else{
+                    $comment['content'] =  asset('').$comment->getPath();
+                }
+                $comment['response_type'] = $comment->response_type - 1;
+
+                $comment->makeHidden('idUser')->toArray();
+                $comment->makeHidden('idpost_response')->toArray();
+                $comment->makeHidden('response')->toArray();
+                $comment->makeHidden('attachment')->toArray();
+                $comment->makeHidden('size')->toArray();
+                $comment->makeHidden('categorized')->toArray();
+                $comment->makeHidden('status')->toArray();
+                $comment->makeHidden('full_path')->toArray();
+                $comment->makeHidden('post')->toArray();
+                $comment->makeHidden('idPost')->toArray();
+                $comment->makeHidden('updated_at')->toArray();
+
+            }
+            return response()->json(['success' => $comments,'statusCode'=>0]);
 
         }
         else{

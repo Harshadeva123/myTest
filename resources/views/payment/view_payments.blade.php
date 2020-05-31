@@ -74,7 +74,7 @@
                                                         @foreach($payments as $payment)
                                                             <tr id="{{$payment->idpayment}}">
                                                                 <td>{{strtoupper($payment->office->office_name)}} </td>
-                                                                <td style="text-align: right;">{{number_format($payment->office->total_payment,2)}} </td>
+                                                                <td style="text-align: right;">{{number_format($payment->office->monthly_payment,2)}} </td>
                                                                 <td style="text-align: right;">{{number_format($payment->discount,2)}} </td>
                                                                 <td style="text-align: right;">{{number_format($payment->payment,2)}} </td>
                                                                 <td>{{date('M-Y', strtotime($payment->for_month))}}</td>

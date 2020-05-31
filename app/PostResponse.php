@@ -15,12 +15,30 @@ class PostResponse extends Model
         return $this->belongsTo(Post::class, 'idPost');
     }
 
+    public function analysis()
+    {
+        return $this->hasMany(Analysis::class, 'referrence_id');
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'idUser');
     }
 
     public function getFullPathAttribute()
+    {
+        if ($this->response_type == 2) {
+            return 'storage/' . $this->post->user->office->random . '/comments/images/' . $this->attachment;
+        } else if ($this->response_type == 3) {
+            return 'storage/' . $this->post->user->office->random . '/comments/videos/' . $this->attachment;
+        } else if ($this->response_type == 4) {
+            return 'storage/' . $this->post->user->office->random . '/comments/audios/' . $this->attachment;
+        } else {
+            return '';
+        }
+    }
+
+    public function getPath()
     {
         if ($this->response_type == 2) {
             return 'storage/' . $this->post->user->office->random . '/comments/images/' . $this->attachment;

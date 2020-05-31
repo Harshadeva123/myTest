@@ -31,18 +31,19 @@ class ApiPostController extends Controller
 
         $user = Auth::user();
         if($user->iduser_role == 7){
-            $agent = Agent::find(intval($request['agent']));
+            $agent = Agent::find( Auth::user()->member->current_agent);
             if($agent == null){
                 return response()->json(['error' => 'Agent not found!','statusCode'=>-99]);
             }
             elseif(MemberAgent::where('idmember',$user->member->idmember)->where('idagent',$agent->idagent)->first() == null || MemberAgent::where('idmember',$user->member->idmember)->where('idagent',$agent->idagent)->first()->status != 1){
-                return response()->json(['error' => 'Agent invalid!','statusCode'=>-99]);
+                return response()->json(['error' => 'You are not able to get post from selected agent.!','statusCode'=>-99]);
             }
             $office = User::find($agent->idUser)->idoffice;
         }
         else{
             $office = $user->idoffice;
         }
+
         $posts = Post::where(function ($q) use ($user) {
             $q->whereHas('postVillages', function ($q) use ($user) {
                 $q->where('idvillage', $user->getType->idvillage);
@@ -85,13 +86,14 @@ class ApiPostController extends Controller
             $q->where('maxAge', 120)->orWhere('maxAge','>=',$user->age);
         })->where(function ($q) use ($office) {
             $q->where('idoffice', $office);
-        })->where('expire_date','>',date('Y-m-d'))->select(['idPost','title_en','title_si','title_ta','text_en','text_si','text_ta','post_no','created_at'])->paginate(15);
+        })->where('expire_date','>',date('Y-m-d'))->select(['idPost','title_en','title_si','title_ta','text_en','text_si','text_ta','post_no','created_at','response_panel'])->paginate(10);
 
         foreach ($posts as $post) {
             $post['title'] = $post[$lang] != null ? $post[$lang] : $post[$fallBack];
             $post['text'] = $post[$langText] != null ? $post[$langText] : $post[$fallBackText];
             $post['id'] = $post['idPost'];
             $post['commentsCount'] = $post->comments_count;
+            $post['panel_type'] = $post->response_panel;
             $post['post_no'] = sprintf('%06d',$post['post_no']);
 
             unset($post->title_en);
@@ -99,6 +101,7 @@ class ApiPostController extends Controller
             unset($post->title_ta);
             unset($post->text_en);
             unset($post->text_si);
+            unset($post->response_panel);
             unset($post->text_ta);
             unset($post->idPost);
             unset($post->$lang);
@@ -150,12 +153,13 @@ class ApiPostController extends Controller
         else{
             if(Post::find($postId)->isOnce == 1){
                 return response()->json(['error' => 'Sorry! This post content can only view once!','statusCode'=>-99]);
-
             }
             $isExist->count +=1;
             $isExist->save();
         }
-        $post =   Post::with(['apiAttachments'])->select(['title_en','title_si','title_ta','text_en','text_si','text_ta','idPost','post_no'])->find(intval($postId));
+
+        $post =  Post::with(['apiAttachments'])->select(['title_en','title_si','title_ta','text_en','text_si','text_ta','idPost','post_no'])->find(intval($postId));
+
         $post['title'] = $post[$lang] != null ? $post[$lang] : $post[$fallBack];
         $post['text'] = $post[$langText] != null ? $post[$langText] : $post[$fallBackText];
         $post['post_no'] = sprintf('%06d',$post['post_no']);

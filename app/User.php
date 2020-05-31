@@ -74,6 +74,10 @@ class User extends Authenticatable
         }
     }
 
+    public function authAccessToken(){
+        return $this->hasMany(OauthAccessToken::class,'user_id');
+    }
+
     public function getAgeAttribute() {
         $d1 = new Carbon(date('Y-m-d', strtotime($this->bday)));
         $d2 = new Carbon(date('Y-m-d', strtotime(date('y-m-d'))));
@@ -96,6 +100,11 @@ class User extends Authenticatable
     public function taskAgent()
     {
         return $this->hasMany(Task::class, 'idUser');
+    }
+
+    public function responsePanel()
+    {
+        return $this->hasMany(ResponsePanel::class, 'idUser');
     }
 
     public function taskAssigned()

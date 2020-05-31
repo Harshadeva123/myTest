@@ -137,5 +137,15 @@ class ElectionDivisionController extends Controller
         return response()->json(['success' => 'Election divisions confirmed']);
     }
 
+    public function deleteRecord(Request $request){
+        $id  = $request['id'];
+        $record  =  ElectionDivision::find(intval($id));
+        if($record->status == 2){
+            $record->delete();
+            return response()->json(['success' => 'Record deleted']);
+        }
+        return response()->json(['errors' => ['error'=>'You are not able to delete this record.']]);
+
+    }
 
 }

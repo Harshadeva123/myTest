@@ -65,6 +65,11 @@
             background-color: #78E08F;
         }
 
+        .pendingComment {
+            border-radius: 10px;
+            background-color: rgba(223, 224, 68, 0.87);
+        }
+
         .noComment {
             border-radius: 10px;
             background-color: #808285;
@@ -105,7 +110,7 @@
 
                                 </div>
                             </div>
-                            @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3)
+                            @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3 || \Illuminate\Support\Facades\Auth::user()->iduser_role == 4)
                                 <form class="form-horizontal" id="form1" role="form">
 
                                     <input type="hidden" class="noClear" name="user_id" value="{{$_REQUEST['user']}}">
@@ -146,11 +151,12 @@
                                            multiple
                                            accept="audio/*">
                                 </form>
-                            @else
+                            @elseif(\Illuminate\Support\Facades\Auth::user()->iduser_role == 5)
                                 <br/>
                                 <div class="row">
                                     <div class="col-md-12 text-center">
-                                        <a class="btn btn-info" onclick="$('#form2').submit()"  href="#">Go Back To Analysis</a>
+                                        <a class="btn btn-info" onclick="$('#form2').submit()" href="#">Go Back To
+                                            Analysis</a>
                                     </div>
                                     <form action="{{route('analyseResponse')}}"
                                           id="form2"
@@ -228,19 +234,6 @@
                         }
                         if (data.success != null) {
 
-                            notify({
-                                type: "success", //alert | success | error | warning | info
-                                title: 'POST PUBLISHED SUCCESSFULLY.',
-                                autoHide: true, //true | false
-                                delay: 2500, //number ms
-                                position: {
-                                    x: "right",
-                                    y: "top"
-                                },
-                                icon: '<em class="mdi mdi-check-circle-outline"></em>',
-
-                                message: 'Post published successfully.'
-                            });
                             $("input[type='file']").val('');
                             refreshComments();
                         }
@@ -303,8 +296,6 @@
                             refreshComments();
                         }
                     }
-
-
                 });
             }
             else {
@@ -326,7 +317,7 @@
                 success: function (data) {
                     let result = data.success;
                     $('#commenterBox').html('');
-                    if(result.length == 0){
+                    if (result.length == 0) {
                         $('#commenterBox').append(
                             "<div class='noComment text-center my-2 text-white col-md-12 p-2  '>No comments available.</div>"
                         );
@@ -334,37 +325,109 @@
                     else {
                         $.each(result, function (key, value) {
                             if (value.is_admin == 1) {
-                                if (value.response_type == 1) {
-                                    $('#commenterBox').append(
-                                        "<div class='ownComment col-md-8 p-2 m-2 ml-auto '>" + value.response + "" +
-                                        "</div>"
-                                    );
-                                } else if (value.response_type == 2) {
-                                    $('#commenterBox').append(
-                                        "<div class='ownComment col-md-5 p-2 m-2 ml-auto '>" +
-                                        "<img src='{{ asset('')}}" + value.full_path + "' width='200px'>' " +
-                                        "</div>"
-                                    );
-                                } else if (value.response_type == 3) {
-                                    $('#commenterBox').append(
-                                        "<div class='ownComment col-md-5 p-2 m-2 ml-auto '>" +
-                                        " <video width='100%' controls controlsList='nodownload'>" +
-                                        "<source src='{{ asset('')}}" + value.full_path + "'  type='video/mp4'> " +
-                                        "<source src='{{ asset('')}}" + value.full_path + "' type='video/ogg'>" +
-                                        " Your browser does not support HTML video." +
-                                        " </video> " +
-                                        "</div>");
-                                } else if (value.response_type == 4) {
-                                    $('#commenterBox').append(
-                                        "<div class='ownComment col-md-5 p-2 m-2 ml-auto '>" +
-                                        " <audio width='100%' controls  controlsList='nofullscreen nodownload noremoteplayback'>" +
-                                        "<source src='{{ asset('')}}" + value.full_path + "'  type='audio/ogg'> " +
-                                        "<source src='{{ asset('')}}" + value.full_path + "' type='audio/mpeg'>" +
-                                        " Your browser does not support HTML audio." +
-                                        " </audio> " +
-                                        "</div>");
-                                } else {
-                                    $('#commenterBox').append("");
+                                if (value.status == 1) {
+                                    if (value.response_type == 1) {
+                                        $('#commenterBox').append(
+                                            "<div class='ownComment col-md-8 p-2 m-2 ml-auto '>" + value.response + "" +
+                                            "</div>"
+                                        );
+                                    } else if (value.response_type == 2) {
+                                        $('#commenterBox').append(
+                                            "<div class='ownComment col-md-5 p-2 m-2 ml-auto '>" +
+                                            "<img src='{{ asset('')}}" + value.full_path + "' width='200px'>' " +
+                                            "</div>"
+                                        );
+                                    } else if (value.response_type == 3) {
+                                        $('#commenterBox').append(
+                                            "<div class='ownComment col-md-5 p-2 m-2 ml-auto '>" +
+                                            " <video width='100%' controls controlsList='nodownload'>" +
+                                            "<source src='{{ asset('')}}" + value.full_path + "'  type='video/mp4'> " +
+                                            "<source src='{{ asset('')}}" + value.full_path + "' type='video/ogg'>" +
+                                            " Your browser does not support HTML video." +
+                                            " </video> " +
+                                            "</div>");
+                                    } else if (value.response_type == 4) {
+                                        $('#commenterBox').append(
+                                            "<div class='ownComment col-md-5 p-2 m-2 ml-auto '>" +
+                                            " <audio width='100%' controls  controlsList='nofullscreen nodownload noremoteplayback'>" +
+                                            "<source src='{{ asset('')}}" + value.full_path + "'  type='audio/ogg'> " +
+                                            "<source src='{{ asset('')}}" + value.full_path + "' type='audio/mpeg'>" +
+                                            " Your browser does not support HTML audio." +
+                                            " </audio> " +
+                                            "</div>");
+                                    } else {
+                                        $('#commenterBox').append("");
+                                    }
+                                }
+                                else if (value.status == 2) {
+                                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3)
+                                    if (value.response_type == 1) {
+                                        $('#commenterBox').append(
+                                            "<div onclick='showApproveDialog(" + value.idpost_response + ")' class='pendingComment col-md-8 p-2 m-2 ml-auto '>" + value.response + "" +
+                                            "</div>"
+                                        );
+                                    } else if (value.response_type == 2) {
+                                        $('#commenterBox').append(
+                                            "<div  onclick='showApproveDialog(" + value.idpost_response + ")' class='pendingComment col-md-5 p-2 m-2 ml-auto '>" +
+                                            "<img src='{{ asset('')}}" + value.full_path + "' width='200px'>' " +
+                                            "</div>"
+                                        );
+                                    } else if (value.response_type == 3) {
+                                        $('#commenterBox').append(
+                                            "<div onclick='showApproveDialog(" + value.idpost_response + ")'  class='pendingComment col-md-5 p-2 m-2 ml-auto '>" +
+                                            " <video width='100%' controls controlsList='nodownload'>" +
+                                            "<source src='{{ asset('')}}" + value.full_path + "'  type='video/mp4'> " +
+                                            "<source src='{{ asset('')}}" + value.full_path + "' type='video/ogg'>" +
+                                            " Your browser does not support HTML video." +
+                                            " </video> " +
+                                            "</div>");
+                                    } else if (value.response_type == 4) {
+                                        $('#commenterBox').append(
+                                            "<div onclick='showApproveDialog(" + value.idpost_response + ")'  class='pendingComment col-md-5 p-2 m-2 ml-auto '>" +
+                                            " <audio width='100%' controls  controlsList='nofullscreen nodownload noremoteplayback'>" +
+                                            "<source src='{{ asset('')}}" + value.full_path + "'  type='audio/ogg'> " +
+                                            "<source src='{{ asset('')}}" + value.full_path + "' type='audio/mpeg'>" +
+                                            " Your browser does not support HTML audio." +
+                                            " </audio> " +
+                                            "</div>");
+                                    } else {
+                                        $('#commenterBox').append("");
+                                    }
+                                    @else
+                                    if (value.response_type == 1) {
+                                        $('#commenterBox').append(
+                                            "<div class='pendingComment col-md-8 p-2 m-2 ml-auto '>" + value.response + "" +
+                                            "</div>"
+                                        );
+                                    } else if (value.response_type == 2) {
+                                        $('#commenterBox').append(
+                                            "<div class='pendingComment col-md-5 p-2 m-2 ml-auto '>" +
+                                            "<img src='{{ asset('')}}" + value.full_path + "' width='200px'>' " +
+                                            "</div>"
+                                        );
+                                    } else if (value.response_type == 3) {
+                                        $('#commenterBox').append(
+                                            "<div class='pendingComment col-md-5 p-2 m-2 ml-auto '>" +
+                                            " <video width='100%' controls controlsList='nodownload'>" +
+                                            "<source src='{{ asset('')}}" + value.full_path + "'  type='video/mp4'> " +
+                                            "<source src='{{ asset('')}}" + value.full_path + "' type='video/ogg'>" +
+                                            " Your browser does not support HTML video." +
+                                            " </video> " +
+                                            "</div>");
+                                    } else if (value.response_type == 4) {
+                                        $('#commenterBox').append(
+                                            "<div class='pendingComment col-md-5 p-2 m-2 ml-auto '>" +
+                                            " <audio width='100%' controls  controlsList='nofullscreen nodownload noremoteplayback'>" +
+                                            "<source src='{{ asset('')}}" + value.full_path + "'  type='audio/ogg'> " +
+                                            "<source src='{{ asset('')}}" + value.full_path + "' type='audio/mpeg'>" +
+                                            " Your browser does not support HTML audio." +
+                                            " </audio> " +
+                                            "</div>");
+                                    } else {
+                                        $('#commenterBox').append("");
+                                    }
+                                    @endif
+
                                 }
                             }
                             else {
@@ -408,5 +471,79 @@
             });
         }
 
+        function showApproveDialog(id) {
+            swal({
+                title: 'Publish or Reject ?',
+                text: 'You will not be able to revert this process!',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Publish This',
+                cancelButtonText: 'Reject This',
+                confirmButtonClass: 'btn btn-success',
+                cancelButtonClass: 'btn btn-danger m-l-10',
+                buttonsStyling: false
+            }).then(function () {
+
+                $.ajax({
+                    url: '{{route('publishManagementComment')}}',
+                    type: 'POST',
+                    data: {id: id},
+                    success: function (data) {
+                        if (data.errors != null) {
+                            notify({
+                                type: "error", //alert | success | error | warning | info
+                                title: 'PROCESS INVALID!',
+                                autoHide: true, //true | false
+                                delay: 5000, //number ms
+                                position: {
+                                    x: "right",
+                                    y: "top"
+                                },
+                                icon: '<em class="mdi mdi-check-circle-outline"></em>',
+
+                                message: 'Something wrong with process.contact administrator..'
+                            });
+                        }
+                        if (data.success != null) {
+                            refreshComments();
+                        }
+
+                    }
+                });
+
+            }, function (dismiss) {
+                // dismiss can be 'cancel', 'overlay',
+                // 'close', and 'timer'
+                if (dismiss === 'cancel') {
+                    $.ajax({
+                        url: '{{route('rejectManagementComment')}}',
+                        type: 'POST',
+                        data: {id: id},
+                        success: function (data) {
+                            if (data.errors != null) {
+                                notify({
+                                    type: "error", //alert | success | error | warning | info
+                                    title: 'PROCESS INVALID!',
+                                    autoHide: true, //true | false
+                                    delay: 5000, //number ms
+                                    position: {
+                                        x: "right",
+                                        y: "top"
+                                    },
+                                    icon: '<em class="mdi mdi-check-circle-outline"></em>',
+
+                                    message: 'Something wrong with process.contact administrator..'
+                                });
+                            }
+                            if (data.success != null) {
+                                refreshComments();
+                            }
+
+                        }
+                    });
+
+                }
+            })
+        }
     </script>
 @endsection

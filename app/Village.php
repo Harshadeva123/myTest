@@ -18,4 +18,8 @@ class Village extends Model
     public function member(){
         return $this->hasMany(Member::class,'idvillage');
     }
+
+    public function events(){
+        return $this->hasMany(Event::class,'idvillage');
+    }
 }

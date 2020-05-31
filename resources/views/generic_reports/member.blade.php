@@ -280,15 +280,15 @@
                                                                 @if(\Illuminate\Support\Facades\Auth::user()->iduser_role <= 2 )
                                                                     <td>{{strtoupper($user->office->office_name)}}</td>
                                                                 @endif
-                                                                @if($user->status == 1)
+                                                                @if($user->member->memberAgents()->where('idoffice',\Illuminate\Support\Facades\Auth::user()->idoffice)->first()->status == 1)
                                                                     <td nowrap><p><em
                                                                                     class="mdi mdi-checkbox-blank-circle text-success "></em>
                                                                             ACTIVATED</p></td>
-                                                                @elseif($user->status == 2)
+                                                                @elseif($user->member->memberAgents()->where('idoffice',\Illuminate\Support\Facades\Auth::user()->idoffice)->first()->status  == 2)
                                                                     <td nowrap><p><em
                                                                                     class="mdi mdi-checkbox-blank-circle text-warning "></em>
                                                                             PENDING</p></td>
-                                                                @elseif($user->status == 0)
+                                                                @elseif($user->member->memberAgents()->where('idoffice',\Illuminate\Support\Facades\Auth::user()->idoffice)->first()->status  == 0)
                                                                     <td nowrap><p><em
                                                                                     class="mdi mdi-checkbox-blank-circle text-danger "></em>
                                                                             DEACTIVATED</p></td>

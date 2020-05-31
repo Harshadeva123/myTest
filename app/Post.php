@@ -18,6 +18,10 @@ class Post extends Model
         return $this->hasMany(PostAttachment::class,'idPost');
     }
 
+    public function responsePanel(){
+        return $this->hasMany(ResponsePanel::class,'idPost');
+    }
+
     public function apiAttachments(){
         return $this->hasMany(Api\ApiPostAttachment::class,'idPost');
     }

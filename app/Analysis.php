@@ -15,4 +15,14 @@ class Analysis extends Model
     public function mainCategory(){
         return $this->belongsTo(MainCategory::class,'idmain_category');
     }
+
+    public function response()
+    {
+        return $this->belongsTo(PostResponse::class, 'referrence_id');
+    }
+
+    public function pollingBooth()
+    {
+        return $this->belongsTo(PollingBooth::class, 'idpolling_booth');
+    }
 }

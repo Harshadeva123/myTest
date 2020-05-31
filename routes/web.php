@@ -29,9 +29,7 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
         Route::group(['middleware' => 'setLanguage', 'prefix' => ''], function () {
 
             //common
-            Route::get('/', function () {
-                return view('index', ['title' => __('Dashboard')]);
-            });
+            Route::get('/', 'DashboardController@index')->name('dashboard');
 
             //user management
             Route::get('add_user', 'UserController@index')->name('addUser');
@@ -79,6 +77,7 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
             Route::post('save_election_division', 'ElectionDivisionController@store')->name('saveElectionDivision');
             Route::post('update_election_division', 'ElectionDivisionController@update')->name('updateElectionDivision');
             Route::post('confirm_election_divisions', 'ElectionDivisionController@confirm')->name('confirmElectionDivisions');
+            Route::post('delete_election_division', 'ElectionDivisionController@deleteRecord')->name('deleteElectionDivision');
 
             //Polling Booth
             Route::get('polling_booth', 'PollingBoothController@index')->name('pollingBooth');
@@ -88,6 +87,7 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
             Route::post('save_polling_booth', 'PollingBoothController@store')->name('savePollingBooth');
             Route::post('update_polling_booth', 'PollingBoothController@update')->name('updatePollingBooth');
             Route::post('confirm_polling_booths', 'PollingBoothController@confirm')->name('confirmPollingBooths');
+            Route::post('delete_polling_booth', 'PollingBoothController@deleteRecord')->name('deletePollingBooth');
 
             //Gramasewa Division
             Route::get('gramasewa_division', 'GramasewaDivisionController@index')->name('gramasewaDivision');
@@ -97,6 +97,7 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
             Route::post('save_gramasewa_division', 'GramasewaDivisionController@store')->name('saveGramasewaDivision');
             Route::post('update_gramasewa_division', 'GramasewaDivisionController@update')->name('updateGramasewaDivision');
             Route::post('confirm_gramasewa_divisions', 'GramasewaDivisionController@confirm')->name('confirmGramasewaDivisions');
+            Route::post('delete_gramasewa_division', 'GramasewaDivisionController@deleteRecord')->name('deleteGramasewaDivision');
 
             //Village
             Route::get('village', 'VillageController@index')->name('village');
@@ -106,6 +107,7 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
             Route::post('save_village', 'VillageController@store')->name('saveVillage');
             Route::post('update_village', 'VillageController@update')->name('updateVillage');
             Route::post('confirm_villages', 'VillageController@confirm')->name('confirmVillages');
+            Route::post('delete_village', 'VillageController@deleteRecord')->name('deleteVillage');
 
             //Post
             Route::get('create_post', 'PostController@index')->name('createPost');
@@ -128,6 +130,8 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
             Route::post('save_comment', 'PostResponseController@store')->name('saveComment');
             Route::post('save_comment_attachments', 'PostResponseController@storeAttachments')->name('saveCommentAttachments');
             Route::post('get_comment_by_user_and_post', 'PostResponseController@getCommentByUserAndPost')->name('getCommentByUserAndPost');
+            Route::post('publish_management_comment', 'PostResponseController@publishManagementComment')->name('publishManagementComment');
+            Route::post('reject_management_comment', 'PostResponseController@rejectManagementComment')->name('rejectManagementComment');
 
             //Staff management
             Route::get('assign_staff', 'StaffController@index')->name('assignStaff');
@@ -152,6 +156,7 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
             Route::post('report_category_wise', 'ReportController@categoryWiseChart')->name('report-categoryWise');
             Route::get('report_location_wise', 'ReportController@locationWise')->name('report-locationWise');
             Route::post('report_location_wise', 'ReportController@locationWiseChart')->name('report-locationWise');
+            Route::post('report_category_data', 'ReportController@getCategoryData')->name('report-category_data');
 
             //Generic Reports
             Route::get('agents_report', 'GenericReportController@agents')->name('report-agents');
@@ -173,6 +178,9 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
             Route::get('create_event', 'EventController@index')->name('create-event');
             Route::get('view_events', 'EventController@view')->name('view-events');
             Route::post('save_event', 'EventController@store')->name('save-event');
+
+            //Dashboard
+            Route::post('dashboard-getStorage', 'DashboardController@getStorage')->name('dashboard-getStorage');
 
         });
     });

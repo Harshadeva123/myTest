@@ -101,7 +101,7 @@
                                                                 @else
                                                                     <td nowrap><em class="mdi mdi-checkbox-blank-circle text-danger"></em> DISABLED</td>
                                                                 @endif
-                                                                @if($office->status)
+                                                                @if($office->status == 1)
                                                                     <td nowrap><p><em  class="mdi mdi-checkbox-blank-circle text-success "></em> LIVE</p></td>
                                                                 @else
                                                                     <td nowrap><em class="mdi mdi-checkbox-blank-circle text-danger"></em> DISABLED</td>

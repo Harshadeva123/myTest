@@ -438,7 +438,7 @@ class UserController extends Controller
         $name = $user->fName;
         $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-        $referral =  substr(str_shuffle($permitted_chars), 0, 2).$name[0].substr(str_shuffle($permitted_chars), 0, 2).substr(str_shuffle($user->office->office_name), 0, 2);
+        $referral =  substr(str_shuffle($permitted_chars), 0, 7);
 //        $referral [7] = 2 randoms from row . first name first character . 2 randoms from row . 2 randoms from office name;
 
         if($user->iduser_role == 3){
@@ -582,7 +582,6 @@ class UserController extends Controller
                 else{
                     return response()->json(['errors' => ['error'=>'User invalid!']]);
                 }
-
             }
             else {
                 if ($user->status == 0) {

@@ -396,7 +396,7 @@
                 }
             });
 
-            setParameters();
+//            setParameters();
         });
 
         $('#table').DataTable({

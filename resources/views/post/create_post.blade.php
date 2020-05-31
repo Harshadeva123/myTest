@@ -48,6 +48,7 @@
         }
 
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.2/css/bootstrap-slider.min.css" integrity="sha256-G3IAYJYIQvZgPksNQDbjvxd/Ca1SfCDFwu2s2lt0oGo=" crossorigin="anonymous" />
 @endsection
 @section('psContent')
 
@@ -387,12 +388,11 @@
                                                     name="gender">&nbsp;{{ __('Other') }}</label>
                                     </div>
                                 </div>
+                                <input type="hidden" name="minAge" id="minAge">
+                                <input type="hidden" name="maxAge" id="maxAge">
                                 <div class="form-group col-md-6">
-                                    <label style="margin-left: 5px;" class="control-label">{{ __('Gender') }}</label>
-                                    <span class="multi-range">
-                                        <input type="range" min="0" max="120" name="minAge" value="0" id="minAge">
-                                        <input type="range" min="0" max="120" name="maxAge" value="120" id="maxAge">
-                                    </span>
+                                    <label style="margin-left: 5px;" class="control-label">{{ __('Age') }}</label><br/>
+                                    <b id="minAgeLabel">0 Y</b> &nbsp; <input id="age" type="text" class="span2" value="" data-slider-min="0" data-slider-max="120" data-slider-step="1" data-slider-value="[0,120]"/>&nbsp; <b id="maxAgeLabel">120 Y</b>
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label style="margin-left: 5px;"
@@ -564,7 +564,7 @@
 
 @endsection
 @section('psScript')
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.2/bootstrap-slider.min.js" integrity="sha256-oj52qvIP5c7N6lZZoh9z3OYacAIOjsROAcZBHUaJMyw=" crossorigin="anonymous"></script>
     <script language="JavaScript" type="text/javascript">
         $(document).ready(function () {
             $('.toggle').hide();
@@ -573,6 +573,17 @@
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            // With JQuery
+            $('#age').slider({
+                formatter: function(value) {
+                    if(value.length == 2) {
+                        $('#minAgeLabel').html(value[0] + ' Y');
+                        $('#minAge').val(value[0]);
+                        $('#maxAgeLabel').html(value[1] + ' Y');
+                        $('#maxAge').val(value[1]);
+                    }
                 }
             });
 
@@ -683,35 +694,6 @@
                 }
             });
         }
-
-
-        let lowerSlider = document.querySelector('#minAge'),
-            upperSlider = document.querySelector('#maxAge'),
-            lowerVal = parseInt(lowerSlider.value);
-        upperVal = parseInt(upperSlider.value);
-
-        upperSlider.oninput = function () {
-
-
-            lowerVal = parseInt(lowerSlider.value);
-            upperVal = parseInt(upperSlider.value);
-
-            if (upperVal < lowerVal + 1) {
-                lowerSlider.value = upperVal;
-            }
-        };
-
-
-        lowerSlider.oninput = function () {
-
-            lowerVal = parseInt(lowerSlider.value);
-            upperVal = parseInt(upperSlider.value);
-
-            if (lowerVal > upperVal) {
-                upperSlider.value = lowerVal;
-
-            }
-        };
 
         function goFirstPage() {
             $('.secondPage').fadeOut('slow');

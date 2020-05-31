@@ -23,27 +23,37 @@ Route::group(['middleware' => 'auth:api'], function () {
         return \Illuminate\Support\Facades\Auth::user()->fName . ' api authenticated';
     })->name('authTest');
 
+    Route::post('logout', function () {
+        $user = \Illuminate\Support\Facades\Auth::user()->token();
+        $user->revoke();
+        return response()->json(['success' => 'Logged out', 'statusCode' => 0]);
+    })->name('logout');
 
-////Response management
+    ////Response management
     Route::post('view_comments', 'Api\ApiPostResponseController@viewComments')->name('viewComments');
     Route::post('save_comment', 'Api\ApiPostResponseController@store')->name('saveComment');
     Route::post('save_comment_attachments', 'Api\ApiPostResponseController@storeAttachments')->name('saveCommentAttachments');
-//user management
+    //user management
 
-//Post management
+    //Post management
     Route::post('get_posts', 'Api\ApiPostController@getPosts')->name('getPosts');
     Route::post('view_post', 'Api\ApiPostController@viewPost')->name('viewPost');
-//Post management end
+    //Post management end
 
-//Agent Switch
+    //Agent Switch
+    Route::post('add_agent', 'Api\ApiUserController@addAgent')->name('addAgent');
     Route::post('get_agents', 'Api\ApiUserController@getAgents')->name('getAgents');
-//Agent Switch
+    Route::post('set_agent', 'Api\ApiUserController@setAgents')->name('setAgents');
+    //Agent Switch
 
-////Get members by agent
-    Route::post('get_pending_members', 'Api\ApiUserController@getPendingMembers')->name('getPendingMembers');
-    Route::post('get_approved_members', 'Api\ApiUserController@getApprovedMembers')->name('getApprovedMembers');
+    ////Get members by agent
+    Route::post('get_members', 'Api\ApiUserController@getMembers')->name('getPendingMembers');
     Route::post('approve_member', 'Api\ApiUserController@approveMember')->name('approveMember');
-//Get members by agent end
+    //Get members by agent end
+
+    //Response panel
+    Route::post('save_response', 'Api\ApiResponsePanelController@store')->name('saveResponse');
+    //Response panel end
 
 });
 

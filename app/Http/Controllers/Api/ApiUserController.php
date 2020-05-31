@@ -395,10 +395,9 @@ class ApiUserController extends Controller
     public function generateReferral($uid)
     {
         $user = User::find(intval($uid));
-        $name = $user->fName;
         $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-        $referral = substr(str_shuffle($permitted_chars), 0, 2) . $name[0] . substr(str_shuffle($permitted_chars), 0, 2) . substr(str_shuffle($user->office->office_name), 0, 2);
+        $referral = substr(str_shuffle($permitted_chars), 0, 7);
 //        $referral [7] = 2 randoms from row . first name first character . 2 randoms from row . 2 randoms from office name;
 
         if ($user->iduser_role == 3) {
@@ -570,7 +569,7 @@ class ApiUserController extends Controller
 
     }
 
-    public function getPendingMembers(){
+    public function getMembers(){
         if(Auth::user()->iduser_role != 6){
             return response()->json(['error' => 'You are not an agent','statusCode'=>-99]);
         }
@@ -583,29 +582,6 @@ class ApiUserController extends Controller
             unset($memberAgent->idmember);
             unset($memberAgent->idagent);
             unset($memberAgent->idoffice);
-            unset($memberAgent->status);
-            unset($memberAgent->updated_at);
-            unset($memberAgent->created_at);
-
-        }
-        return response()->json(['success' => $memberAgents,'statusCode'=>0]);
-
-    }
-
-    public function getApprovedMembers(){
-        if(Auth::user()->iduser_role != 6){
-            return response()->json(['error' => 'You are not an agent','statusCode'=>-99]);
-        }
-        $memberAgents = MemberAgent::where('idagent',Auth::user()->agent->idagent)->where('status',1)->get();
-        foreach ($memberAgents as $memberAgent) {
-            $memberAgent['id'] = $memberAgent->idmember_agent;
-            $memberAgent['name'] = User::find(Member::find($memberAgent->idmember)->idUser)->fName.' '.User::find(Member::find($memberAgent->idmember)->idUser)->lName;
-            $memberAgent['requested'] = $memberAgent->created_at->format('Y-m-d');
-            unset($memberAgent->idmember_agent);
-            unset($memberAgent->idmember);
-            unset($memberAgent->idagent);
-            unset($memberAgent->idoffice);
-            unset($memberAgent->status);
             unset($memberAgent->updated_at);
             unset($memberAgent->created_at);
 
@@ -637,6 +613,91 @@ class ApiUserController extends Controller
         $memberAgent->save();
 
         return response()->json(['success' => 'Member Approved!','statusCode'=>0]);
+
+    }
+
+
+    public function addAgent(Request $request){
+        $validationMessages = [
+            'referral_code.required' => 'Please provide referral code!',
+        ];
+
+        $validator = \Validator::make($request->all(), [
+            'referral_code' => 'required',
+        ], $validationMessages);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()->first(),'statusCode'=>-99]);
+        }
+        if( Auth::user()->iduser_role != 7){
+            return response()->json(['error' => 'You are not a member','statusCode'=>-99]);
+        }
+
+        $referral = $request['referral_code'];
+
+        $agent = Agent::where('referral_code', $referral)->where('status', 1)->first();
+
+        if($agent == null){
+            return response()->json(['error' => 'Referral code invalid','statusCode'=>-99]);
+        }
+
+
+        if($agent->idvillage != Auth::user()->member->idvillage){
+            return response()->json(['error' => 'Agent is not belongs to your village.','statusCode'=>-99]);
+
+        }
+
+        $isExist  = MemberAgent::where('idmember',Auth::user()->member->idmember)->where('idagent',$agent->idagent)->first();
+        if($isExist != null){
+            return response()->json(['error' => 'Agent has been added already.','statusCode'=>-99]);
+
+        }
+        //Validation end//
+
+        $memberAgent = new MemberAgent();
+        $memberAgent->idmember = Auth::user()->member->idmember;
+        $memberAgent->idagent = $agent->idagent;
+        $memberAgent->idoffice = User::find($agent->idUser)->idoffice;
+        $memberAgent->status = 2;
+        $memberAgent->save();
+
+        return response()->json(['success' => 'Agent added.Please wait for confirmation!','statusCode'=>0]);
+
+    }
+
+    public function setAgents(Request $request){
+
+        $validationMessages = [
+            'id.required' => 'Please provide agent id!',
+        ];
+
+        $validator = \Validator::make($request->all(), [
+            'id' => 'required',
+        ], $validationMessages);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()->first(),'statusCode'=>-99]);
+        }
+
+        $id = $request['id'];
+        $agent = Agent::find(intval($id));
+
+
+        $isExist  = MemberAgent::where('idmember',Auth::user()->member->idmember)->where('idagent',$agent->idagent)->first();
+
+        if($isExist == null){
+            return response()->json(['error' => 'Agent id invalid.','statusCode'=>-99]);
+        }
+        else if($isExist->status != 1){
+            return response()->json(['error' => 'Agent has suspended you.','statusCode'=>-99]);
+        }
+        else{
+            $member = Auth::user()->member;
+            $member->current_agent = $id;
+            $member->save();
+        }
+        return response()->json(['success' => 'Agent switched successfully.','statusCode'=>0]);
+
 
     }
 }

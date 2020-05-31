@@ -108,7 +108,7 @@
                         <li class="has_sub">
                             <a href="javascript:void(0);" class="waves-effect">
                                 <i class="dripicons-suitcase"></i>
-                                <span>{{ __('Pending Works') }}
+                                <span>{{ __('Analyze') }}
                                     <span class="pull-right">
                                        <i class="mdi mdi-chevron-right"></i>
                                    </span>
@@ -116,7 +116,7 @@
                             </a>
                             <ul class="list-unstyled">
                                 <li><a href="{{route('pendingResponse')}}">{{ __('Post Response') }}</a></li>
-                                <li><a href="{{route('assignStaff')}}">{{ __('Direct Messages') }}</a></li>
+{{--                                <li><a href="{{route('assignStaff')}}">{{ __('Direct Messages') }}</a></li>--}}
                             </ul>
                         </li>
                     @endif
@@ -137,11 +137,11 @@
                             </ul>
                         </li>
                     @endif
-                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role <= 4)
+                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3)
 
                         <li class="menu-title">{{ __('ATTENDANCE') }}</li>
                     @endif
-                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role <= 4)
+                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3)
 
                         <li class="has_sub">
                             <a href="javascript:void(0);" class="waves-effect">
@@ -158,11 +158,11 @@
                             </ul>
                         </li>
                     @endif
-                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role <= 3)
+                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3)
 
                         <li class="menu-title">{{ __('REPORTS') }}</li>
                     @endif
-                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role <= 3)
+                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3)
                     <li class="has_sub">
                         <a href="javascript:void(0);" class="waves-effect">
                             <i class="dripicons-suitcase"></i>

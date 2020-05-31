@@ -32,7 +32,7 @@ class PostResponseController extends Controller
             return redirect()->back()->with(['error'=>'Invalid post or user']);
         }
         else{
-            $commenters = $post->responses()->where('idUser',$user)->where('status',1)->get();
+            $commenters = $post->responses()->where('idUser',$user)->whereIn('status',[1,2])->get();
             return view('post.user_comments')->with(['title'=>'View User Comments','commenters'=>$commenters,'user'=>$user,'post_no'=>$postNo,'responseId'=>$responseId]);
         }
     }
@@ -74,7 +74,12 @@ class PostResponseController extends Controller
         $response->attachment = '';// no value for text
         $response->size = 0; // not value for text
         $response->response_type = 1;// text response
-        $response->status = 1;
+        if(Auth::user()->iduser_role == 3){
+            $response->status = 1; // office admin comment publish directly
+        }
+        else{
+            $response->status = 2; // managment comment que to office admin
+        }
         $response->save();
         return response()->json(['success' =>'message sent']);
 
@@ -145,7 +150,12 @@ class PostResponseController extends Controller
                 $response->attachment = $imageName;
                 $response->size = $image->getSize();
                 $response->response_type = 2;// image
-                $response->status = 1;
+                if(Auth::user()->iduser_role == 3){
+                    $response->status = 1; // office admin comment publish directly
+                }
+                else{
+                    $response->status = 2; // managment comment que to office admin
+                }
                 $response->save();
             }
         }
@@ -220,7 +230,37 @@ class PostResponseController extends Controller
 
         //validation end
 
-       $responses =  $post->responses()->with('post')->where('idPost',$post->idPost)->where('idUser',$request['user_id'])->where('status',1)->orderBy('created_at')->get();
+       $responses =  $post->responses()->with('post')->where('idPost',$post->idPost)->where('idUser',$request['user_id'])->whereIn('status',[1,2])->orderBy('created_at')->get();
        return response()->json(['success' =>$responses]);
+    }
+
+    public function publishManagementComment(Request $request){
+       $id = $request['id'];
+       $response = PostResponse::find(intval($id));
+       if($response == null){
+           return response()->json(['errors' =>['error'=>'Process invalid.']]);
+       }
+       else{
+           if($response->status == 2){
+               $response->status = 1;
+               $response->save();
+           }
+       }
+        return response()->json(['success' =>'success']);
+    }
+
+    public function rejectManagementComment(Request $request){
+        $id = $request['id'];
+        $response = PostResponse::find(intval($id));
+        if($response == null){
+            return response()->json(['errors' =>['error'=>'Process invalid.']]);
+        }
+        else{
+            if($response->status == 2){
+                $response->status = 0;
+                $response->save();
+            }
+        }
+        return response()->json(['success' =>'success']);
     }
 }

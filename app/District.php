@@ -20,4 +20,8 @@ class District extends Model
     public function beneficialDistricts(){
         return $this->hasMany(BeneficialDistrict::class,'iddistrict');
     }
+
+    public function events(){
+        return $this->hasMany(Event::class,'iddistrict');
+    }
 }

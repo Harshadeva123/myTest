@@ -36,19 +36,29 @@ class ResponseAnalysisController extends Controller
                     });
                 }
             }
-            $query->whereHas('user', function ($q) use ($assignedDivisions, $request) {
-                $q->where('idoffice', Auth::user()->office->idoffice)->where('status', 1)
-                    ->whereHas('agent', function ($q) use ($assignedDivisions, $request) {
-                        $q->whereIn('idgramasewa_division', $assignedDivisions);
-                    });
-            });
             if (!empty(strtotime($request['start']) && !empty($request['end']))) {
                 $startDate = date('Y-m-d', strtotime($request['start']));
                 $endDate = date('Y-m-d', strtotime($request['end'] . ' +1 day'));
 
                 $query = $query->whereBetween('created_at', [$startDate, $endDate]);
             }
+
+            $query->where(function ($q) use ($assignedDivisions, $request) {
+                $q->orWhereHas('user', function ($q) use ($assignedDivisions, $request) {
+                    $q->where('idoffice', Auth::user()->idoffice)->where('status', 1)
+                        ->whereHas('agent', function ($q) use ($assignedDivisions, $request) {
+                            $q->whereIn('idgramasewa_division', $assignedDivisions);
+                        });
+                })->orWhereHas('user', function ($q) use ($assignedDivisions, $request) {
+                    $q->where('idoffice', Auth::user()->idoffice)->where('status', 1)
+                        ->whereHas('member', function ($q) use ($assignedDivisions, $request) {
+                            $q->whereIn('idgramasewa_division', $assignedDivisions);
+                        });
+                });
+            });
+
             $responses = $query->where('is_admin', 0)->where('categorized', 0)->get();
+
         } else {
             $responses = collect();
         }
@@ -100,6 +110,7 @@ class ResponseAnalysisController extends Controller
         $analysis->idsub_category = $request['subCat'];
         $analysis->idcategory = $request['cat'];
         $analysis->commenter = $response->idUser;
+        $analysis->idoffice = Auth::user()->idoffice;
         $analysis->iddistrict = Auth::user()->office->iddistrict;
         $analysis->idelection_division = $response->user->getType->idelection_division;
         $analysis->idpolling_booth = $response->user->getType->idpolling_booth;

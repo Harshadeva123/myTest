@@ -301,6 +301,11 @@
                                 "class='btn btn-sm btn-warning  waves-effect waves-light' onclick='showUpdateModal(" + value1.idgramasewa_division + ")'>" +
                                 " <i class='fa fa-edit'></i>" +
                                 "</button>" +
+                                " <button type='button' " +
+                                "class='btn btn-sm btn-danger  waves-effect waves-light'" +
+                                "onclick='deleteThis(" + value1.idgramasewa_division + ")'>" +
+                                " <i class='fa fa-trash'></i>" +
+                                "</button>" +
                                 " </p>" +
                                 " </td>" +
                                 "</tr>"
@@ -546,5 +551,70 @@
             })
         }
 
+        function deleteThis(id) {
+            swal({
+                title: 'Delete?',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Delete',
+                cancelButtonText: 'Keep it',
+                confirmButtonClass: 'btn btn-danger',
+                cancelButtonClass: 'btn btn-success m-l-10',
+                buttonsStyling: false
+            }).then(function () {
+
+                $.ajax({
+                    url: '{{route('deleteGramasewaDivision')}}',
+                    data: {id: id},
+                    type: 'POST',
+                    success: function (data) {
+                        if (data.errors != null) {
+                            notify({
+                                type: "error", //alert | success | error | warning | info
+                                title: 'PROCESS INVALID!',
+                                autoHide: true, //true | false
+                                delay: 2500, //number ms
+                                position: {
+                                    x: "right",
+                                    y: "top"
+                                },
+                                icon: '<em class="mdi mdi-check-circle-outline"></em>',
+
+                                message: 'Something wrong with process.contact administrator..'
+                            });
+                        }
+                        if (data.success != null) {
+
+                            notify({
+                                type: "success", //alert | success | error | warning | info
+                                title: 'GRAMASEWA DIVISION DELETED!',
+                                autoHide: true, //true | false
+                                delay: 2500, //number ms
+                                position: {
+                                    x: "right",
+                                    y: "top"
+                                },
+                                icon: '<em class="mdi mdi-check-circle-outline"></em>',
+
+                                message: 'Gramasewa division deleted successfully.'
+                            });
+                            showTableData();
+                        }
+
+                    }
+                });
+
+            }, function (dismiss) {
+                // dismiss can be 'cancel', 'overlay',
+                // 'close', and 'timer'
+//                if (dismiss === 'cancel') {
+//                    swal(
+//                        'Cancelled',
+//                        'Process has been cancelled',
+//                        'error'
+//                    )
+//                }
+            })
+        }
     </script>
 @endsection

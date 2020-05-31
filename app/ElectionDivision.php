@@ -24,4 +24,8 @@ class ElectionDivision extends Model
     public function member(){
         return $this->hasMany(Member::class,'idelection_division');
     }
+
+    public function events(){
+        return $this->hasMany(Event::class,'idelection_division');
+    }
 }
