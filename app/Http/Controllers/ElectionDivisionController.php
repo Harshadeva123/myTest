@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\ElectionDivision;
+use App\GramasewaDivision;
+use App\PollingBooth;
+use App\Village;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -26,7 +29,7 @@ class ElectionDivisionController extends Controller
     public function getByAuth()
     {
         $district  = Auth::user()->office->iddistrict;
-        $electionDivisions = ElectionDivision::where('iddistrict',$district)->where('iduser',Auth::user()->idUser)->where('status',2)->latest()->get();
+        $electionDivisions = ElectionDivision::where('iddistrict',$district)->whereIn('status',[1,2])->orderBy('name_en')->get();
         return response()->json(['success'  =>$electionDivisions]);
     }
 
@@ -141,6 +144,10 @@ class ElectionDivisionController extends Controller
         $id  = $request['id'];
         $record  =  ElectionDivision::find(intval($id));
         if($record->status == 2){
+
+            Village::where('idelection_division',$id)->where('status',2)->delete();
+            GramasewaDivision::where('idelection_division',$id)->where('status',2)->delete();
+            PollingBooth::where('idelection_division',$id)->where('status',2)->delete();
             $record->delete();
             return response()->json(['success' => 'Record deleted']);
         }

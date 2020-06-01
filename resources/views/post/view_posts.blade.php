@@ -196,7 +196,10 @@
                     //post attachments
                     $.each(postAttachments, function (key, value) {
                         if (value.file_type == 1) {
-                            modalAttachment.append("<img class='rounded postImage m-2' src='" + value.full_path + "' height='200px' width='200px'>");
+                            modalAttachment.append("" +
+                                "<a href='" + value.full_path + "' data-gallery='example-gallery' data-toggle='lightbox'>" +
+                                "<img class='rounded postImage m-2' src='" + value.full_path + "' height='200px' width='200px'>" +
+                                "</a>");
                         } else if (value.file_type == 2) {
                             modalAttachment.append("" +
                                 "<video width='400' controls>" +
@@ -221,5 +224,17 @@
                 }
             });
         }
+
+        $('.modal').on('hidden.bs.modal', function () {
+            $('video').each(function(){
+                this.pause(); // Stop playing
+                this.currentTime = 0; // Reset time
+            });
+            $('audio').each(function(){
+                this.pause(); // Stop playing
+                this.currentTime = 0; // Reset time
+            });
+        });
+
     </script>
 @endsection

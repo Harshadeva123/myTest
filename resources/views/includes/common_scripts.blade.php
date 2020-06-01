@@ -29,6 +29,9 @@
 <!-- sweet alert -->
 <script src="{{ URL::asset('assets/plugins/sweet-alert2/sweetalert2.min.js')}}"></script>
 
+<!-- light box -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.js" integrity="sha256-jGAkJO3hvqIDc4nIY1sfh/FPbV+UK+1N+xJJg6zzr7A=" crossorigin="anonymous"></script>
+
 
 <script language="JavaScript" type="text/javascript">
     $('.gtZero').on('input',function () {
@@ -65,7 +68,20 @@
     $(document).on("wheel", "input[type=number]", function (e) {
         $(this).blur();
     });
+
+    $(document).on('click', '[data-toggle="lightbox"]', function(event) {
+        event.preventDefault();
+        $(this).ekkoLightbox({
+            onShown: function() {
+                $('.modal').hide();
+            },
+            onHidden: function() {
+                $('.modal').show();
+            },
+        });
+    });
 </script>
+
 
 
 

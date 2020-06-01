@@ -146,7 +146,7 @@ class ApiPostResponseController extends Controller
             return response()->json(['error' =>'Process invalid.Please refresh page and try again!','statusCode'=>-99]);
         }
 
-//save images
+        //save images
         $images = $request->file('imageFiles');
         if (!empty($images)) {
             foreach ($images as $image) {

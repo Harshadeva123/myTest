@@ -27,10 +27,14 @@ class GramasewaDivisionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getByAuth()
+    public function getByAuth(Request $request)
     {
         $district  = intval(Auth::user()->office->iddistrict);
-        $gramasewaDivisions = GramasewaDivision::with(['pollingBooth'])->where('iddistrict',$district)->where('iduser',Auth::user()->idUser)->where('status',2)->get();
+        $query = GramasewaDivision::query();
+        if($request['id'] != null){
+            $query  = $query->where('idpolling_booth',$request['id']);
+        }
+        $gramasewaDivisions = $query->with(['pollingBooth'])->where('iddistrict',$district)->whereIn('status',[1,2])->orderBy('name_en')->get();
         return response()->json(['success'  => $gramasewaDivisions]);
     }
 
@@ -209,7 +213,10 @@ class GramasewaDivisionController extends Controller
         $id  = $request['id'];
         $record  =  GramasewaDivision::find(intval($id));
         if($record->status == 2){
+
+            Village::where('idgramasewa_division',$id)->where('status',2)->delete();
             $record->delete();
+
             return response()->json(['success' => 'Record deleted']);
         }
         return response()->json(['errors' => ['error'=>'You are not able to delete this record.']]);

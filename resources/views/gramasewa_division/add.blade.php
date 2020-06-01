@@ -27,10 +27,10 @@
                                             <span class="input-group-text"><em class="mdi mdi-bank"></em></span>
                                         </div>
                                         <select id="pollingBooth" name="pollingBooth" class="form-control"
-                                                onchange="setCustomValidity('')"
+                                                onchange="setCustomValidity('');showTableData()"
                                                 oninvalid="this.setCustomValidity('Please select polling booth')"
                                                 required>
-                                            <option value="" disabled selected>Select polling booth</option>
+                                            <option value=""  selected>Select polling booth</option>
                                             @if($pollingBooths != null)
                                                 @foreach($pollingBooths as $pollingBooth)
                                                     <option value="{{$pollingBooth->idpolling_booth}}">{{strtoupper($pollingBooth->name_en)}}</option>
@@ -119,7 +119,7 @@
                                                 <th>ENGLISH</th>
                                                 <th>SINHALA</th>
                                                 <th>TAMIL</th>
-                                                <th>UPDATE</th>
+                                                <th style='text-align:center;'>OPTIONS</th>
                                             </tr>
                                             </thead>
                                             <tbody id="gramasewaDivisionTBody">
@@ -275,8 +275,10 @@
         }
 
         function showTableData() {
+            let id = $('#pollingBooth').val();
             $.ajax({
                 url: '{{route('getGramasewaDivisionByAuth')}}',
+                data:{id:id},
                 type: 'POST',
                 success: function (data) {
                     if (data.success != null) {
@@ -289,27 +291,51 @@
                         }
                         $('#gramasewaDivisionTBody').html('');
                         $.each(array, function (key1, value1) {
-                            $('#gramasewaDivisionTBody').append(
-                                "<tr data-id='"+value1.idpolling_booth+"' id='"+value1.idgramasewa_division+"'>" +
-                                "<td>" + value1.polling_booth.name_en.toUpperCase() + "</td>" +
-                                "<td>" + value1.name_en.toUpperCase() + "</td>" +
-                                "<td>" + value1.name_si.toUpperCase() + "</td>" +
-                                "<td>" + value1.name_ta.toUpperCase() + "</td>" +
-                                "<td>" +
-                                "<p>" +
-                                " <button type='button' " +
-                                "class='btn btn-sm btn-warning  waves-effect waves-light' onclick='showUpdateModal(" + value1.idgramasewa_division + ")'>" +
-                                " <i class='fa fa-edit'></i>" +
-                                "</button>" +
-                                " <button type='button' " +
-                                "class='btn btn-sm btn-danger  waves-effect waves-light'" +
-                                "onclick='deleteThis(" + value1.idgramasewa_division + ")'>" +
-                                " <i class='fa fa-trash'></i>" +
-                                "</button>" +
-                                " </p>" +
-                                " </td>" +
-                                "</tr>"
-                            );
+                            if(value1.status == 2) {
+                                $('#gramasewaDivisionTBody').append(
+                                    "<tr data-id='" + value1.idpolling_booth + "' id='" + value1.idgramasewa_division + "'>" +
+                                    "<td>" + value1.polling_booth.name_en.toUpperCase() + "</td>" +
+                                    "<td>" + value1.name_en.toUpperCase() + "</td>" +
+                                    "<td>" + value1.name_si.toUpperCase() + "</td>" +
+                                    "<td>" + value1.name_ta.toUpperCase() + "</td>" +
+                                    "<td style='text-align: center;'>" +
+                                    "<p>" +
+                                    " <button type='button' " +
+                                    "class='btn btn-sm btn-warning  waves-effect waves-light' onclick='showUpdateModal(" + value1.idgramasewa_division + ")'>" +
+                                    " <i class='fa fa-edit'></i>" +
+                                    "</button>" +
+                                    " <button type='button' " +
+                                    "class='btn btn-sm btn-danger  waves-effect waves-light'" +
+                                    "onclick='deleteThis(" + value1.idgramasewa_division + ")'>" +
+                                    " <i class='fa fa-trash'></i>" +
+                                    "</button>" +
+                                    " </p>" +
+                                    " </td>" +
+                                    "</tr>"
+                                );
+                            }
+                            else{
+                                $('#gramasewaDivisionTBody').append(
+                                    "<tr data-id='" + value1.idpolling_booth + "' id='" + value1.idgramasewa_division + "'>" +
+                                    "<td>" + value1.polling_booth.name_en.toUpperCase() + "</td>" +
+                                    "<td>" + value1.name_en.toUpperCase() + "</td>" +
+                                    "<td>" + value1.name_si.toUpperCase() + "</td>" +
+                                    "<td>" + value1.name_ta.toUpperCase() + "</td>" +
+                                    "<td style='text-align: center;'>" +
+                                    "<p>" +
+                                    " <button title='Can not use this option on confirmed records' disabled type='button' " +
+                                    "class='btn btn-sm btn-muted  waves-effect waves-light'>" +
+                                    " <i class='fa fa-edit'></i>" +
+                                    "</button>" +
+                                    " <button  title='Can not use this option on confirmed records'  disabled type='button' " +
+                                    "class='btn btn-sm btn-muted  waves-effect waves-light'>" +
+                                    " <i class='fa fa-trash'></i>" +
+                                    "</button>" +
+                                    " </p>" +
+                                    " </td>" +
+                                    "</tr>"
+                                );
+                            }
                         });
                     }
                     else {

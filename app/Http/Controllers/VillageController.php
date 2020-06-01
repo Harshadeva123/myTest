@@ -26,10 +26,14 @@ class VillageController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getByAuth()
+    public function getByAuth(Request $request)
     {
         $district  = intval(Auth::user()->office->iddistrict);
-        $villages = Village::with(['gramasewaDivision'])->where('iddistrict',$district)->where('iduser',Auth::user()->idUser)->where('status',2)->get();
+        $query = Village::query();
+        if($request['id'] != null){
+            $query  = $query->where('idgramasewa_division',$request['id']);
+        }
+        $villages = $query->with(['gramasewaDivision'])->where('iddistrict',$district)->where('iduser',Auth::user()->idUser)->whereIn('status',[1,2])->orderBy('name_en')->get();
         return response()->json(['success'  => $villages]);
     }
 

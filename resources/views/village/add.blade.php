@@ -27,10 +27,10 @@
                                             <span class="input-group-text"><em class="mdi mdi-bank"></em></span>
                                         </div>
                                         <select id="gramasewaDivision" name="gramasewaDivision" class="form-control"
-                                                onchange="setCustomValidity('')"
+                                                onchange="setCustomValidity('');showTableData()"
                                                 oninvalid="this.setCustomValidity('Please select gramasewa division')"
                                                 required>
-                                            <option value="" disabled selected>Select  gramasewa division</option>
+                                            <option value=""  selected>Select  gramasewa division</option>
                                             @if($gramasewaDivisions != null)
                                                 @foreach($gramasewaDivisions as $gramasewaDivision)
                                                     <option value="{{$gramasewaDivision->idgramasewa_division}}">{{strtoupper($gramasewaDivision->name_en)}}</option>
@@ -119,7 +119,7 @@
                                                 <th>ENGLISH</th>
                                                 <th>SINHALA</th>
                                                 <th>TAMIL</th>
-                                                <th>UPDATE</th>
+                                                <th style='text-align:center;'>OPTIONS</th>
                                             </tr>
                                             </thead>
                                             <tbody id="villageTBody">
@@ -274,11 +274,11 @@
         }
 
         function showTableData() {
-
-
+            let id = $('#gramasewaDivision').val();
             $.ajax({
                 url: '{{route('getVillageByAuth')}}',
                 type: 'POST',
+                data:{id:id},
                 success: function (data) {
                     if (data.success != null) {
                         let array = data.success;
@@ -290,27 +290,50 @@
                         }
                         $('#villageTBody').html('');
                         $.each(array, function (key1, value1) {
-                            $('#villageTBody').append(
-                                "<tr data-id='"+value1.idgramasewa_division+"' id='"+value1.idvillage+"'>" +
-                                "<td>" + value1.gramasewa_division.name_en.toUpperCase() + "</td>" +
-                                "<td>" + value1.name_en.toUpperCase() + "</td>" +
-                                "<td>" + value1.name_si.toUpperCase() + "</td>" +
-                                "<td>" + value1.name_ta.toUpperCase() + "</td>" +
-                                "<td>" +
-                                "<p>" +
-                                " <button type='button' " +
-                                "class='btn btn-sm btn-warning  waves-effect waves-light' onclick='showUpdateModal(" + value1.idvillage + ")'>" +
-                                " <i class='fa fa-edit'></i>" +
-                                "</button>" +
-                                " <button type='button' " +
-                                "class='btn btn-sm btn-danger  waves-effect waves-light'" +
-                                "onclick='deleteThis(" + value1.idvillage + ")'>" +
-                                " <i class='fa fa-trash'></i>" +
-                                "</button>" +
-                                " </p>" +
-                                " </td>" +
-                                "</tr>"
-                            );
+                            if(value1.status == 2) {
+                                $('#villageTBody').append(
+                                    "<tr data-id='" + value1.idgramasewa_division + "' id='" + value1.idvillage + "'>" +
+                                    "<td>" + value1.gramasewa_division.name_en.toUpperCase() + "</td>" +
+                                    "<td>" + value1.name_en.toUpperCase() + "</td>" +
+                                    "<td>" + value1.name_si.toUpperCase() + "</td>" +
+                                    "<td>" + value1.name_ta.toUpperCase() + "</td>" +
+                                    "<td style='text-align: center;'>" +
+                                    "<p>" +
+                                    " <button type='button' " +
+                                    "class='btn btn-sm btn-warning  waves-effect waves-light' onclick='showUpdateModal(" + value1.idvillage + ")'>" +
+                                    " <i class='fa fa-edit'></i>" +
+                                    "</button>" +
+                                    " <button type='button' " +
+                                    "class='btn btn-sm btn-danger  waves-effect waves-light'" +
+                                    "onclick='deleteThis(" + value1.idvillage + ")'>" +
+                                    " <i class='fa fa-trash'></i>" +
+                                    "</button>" +
+                                    " </p>" +
+                                    " </td>" +
+                                    "</tr>"
+                                );
+                            }else{
+                                $('#villageTBody').append(
+                                    "<tr data-id='" + value1.idgramasewa_division + "' id='" + value1.idvillage + "'>" +
+                                    "<td>" + value1.gramasewa_division.name_en.toUpperCase() + "</td>" +
+                                    "<td>" + value1.name_en.toUpperCase() + "</td>" +
+                                    "<td>" + value1.name_si.toUpperCase() + "</td>" +
+                                    "<td>" + value1.name_ta.toUpperCase() + "</td>" +
+                                    "<td style='text-align: center;'>" +
+                                    "<p>" +
+                                    " <button title='Can not use this option on confirmed records' disabled type='button' " +
+                                    "class='btn btn-sm btn-muted  waves-effect waves-light'>" +
+                                    " <i class='fa fa-edit'></i>" +
+                                    "</button>" +
+                                    " <button  title='Can not use this option on confirmed records'  disabled type='button' " +
+                                    "class='btn btn-sm btn-muted  waves-effect waves-light'>" +
+                                    " <i class='fa fa-trash'></i>" +
+                                    "</button>" +
+                                    " </p>" +
+                                    " </td>" +
+                                    "</tr>"
+                                );
+                            }
                         });
                     }
                     else {
@@ -552,6 +575,7 @@
 //                }
             })
         }
+
 
 
         function deleteThis(id) {

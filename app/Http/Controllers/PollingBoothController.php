@@ -28,10 +28,14 @@ class PollingBoothController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getByAuth()
+    public function getByAuth(Request $request)
     {
         $district  = intval(Auth::user()->office->iddistrict);
-        $pollingBooth = PollingBooth::with(['electionDivision'])->where('iddistrict',$district)->where('iduser',Auth::user()->idUser)->latest()->where('status',2)->get();
+        $query  = PollingBooth::query();
+        if($request['id'] != null){
+            $query  = $query->where('idelection_division',$request['id']);
+        }
+        $pollingBooth = $query->with(['electionDivision'])->where('iddistrict',$district)->whereIn('status',[1,2])->orderBy('name_en')->get();
         return response()->json(['success'  => $pollingBooth]);
     }
 
@@ -224,7 +228,11 @@ class PollingBoothController extends Controller
         $id  = $request['id'];
         $record  =  PollingBooth::find(intval($id));
         if($record->status == 2){
+
+            GramasewaDivision::where('idpolling_booth',$id)->where('status',2)->delete();
+            Village::where('idpolling_booth',$id)->where('status',2)->delete();
             $record->delete();
+
             return response()->json(['success' => 'Record deleted']);
         }
         return response()->json(['errors' => ['error'=>'You are not able to delete this record.']]);

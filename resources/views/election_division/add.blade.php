@@ -114,7 +114,7 @@
                                                 <th>ENGLISH</th>
                                                 <th>SINHALA</th>
                                                 <th>TAMIL</th>
-                                                <th style='text-align:center;'>ACTIONS</th>
+                                                <th style='text-align:center;'>OPTIONS</th>
                                             </tr>
                                             </thead>
                                             <tbody id="electionDivisionTBody">
@@ -280,28 +280,52 @@
                         }
                         $('#electionDivisionTBody').html('');
                         $.each(array, function (key, value) {
-                            $('#electionDivisionTBody').append(
-                                "<tr id='" + value.idelection_division + "'>" +
-                                "<td>{{ strtoupper( \Illuminate\Support\Facades\Auth::user()->office->district->name_en)}}</td>" +
-                                "<td>" + value.name_en.toUpperCase() + "</td>" +
-                                "<td>" + value.name_si.toUpperCase() + "</td>" +
-                                "<td>" + value.name_ta.toUpperCase() + "</td>" +
-                                " <td style='text-align:center;'>" +
-                                "<p>" +
-                                " <button type='button' " +
-                                "class='btn btn-sm btn-warning  waves-effect waves-light'" +
-                                "onclick='showUpdateModal(" + value.idelection_division + ")'>" +
-                                " <i class='fa fa-edit'></i>" +
-                                "</button>" +
-                                " <button type='button' " +
-                                "class='btn btn-sm btn-danger  waves-effect waves-light'" +
-                                "onclick='deleteThis(" + value.idelection_division + ")'>" +
-                                " <i class='fa fa-trash'></i>" +
-                                "</button>" +
-                                " </p>" +
-                                " </td>" +
-                                "</tr>"
-                            );
+                            if (value.status == 2) {
+                                $('#electionDivisionTBody').append(
+                                    "<tr id='" + value.idelection_division + "'>" +
+                                    "<td>{{ strtoupper( \Illuminate\Support\Facades\Auth::user()->office->district->name_en)}}</td>" +
+                                    "<td>" + value.name_en.toUpperCase() + "</td>" +
+                                    "<td>" + value.name_si.toUpperCase() + "</td>" +
+                                    "<td>" + value.name_ta.toUpperCase() + "</td>" +
+                                    " <td style='text-align:center;'>" +
+                                    "<p>" +
+                                    " <button type='button' " +
+                                    "class='btn btn-sm btn-warning  waves-effect waves-light'" +
+                                    "onclick='showUpdateModal(" + value.idelection_division + ")'>" +
+                                    " <i class='fa fa-edit'></i>" +
+                                    "</button>" +
+                                    " <button type='button' " +
+                                    "class='btn btn-sm btn-danger  waves-effect waves-light'" +
+                                    "onclick='deleteThis(" + value.idelection_division + ")'>" +
+                                    " <i class='fa fa-trash'></i>" +
+                                    "</button>" +
+                                    " </p>" +
+                                    " </td>" +
+                                    "</tr>"
+                                );
+                            }
+                            else {
+                                $('#electionDivisionTBody').append(
+                                    "<tr id='" + value.idelection_division + "'>" +
+                                    "<td>{{ strtoupper( \Illuminate\Support\Facades\Auth::user()->office->district->name_en)}}</td>" +
+                                    "<td>" + value.name_en.toUpperCase() + "</td>" +
+                                    "<td>" + value.name_si.toUpperCase() + "</td>" +
+                                    "<td>" + value.name_ta.toUpperCase() + "</td>" +
+                                    " <td style='text-align:center;'>" +
+                                    "<p>" +
+                                    " <button title='Can not use this option on confirmed records' disabled type='button' " +
+                                    "class='btn btn-sm btn-muted  waves-effect waves-light'>" +
+                                    " <i class='fa fa-edit'></i>" +
+                                    "</button>" +
+                                    " <button  title='Can not use this option on confirmed records'  disabled type='button' " +
+                                    "class='btn btn-sm btn-muted  waves-effect waves-light'>" +
+                                    " <i class='fa fa-trash'></i>" +
+                                    "</button>" +
+                                    " </p>" +
+                                    " </td>" +
+                                    "</tr>"
+                                );
+                            }
                         });
                     }
                     else {
