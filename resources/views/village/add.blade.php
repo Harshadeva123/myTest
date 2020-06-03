@@ -26,7 +26,7 @@
                                         <div class="input-group-append">
                                             <span class="input-group-text"><em class="mdi mdi-bank"></em></span>
                                         </div>
-                                        <select id="gramasewaDivision" name="gramasewaDivision" class="form-control"
+                                        <select id="gramasewaDivision" name="gramasewaDivision" class="form-control noClear"
                                                 onchange="setCustomValidity('');showTableData()"
                                                 oninvalid="this.setCustomValidity('Please select gramasewa division')"
                                                 required>

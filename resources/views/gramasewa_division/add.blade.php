@@ -26,7 +26,7 @@
                                         <div class="input-group-append">
                                             <span class="input-group-text"><em class="mdi mdi-bank"></em></span>
                                         </div>
-                                        <select id="pollingBooth" name="pollingBooth" class="form-control"
+                                        <select id="pollingBooth" name="pollingBooth" class="form-control noClear"
                                                 onchange="setCustomValidity('');showTableData()"
                                                 oninvalid="this.setCustomValidity('Please select polling booth')"
                                                 required>

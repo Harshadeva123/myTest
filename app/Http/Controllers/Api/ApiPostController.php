@@ -6,6 +6,7 @@ use App\Agent;
 use App\MemberAgent;
 use App\Post;
 use App\PostView;
+use App\ResponsePanel;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -35,9 +36,9 @@ class ApiPostController extends Controller
             if($agent == null){
                 return response()->json(['error' => 'Agent not found!','statusCode'=>-99]);
             }
-            elseif(MemberAgent::where('idmember',$user->member->idmember)->where('idagent',$agent->idagent)->first() == null || MemberAgent::where('idmember',$user->member->idmember)->where('idagent',$agent->idagent)->first()->status != 1){
-                return response()->json(['error' => 'You are not able to get post from selected agent.!','statusCode'=>-99]);
-            }
+//            elseif(MemberAgent::where('idmember',$user->member->idmember)->where('idagent',$agent->idagent)->first() == null || MemberAgent::where('idmember',$user->member->idmember)->where('idagent',$agent->idagent)->first()->status != 1){
+//                return response()->json(['error' => 'You are not able to get post from selected agent.!','statusCode'=>-99]);
+//            }
             $office = User::find($agent->idUser)->idoffice;
         }
         else{
@@ -86,14 +87,22 @@ class ApiPostController extends Controller
             $q->where('maxAge', 120)->orWhere('maxAge','>=',$user->age);
         })->where(function ($q) use ($office) {
             $q->where('idoffice', $office);
-        })->where('expire_date','>',date('Y-m-d'))->select(['idPost','title_en','title_si','title_ta','text_en','text_si','text_ta','post_no','created_at','response_panel'])->paginate(10);
+        })->where('expire_date','>',date('Y-m-d'))->select(['idPost','title_en','title_si','title_ta','text_en','text_si','text_ta','post_no','created_at','response_panel'])->latest()->paginate(10);
 
         foreach ($posts as $post) {
+
+            $responseValue = ResponsePanel::where('idPost',$post->idPost)->where('idUser',Auth::user()->idUser)->first();
+            if($responseValue != null){
+                $value = $responseValue->value;
+            }
+            else{
+                $value = -1;
+            }
             $post['title'] = $post[$lang] != null ? $post[$lang] : $post[$fallBack];
             $post['text'] = $post[$langText] != null ? $post[$langText] : $post[$fallBackText];
             $post['id'] = $post['idPost'];
-            $post['commentsCount'] = $post->comments_count;
-            $post['panel_type'] = $post->response_panel;
+            $post['commentsCount'] = $post->userCommentsCount($user->idUser);
+            $post['panel'] = ['type'=>$post->response_panel,'value'=>$value];
             $post['post_no'] = sprintf('%06d',$post['post_no']);
 
             unset($post->title_en);
@@ -106,6 +115,7 @@ class ApiPostController extends Controller
             unset($post->idPost);
             unset($post->$lang);
         }
+//        $posts = $posts->reverse();
         return response()->json(['success' =>$posts,'statusCode'=>0]);
     }
 
@@ -148,10 +158,11 @@ class ApiPostController extends Controller
             $postView->idPost = $postId;
             $postView->idUser = Auth::user()->idUser;
             $postView->count = 1;
+            $postView->status = 1;//default value
             $postView->save();
         }
         else{
-            if(Post::find($postId)->isOnce == 1){
+            if(Post::find(intval($postId))->isOnce == 1){
                 return response()->json(['error' => 'Sorry! This post content can only view once!','statusCode'=>-99]);
             }
             $isExist->count +=1;

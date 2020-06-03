@@ -28,7 +28,7 @@ class ApiPostResponseController extends Controller
         $postId = $request['post_id'];
         $post = Post::find($postId);
         if($post != null){
-            $comments = PostResponse::where('idPost',$postId)->where('idUser',Auth::user()->idUser)->where('status',1)->latest()->paginate(20);
+            $comments = PostResponse::where('idPost',$postId)->where('idUser',Auth::user()->idUser)->where('status',1)->orderBy('updated_at','DESC')->paginate(20);
 
             foreach ($comments as $comment) {
 
@@ -39,7 +39,9 @@ class ApiPostResponseController extends Controller
                     $comment['content'] =  asset('').$comment->getPath();
                 }
                 $comment['response_type'] = $comment->response_type - 1;
+                $comment['id'] = $comment->idpost_response;
 
+                $comment->makeHidden('created_at')->toArray();
                 $comment->makeHidden('idUser')->toArray();
                 $comment->makeHidden('idpost_response')->toArray();
                 $comment->makeHidden('response')->toArray();
@@ -50,7 +52,6 @@ class ApiPostResponseController extends Controller
                 $comment->makeHidden('full_path')->toArray();
                 $comment->makeHidden('post')->toArray();
                 $comment->makeHidden('idPost')->toArray();
-                $comment->makeHidden('updated_at')->toArray();
 
             }
             return response()->json(['success' => $comments,'statusCode'=>0]);
@@ -99,10 +100,31 @@ class ApiPostResponseController extends Controller
         $response->response_type = 1;// text response
         $response->status = 1;
         $response->save();
-        return response()->json(['success' =>'message sent','statusCode'=>0]);
 
+
+        if($response->response_type == 1){
+            $response['content'] = $response['response'];
+        }
+        else{
+            $response['content'] =  asset('').$response->getPath();
+        }
+        $response['response_type'] = $response->response_type - 1;
+        $response['id'] = $response->idpost_response;
+
+        $response->makeHidden('created_at')->toArray();
+        $response->makeHidden('idUser')->toArray();
+        $response->makeHidden('idpost_response')->toArray();
+        $response->makeHidden('response')->toArray();
+        $response->makeHidden('attachment')->toArray();
+        $response->makeHidden('size')->toArray();
+        $response->makeHidden('categorized')->toArray();
+        $response->makeHidden('status')->toArray();
+        $response->makeHidden('full_path')->toArray();
+        $response->makeHidden('post')->toArray();
+        $response->makeHidden('idPost')->toArray();
+
+        return response()->json(['success' =>$response,'statusCode'=>0]);
     }
-
 
     public function storeAttachments(Request $request){
         $validationMessages = [
@@ -146,6 +168,8 @@ class ApiPostResponseController extends Controller
             return response()->json(['error' =>'Process invalid.Please refresh page and try again!','statusCode'=>-99]);
         }
 
+        $attachments  = [];
+
         //save images
         $images = $request->file('imageFiles');
         if (!empty($images)) {
@@ -155,7 +179,6 @@ class ApiPostResponseController extends Controller
 
                 $response = new PostResponse();
                 $response->idPost = $post->idPost;
-                $response->idUser = $request['user'];
                 $response->idUser = Auth::user()->idUser;
                 $response->response = '';
                 $response->categorized = 0;// uncategorized when creating
@@ -165,8 +188,32 @@ class ApiPostResponseController extends Controller
                 $response->response_type = 2;// image
                 $response->status = 1;
                 $response->save();
+
+                if($response->response_type == 1){
+                    $response['content'] = $response['response'];
+                }
+                else{
+                    $response['content'] =  asset('').$response->getPath();
+                }
+                $response['response_type'] = $response->response_type - 1;
+                $response['id'] = $response->idpost_response;
+
+                $response->makeHidden('created_at')->toArray();
+                $response->makeHidden('idUser')->toArray();
+                $response->makeHidden('idpost_response')->toArray();
+                $response->makeHidden('response')->toArray();
+                $response->makeHidden('attachment')->toArray();
+                $response->makeHidden('size')->toArray();
+                $response->makeHidden('categorized')->toArray();
+                $response->makeHidden('status')->toArray();
+                $response->makeHidden('full_path')->toArray();
+                $response->makeHidden('post')->toArray();
+                $response->makeHidden('idPost')->toArray();
+
+                $attachments[] = $response;
             }
-            return response()->json(['success' =>'image sent','statusCode'=>0]);
+
+            return response()->json(['success' =>$attachments,'statusCode'=>0]);
 
         }
         //save images end
@@ -180,7 +227,6 @@ class ApiPostResponseController extends Controller
 
                 $response = new PostResponse();
                 $response->idPost = $post->idPost;
-                $response->idUser = $request['user'];
                 $response->idUser = Auth::user()->idUser;
                 $response->response = '';
                 $response->categorized = 0;// uncategorized when creating
@@ -190,8 +236,31 @@ class ApiPostResponseController extends Controller
                 $response->response_type = 3;// video
                 $response->status = 1;
                 $response->save();
+
+                if($response->response_type == 1){
+                    $response['content'] = $response['response'];
+                }
+                else{
+                    $response['content'] =  asset('').$response->getPath();
+                }
+                $response['response_type'] = $response->response_type - 1;
+                $response['id'] = $response->idpost_response;
+
+                $response->makeHidden('created_at')->toArray();
+                $response->makeHidden('idUser')->toArray();
+                $response->makeHidden('idpost_response')->toArray();
+                $response->makeHidden('response')->toArray();
+                $response->makeHidden('attachment')->toArray();
+                $response->makeHidden('size')->toArray();
+                $response->makeHidden('categorized')->toArray();
+                $response->makeHidden('status')->toArray();
+                $response->makeHidden('full_path')->toArray();
+                $response->makeHidden('post')->toArray();
+                $response->makeHidden('idPost')->toArray();
+
+                $attachments[] = $response;
             }
-            return response()->json(['success' =>'video sent','statusCode'=>0]);
+            return response()->json(['success' =>$attachments,'statusCode'=>0]);
 
         }
         //save video end
@@ -205,7 +274,6 @@ class ApiPostResponseController extends Controller
 
                 $response = new PostResponse();
                 $response->idPost = $post->idPost;
-                $response->idUser = $request['user'];
                 $response->idUser = Auth::user()->idUser;
                 $response->response = '';
                 $response->categorized = 0;// uncategorized when creating
@@ -215,14 +283,36 @@ class ApiPostResponseController extends Controller
                 $response->response_type = 4;// audio
                 $response->status = 1;
                 $response->save();
+
+                if($response->response_type == 1){
+                    $response['content'] = $response['response'];
+                }
+                else{
+                    $response['content'] =  asset('').$response->getPath();
+                }
+                $response['response_type'] = $response->response_type - 1;
+                $response['id'] = $response->idpost_response;
+
+                $response->makeHidden('created_at')->toArray();
+                $response->makeHidden('idUser')->toArray();
+                $response->makeHidden('idpost_response')->toArray();
+                $response->makeHidden('response')->toArray();
+                $response->makeHidden('attachment')->toArray();
+                $response->makeHidden('size')->toArray();
+                $response->makeHidden('categorized')->toArray();
+                $response->makeHidden('status')->toArray();
+                $response->makeHidden('full_path')->toArray();
+                $response->makeHidden('post')->toArray();
+                $response->makeHidden('idPost')->toArray();
+
+                $attachments[] = $response;
             }
-            return response()->json(['success' =>'audio sent','statusCode'=>0]);
+            return response()->json(['success' =>$attachments,'statusCode'=>0]);
+
 
         }
         //save audio end
 
         return response()->json(['success' =>'no file to send','statusCode'=>0]);
     }
-
-
 }

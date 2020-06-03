@@ -22,4 +22,9 @@ class Village extends Model
     public function events(){
         return $this->hasMany(Event::class,'idvillage');
     }
+
+    public function analysis()
+    {
+        return $this->belongsTo(Analysis::class, 'idvillage');
+    }
 }

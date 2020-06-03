@@ -687,7 +687,6 @@
                 data: {id: divisions},
                 success: function (data) {
                     let result = data.success;
-                    console.log(result);
                     $.each(result, function (key, value) {
                         $('#villages').append("<option value='" + value.idvillage + "'>" + value.name_en + "</option>");
                     });
@@ -761,6 +760,7 @@
                     cache: false,
                     processData: false,
                     success: function (data) {
+                        console.log(data);
                         $('#publishBtns').show();
                         $('#uploadingBtn').hide();
                         if (data.errors != null) {

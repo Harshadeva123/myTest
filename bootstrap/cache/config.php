@@ -5,7 +5,7 @@
     'env' => 'local',
     'debug' => true,
     'url' => 'http://localhost',
-    'timezone' => 'UTC',
+    'timezone' => 'Asia/Colombo',
     'locale' => 'en',
     'fallback_locale' => 'en',
     'key' => 'base64:J28k1ZFyLKnEhOgMLQxDNoNv51emtJ4f49VoKEjksN4=',

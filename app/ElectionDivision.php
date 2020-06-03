@@ -28,4 +28,8 @@ class ElectionDivision extends Model
     public function events(){
         return $this->hasMany(Event::class,'idelection_division');
     }
+    public function analysis()
+    {
+        return $this->hasMany(Analysis::class, 'idelection_division');
+    }
 }

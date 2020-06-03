@@ -140,7 +140,7 @@
                                 <tr>
                                     <th id="firstColumn" onclick="sortTable(0)"> </th>
                                     <th onclick="sortTable(1)" style='text-align: center;'>PERCENTAGE  <em style="opacity: 0.5;" class="float-right mt-1 text-secondary fa fa-sort"></em></th>
-                                    <th onclick="sortTable(2)" style='text-align: center;'>SOLUTIONS  <em style="opacity: 0.5;" class="float-right mt-1 text-secondary fa fa-sort"></em></th>
+                                    {{--<th onclick="sortTable(2)" style='text-align: center;'>SOLUTIONS  <em style="opacity: 0.5;" class="float-right mt-1 text-secondary fa fa-sort"></em></th>--}}
                                     <th onclick="sortTable(3)" style='text-align: center;'>QUESTIONS  <em style="opacity: 0.5;" class="float-right mt-1 text-secondary fa fa-sort"></em></th>
                                     <th onclick="sortTable(4)" style='text-align: center;'>PROPOSALS  <em style="opacity: 0.5;" class="float-right mt-1 text-secondary fa fa-sort"></em></th>
                                     <th onclick="sortTable(5)" style='text-align: center;'>REQUESTS  <em style="opacity: 0.5;" class="float-right mt-1 text-secondary fa fa-sort"></em></th>
@@ -232,6 +232,8 @@
 
         $("#form1").on("submit", function (event) {
 
+            mainArray = {};
+            postsArray = {};
             event.preventDefault();
             //initialize alert and variables
             $('.notify').empty();
@@ -266,7 +268,7 @@
                             $('#chartDiv').html('');
 
                             let categories = data.success;
-                            let posts = data.posts;
+//                            let posts = data.posts;
                             let mainArray = [$('#category option:selected').html(),0,0,0];
 
                             $.each(categories, function (key, value) {
@@ -282,18 +284,18 @@
                                 //mainArray = [category name, questions, proposal, requests , beneficial]
                             });
 
-                            $.each(posts, function (key, value) {
-                                let cat = value.beneficial_category;
-                                $.each(cat, function (catKey, catValue) {
-                                    let cat = catValue.idcategory;
-                                    if (mainArray[cat] !== undefined) {
-                                        mainArray[cat][4] += 1;
-                                    }
-                                    else {
-                                        mainArray[cat] = [catValue.category.category, 0, 0,0,1];
-                                    }
-                                });
-                            });
+//                            $.each(posts, function (key, value) {
+//                                let cat = value.beneficial_category;
+//                                $.each(cat, function (catKey, catValue) {
+//                                    let cat = catValue.idcategory;
+//                                    if (mainArray[cat] !== undefined) {
+//                                        mainArray[cat][4] += 1;
+//                                    }
+//                                    else {
+//                                        mainArray[cat] = [catValue.category.category, 0, 0,0,1];
+//                                    }
+//                                });
+//                            });
 
 
                             barChart();
@@ -302,11 +304,11 @@
                                 window.barChart = Morris.Bar({
                                     element: 'chartDiv',
                                     data: [
-                                        { y: mainArray[0], a: posts.length, b: mainArray[1], c: mainArray[2] , d: mainArray[3]}
+                                        { y: mainArray[0],  b: mainArray[1], c: mainArray[2] , d: mainArray[3]}
                                     ],
                                     xkey: 'y',
-                                    ykeys: ['a', 'b','c','d'],
-                                    labels: ['Beneficial','Questions', 'Proposals', 'Requests'],
+                                    ykeys: [ 'b','c','d'],
+                                    labels: ['Questions', 'Proposals', 'Requests'],
                                     lineColors: ['#1e88e5','#ff3321'],
                                     lineWidth: '3px',
                                     resize: true,
@@ -418,14 +420,114 @@
                     }
                     if (data.success != null) {
 
-                        let post = data.posts;
+//                        let post = data.posts;
                         let response = data.questions;
                         let total = 0;
                         console.log(response);
 
                         if(level == 0) {
                             $.each(response, function (key, value) {
+                                mainArray[key] = [value[0].election_division.name_en, 0, 0, 0, 0, 0];
+                                $.each(value, function (key1, value1) {
+
+                                    if (value1.idsub_category == 1) {
+                                        mainArray[key][1] += 1; //QUESTIONS
+                                        mainArray[key][5] += 1; //CATEGORY TOTAL
+                                        total += 1;//TOTAL
+                                    }
+                                    else if (value1.idsub_category == 2) {
+                                        mainArray[key][2] += 1; //PERSONAL
+                                        mainArray[key][5] += 1; //CATEGORY TOTAL
+                                        total += 1;//TOTAL
+
+                                    } else if (value1.idsub_category == 3) {
+                                        mainArray[key][3] += 1; // REQUESTS
+                                        mainArray[key][5] += 1; //CATEGORY TOTAL
+                                        total += 1;//TOTAL
+
+                                    }
+                                });
+                                //mainArray = [category name, questions, proposal, requests , beneficial]
+                            });
+                        }
+                        else if(level == 1) {
+                            $.each(response, function (key, value) {
                                 mainArray[key] = [value[0].polling_booth.name_en, 0, 0, 0, 0, 0];
+                                $.each(value, function (key1, value1) {
+
+                                    if (value1.idsub_category == 1) {
+                                        mainArray[key][1] += 1; //QUESTIONS
+                                        mainArray[key][5] += 1; //CATEGORY TOTAL
+                                        total += 1;//TOTAL
+                                    }
+                                    else if (value1.idsub_category == 2) {
+                                        mainArray[key][2] += 1; //PERSONAL
+                                        mainArray[key][5] += 1; //CATEGORY TOTAL
+                                        total += 1;//TOTAL
+
+                                    } else if (value1.idsub_category == 3) {
+                                        mainArray[key][3] += 1; // REQUESTS
+                                        mainArray[key][5] += 1; //CATEGORY TOTAL
+                                        total += 1;//TOTAL
+
+                                    }
+                                });
+                                //mainArray = [category name, questions, proposal, requests , beneficial]
+                            });
+                        }
+                        else if(level == 2) {
+                            $.each(response, function (key, value) {
+                                mainArray[key] = [value[0].gramasewa_division.name_en, 0, 0, 0, 0, 0];
+                                $.each(value, function (key1, value1) {
+
+                                    if (value1.idsub_category == 1) {
+                                        mainArray[key][1] += 1; //QUESTIONS
+                                        mainArray[key][5] += 1; //CATEGORY TOTAL
+                                        total += 1;//TOTAL
+                                    }
+                                    else if (value1.idsub_category == 2) {
+                                        mainArray[key][2] += 1; //PERSONAL
+                                        mainArray[key][5] += 1; //CATEGORY TOTAL
+                                        total += 1;//TOTAL
+
+                                    } else if (value1.idsub_category == 3) {
+                                        mainArray[key][3] += 1; // REQUESTS
+                                        mainArray[key][5] += 1; //CATEGORY TOTAL
+                                        total += 1;//TOTAL
+
+                                    }
+                                });
+                                //mainArray = [category name, questions, proposal, requests , beneficial]
+                            });
+                        }
+                        else if(level == 3) {
+                            $.each(response, function (key, value) {
+                                mainArray[key] = [value[0].village.name_en, 0, 0, 0, 0, 0];
+                                $.each(value, function (key1, value1) {
+
+                                    if (value1.idsub_category == 1) {
+                                        mainArray[key][1] += 1; //QUESTIONS
+                                        mainArray[key][5] += 1; //CATEGORY TOTAL
+                                        total += 1;//TOTAL
+                                    }
+                                    else if (value1.idsub_category == 2) {
+                                        mainArray[key][2] += 1; //PERSONAL
+                                        mainArray[key][5] += 1; //CATEGORY TOTAL
+                                        total += 1;//TOTAL
+
+                                    } else if (value1.idsub_category == 3) {
+                                        mainArray[key][3] += 1; // REQUESTS
+                                        mainArray[key][5] += 1; //CATEGORY TOTAL
+                                        total += 1;//TOTAL
+
+                                    }
+                                });
+                                //mainArray = [category name, questions, proposal, requests , beneficial]
+                            });
+                        }
+                        else if(level == 4) {
+                            $.each(response, function (key, value) {
+                                mainArray[key] = [$( "#village option:selected" ).text(), 0, 0, 0, 0, 0];
                                 $.each(value, function (key1, value1) {
 
                                     if (value1.idsub_category == 1) {
@@ -476,7 +578,7 @@
                                 }
                             }
 
-                            tableDate += "<td  style='text-align: center;'>" + value[4]  + "</td>";
+//                            tableDate += "<td  style='text-align: center;'>" + value[4]  + "</td>";
                             tableDate += "<td  style='text-align: center;'>" + value[1]  + "</td>";
                             tableDate += "<td  style='text-align: center;'>" + value[2]  + "</td>";
                             tableDate += "<td  style='text-align: center;'>" + value[3]  + "</td>";

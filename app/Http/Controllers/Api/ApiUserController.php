@@ -44,6 +44,34 @@ class ApiUserController extends Controller
             return response()->json(['error' => $validator->errors()->first(),'statusCode'=>-99]);
         }
 
+        $userMaster = User::where('username',$request->username)->first();
+        if($userMaster!= null ) {
+            if ($userMaster->iduser_role > 2 && $userMaster->iduser_role != 7) {
+                if ($userMaster->status != 1 ) {
+                    return response()->json(['error' => 'Account is not activated!','statusCode'=>-99]);
+                }
+                if ($userMaster->office->status != 1 ) {
+                    return response()->json(['error' => 'Your office has been disabled.Please contact your administrator!','statusCode'=>-99]);
+                }
+            }
+        }
+
+        if($userMaster->iduser_role == 6){
+            //not specific action .only check user role
+        }
+        elseif($userMaster->iduser_role == 7){
+            if($userMaster->member->memberAgents()->where('idAgent',$userMaster->member->current_agent)->first()->status != 1) {
+                return response()->json(['error' =>  'You are not a active member of selected agent!', 'statusCode' => -99]);
+            }
+            if(Office::find(intval($userMaster->member->memberAgents()->where('idAgent',$userMaster->member->current_agent)->first()->idoffice))->status != 1){
+                return response()->json(['error' => 'Agent\'s office has been disabled.Please contact your administrator!', 'statusCode' => -99]);
+            }
+        }
+        else{
+            return response()->json(['error' =>  'User Invalid!','statusCode'=>-99]);
+        }
+
+
         if (!Auth::attempt(['username'=>$request->username,'password'=>$request->password])) {
             return response()->json(['error' => 'Username or Password Incorrect!','statusCode'=>-99]);
         }
@@ -546,28 +574,7 @@ class ApiUserController extends Controller
         return $collection;
     }
 
-    public function getAgents(Request $request){
-        if(Auth::user()->iduser_role != 7){
-            return response()->json(['error' => 'You are not a member','statusCode'=>-99]);
-        }
-        $memberAgents = MemberAgent::where('idmember',Auth::user()->member->idmember)->get();
-        foreach ($memberAgents as $memberAgent) {
-            $memberAgent['id'] = Agent::find($memberAgent->idagent)->idUser;
-            $memberAgent['name'] = User::find(Agent::find($memberAgent->idagent)->idUser)->fName.' '.User::find(Agent::find($memberAgent->idagent)->idUser)->lName;
-            $memberAgent['office'] = User::find(Agent::find($memberAgent->idagent)->idUser)->office->office_name;
-            $memberAgent['availability'] = $memberAgent->status;
-            unset($memberAgent->idmember_agent);
-            unset($memberAgent->idmember);
-            unset($memberAgent->idagent);
-            unset($memberAgent->idoffice);
-            unset($memberAgent->status);
-            unset($memberAgent->created_at);
-            unset($memberAgent->updated_at);
 
-        }
-        return response()->json(['success' => $memberAgents,'statusCode'=>0]);
-
-    }
 
     public function getMembers(){
         if(Auth::user()->iduser_role != 6){
@@ -616,6 +623,30 @@ class ApiUserController extends Controller
 
     }
 
+    public function getAgents(){
+        if(Auth::user()->iduser_role != 7){
+            return response()->json(['error' => 'You are not a member','statusCode'=>-99]);
+        }
+        $memberAgents = MemberAgent::where('idmember',Auth::user()->member->idmember)->get();
+        foreach ($memberAgents as $memberAgent) {
+//            $memberAgent['id'] = Agent::find($memberAgent->idagent)->idUser;
+            $memberAgent['id'] = $memberAgent->idagent;
+            $memberAgent['name'] = User::find(Agent::find($memberAgent->idagent)->idUser)->fName.' '.User::find(Agent::find($memberAgent->idagent)->idUser)->lName;
+            $memberAgent['office'] = User::find(Agent::find($memberAgent->idagent)->idUser)->office->office_name;
+            $memberAgent['availability'] = $memberAgent->status;
+            $memberAgent['isSelected'] = Member::find(intval($memberAgent->idmember))->current_agent == $memberAgent->idagent ? 1 : 0;
+            unset($memberAgent->idmember_agent);
+            unset($memberAgent->idmember);
+            unset($memberAgent->idagent);
+            unset($memberAgent->idoffice);
+            unset($memberAgent->status);
+            unset($memberAgent->created_at);
+            unset($memberAgent->updated_at);
+
+        }
+        return response()->json(['success' => $memberAgents,'statusCode'=>0]);
+
+    }
 
     public function addAgent(Request $request){
         $validationMessages = [
@@ -682,7 +713,9 @@ class ApiUserController extends Controller
         $id = $request['id'];
         $agent = Agent::find(intval($id));
 
-
+        if($agent == null){
+            return response()->json(['error' => 'Agent id invalid.','statusCode'=>-99]);
+        }
         $isExist  = MemberAgent::where('idmember',Auth::user()->member->idmember)->where('idagent',$agent->idagent)->first();
 
         if($isExist == null){

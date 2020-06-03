@@ -38,6 +38,7 @@ class DashboardController extends Controller
                 'comments' => $this->latestComments(),
                 'posts' => $this->latestPost(),
                 'responseChart' => $this->getResponseCategories(),
+                'referralCode' => $this->getReferral(),
 //                'bars' => $this->createBarChart()
             ]);
         } else if (Auth::user()->iduser_role == 4) {
@@ -267,5 +268,19 @@ class DashboardController extends Controller
 
     public function getOffices(){
         return Office::all();
+    }
+
+    public function getReferral(){
+        //get referral code
+        if(Auth::user()->iduser_role == 3 ){
+            return Auth::user()->officeAdmin->referral_code;
+        }
+        else if(Auth::user()->iduser_role == 6 ){
+            return Auth::user()->agent->referral_code;
+        }
+        else{
+            return '';
+        }
+        //get referral code end
     }
 }

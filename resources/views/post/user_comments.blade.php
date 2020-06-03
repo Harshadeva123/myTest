@@ -333,8 +333,10 @@
                                         );
                                     } else if (value.response_type == 2) {
                                         $('#commenterBox').append(
-                                            "<div class='ownComment col-md-5 p-2 m-2 ml-auto '>" +
-                                            "<img src='{{ asset('')}}" + value.full_path + "' width='200px'>' " +
+                                            "<div class='ownComment  text-center col-md-3  p-2 m-2 ml-auto '>" +
+                                            "<a href='" + value.full_path + "' data-gallery='example-gallery' data-toggle='lightbox'>" +
+                                            "<img src='{{ asset('')}}" + value.full_path + "' width='200px'> " +
+                                            "</a>" +
                                             "</div>"
                                         );
                                     } else if (value.response_type == 3) {
@@ -368,8 +370,10 @@
                                         );
                                     } else if (value.response_type == 2) {
                                         $('#commenterBox').append(
-                                            "<div  onclick='showApproveDialog(" + value.idpost_response + ")' class='pendingComment col-md-5 p-2 m-2 ml-auto '>" +
-                                            "<img src='{{ asset('')}}" + value.full_path + "' width='200px'>' " +
+                                            "<div  onclick='showApproveDialog(" + value.idpost_response + ")' class='pendingComment  text-center col-md-3  p-2 m-2 ml-auto '>" +
+                                            "<a href='" + value.full_path + "' data-gallery='example-gallery' data-toggle='lightbox'>" +
+                                            "<img src='{{ asset('')}}" + value.full_path + "' width='200px'> " +
+                                            "</a>"+
                                             "</div>"
                                         );
                                     } else if (value.response_type == 3) {
@@ -401,8 +405,10 @@
                                         );
                                     } else if (value.response_type == 2) {
                                         $('#commenterBox').append(
-                                            "<div class='pendingComment col-md-5 p-2 m-2 ml-auto '>" +
-                                            "<img src='{{ asset('')}}" + value.full_path + "' width='200px'>' " +
+                                            "<div class='pendingComment  text-center col-md-3  p-2 m-2 ml-auto '>" +
+                                            "<a href='" + value.full_path + "' data-gallery='example-gallery' data-toggle='lightbox'>" +
+                                            "<img src='{{ asset('')}}" + value.full_path + "' width='200px'> " +
+                                            "</a>"+
                                             "</div>"
                                         );
                                     } else if (value.response_type == 3) {
@@ -438,8 +444,10 @@
                                     );
                                 } else if (value.response_type == 2) {
                                     $('#commenterBox').append(
-                                        "<div class='receivedComment col-md-5 p-2 m-2' >" +
-                                        "<img src='{{ asset('')}}" + value.full_path + "' width='200px'>' " +
+                                        "<div class='receivedComment text-center col-md-3 p-2 m-2' >" +
+                                        "<a href='" + value.full_path + "' data-gallery='example-gallery' data-toggle='lightbox'>" +
+                                        "<img src='{{ asset('')}}" + value.full_path + "' width='200px'> " +
+                                        "</a>"+
                                         "</div>"
                                     );
                                 } else if (value.response_type == 3) {

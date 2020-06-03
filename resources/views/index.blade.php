@@ -134,7 +134,7 @@
                                 <div class="row text-center m-t-20">
                                     <div class="col-6">
                                         <h5 class="">{{round($currentStorage / 1000000,2)}} MB</h5>
-                                        <p class="text-muted font-14">Current</p>
+                                        <p class="text-muted font-14">Used</p>
                                     </div>
                                     <div class="col-6">
                                         <h5 class="">2 GB</h5>
@@ -169,50 +169,60 @@
                         </div>
                     </div>
                 @endif
-                    @if(isset($offices))
-                        <div class="col-xl-8">
-                            <div class="card m-b-30">
-                                <div class="card-body">
-                                    <h4 class="mt-0 m-b-30 header-title">Latest Offices</h4>
+                @if(isset($referralCode))
+                    <div class="col-md-6 col-xl-3">
+                        <div class="card text-center m-b-30">
+                            <div  class="mb-2 card-body text-muted">
+                                <h3 title="Send this code to agents to join with your office." style="color: #1853ef">{{$referralCode}}</h3>
+                                 Referral Code
+                            </div>
+                        </div>
+                    </div>
+                @endif
+                @if(isset($offices))
+                    <div class="col-xl-8">
+                        <div class="card m-b-30">
+                            <div class="card-body">
+                                <h4 class="mt-0 m-b-30 header-title">Latest Offices</h4>
 
-                                    <div class="table-responsive">
-                                        <table class="table m-t-20 mb-0 table-vertical">
+                                <div class="table-responsive">
+                                    <table class="table m-t-20 mb-0 table-vertical">
 
-                                            <tbody>
-                                            @foreach($offices as $office)
-                                                <tr>
-                                                    <td>
-                                                        {{$office->office_name}}
-                                                    </td>
-                                                    @if($office->status == 1)
+                                        <tbody>
+                                        @foreach($offices as $office)
+                                            <tr>
+                                                <td>
+                                                    {{$office->office_name}}
+                                                </td>
+                                                @if($office->status == 1)
                                                     <td nowrap="">
                                                         <em style="color: #17c513" class="fa fa-circle"></em>
 
                                                         ACTIVATED
                                                     </td>
-                                                    @else
-                                                        <td nowrap="">
-                                                            <em style="color: #c51209" class="fa fa-circle"></em>
+                                                @else
+                                                    <td nowrap="">
+                                                        <em style="color: #c51209" class="fa fa-circle"></em>
 
-                                                            DEACTIVATED
-                                                        </td>
-                                                        @endif
-                                                    <td colspan="3">
-                                                        {{number_format($office->monthly_payment,2)}}
+                                                        DEACTIVATED
                                                     </td>
-                                                    <td>
-                                                        {{$office->created_at->format('Y-m-d')}}
-                                                        <p class="m-0 text-muted font-14">Date</p>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                                @endif
+                                                <td colspan="3">
+                                                    {{number_format($office->monthly_payment,2)}}
+                                                </td>
+                                                <td>
+                                                    {{$office->created_at->format('Y-m-d')}}
+                                                    <p class="m-0 text-muted font-14">Date</p>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
-                    @endif
+                    </div>
+                @endif
             </div>
             <!-- end row -->
 
@@ -340,7 +350,7 @@
                 labels: ['Questions', 'Proposal', 'Requests', 'Response']
             });
             @endif
-            @if(isset($totalStorage))
+                    @if(isset($totalStorage))
                 new Morris.Donut({
                 // ID of the element in which to draw the chart.
                 element: 'totalStorageChart',

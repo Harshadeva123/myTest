@@ -118,86 +118,87 @@ class ReportController extends Controller
 
             $questions = Analysis::with(['category'])->where('idoffice', Auth::user()->idoffice)->where('idcategory', $category)->where('iddistrict', Auth::user()->office->iddistrict)->where('idvillage', $village)->where('idgramasewa_division', $gramasewaDivision)->get();
 
-            $posts = Post::with(['beneficialCategory', 'beneficialCategory.category'])->where(function ($q) use ($village) {
-                $q->whereHas('beneficialVillage', function ($q) use ($village) {
-                    $q->where('idvillage', $village);
-                })->orWhereHas('beneficialGramasewaDivision', function ($q) use ($village) {
-                    $q->where('idgramasewa_division', Village::find($village)->idgramasewa_division)->where('allChild', 1);
-                })->orWhereHas('beneficialPollingBooth', function ($q) use ($village) {
-                    $q->where('idpolling_booth', GramasewaDivision::find(Village::find($village)->idgramasewa_division)->idpolling_booth)->where('allChild', 1);
-                })->orWhereHas('beneficialDistrict', function ($q) {
-                    $q->where('iddistrict', Auth::user()->office->iddistrict)->where('allChild', 1);
-                });
-            })->where(function ($q) use ($category) {
-                $q->whereHas('beneficialCategory', function ($q) use ($category) {
-                    $q->where('idcategory', $category);
-                });
-            })->where('idoffice', Auth::user()->idoffice)->get();
+//            $posts = Post::with(['beneficialCategory', 'beneficialCategory.category'])->where(function ($q) use ($village) {
+//                $q->whereHas('beneficialVillage', function ($q) use ($village) {
+//                    $q->where('idvillage', $village);
+//                })->orWhereHas('beneficialGramasewaDivision', function ($q) use ($village) {
+//                    $q->where('idgramasewa_division', Village::find($village)->idgramasewa_division)->where('allChild', 1);
+//                })->orWhereHas('beneficialPollingBooth', function ($q) use ($village) {
+//                    $q->where('idpolling_booth', GramasewaDivision::find(Village::find($village)->idgramasewa_division)->idpolling_booth)->where('allChild', 1);
+//                })->orWhereHas('beneficialDistrict', function ($q) {
+//                    $q->where('iddistrict', Auth::user()->office->iddistrict)->where('allChild', 1);
+//                });
+//            })->where(function ($q) use ($category) {
+//                $q->whereHas('beneficialCategory', function ($q) use ($category) {
+//                    $q->where('idcategory', $category);
+//                });
+//            })->where('idoffice', Auth::user()->idoffice)->get();
 
         } else if ($gramasewaDivision != null) {
 
             $questions = Analysis::with(['category'])->where('idoffice', Auth::user()->idoffice)->where('idcategory', $category)->where('iddistrict', Auth::user()->office->iddistrict)->where('idgramasewa_division', $gramasewaDivision)->get();
 
-            $posts = Post::with(['beneficialCategory', 'beneficialCategory.category'])->where(function ($q) use ($gramasewaDivision) {
-                $q->whereHas('beneficialGramasewaDivision', function ($q) use ($gramasewaDivision) {
-                    $q->where('idgramasewa_division', $gramasewaDivision);
-                })->orWhereHas('beneficialPollingBooth', function ($q) use ($gramasewaDivision) {
-                    $q->where('idpolling_booth', GramasewaDivision::find($gramasewaDivision)->idpolling_booth)->where('allChild', 1);
-                })->orWhereHas('beneficialElectionDivision', function ($q) use ($gramasewaDivision) {
-                    $q->where('idelection_division', ElectionDivision::find(GramasewaDivision::find($gramasewaDivision)->idpolling_booth)->idelection_division)->where('allChild', 1);
-                })->orWhereHas('beneficialDistrict', function ($q) {
-                    $q->where('iddistrict', Auth::user()->office->iddistrict)->where('allChild', 1);
-                });
-            })->where(function ($q) use ($category) {
-                $q->whereHas('beneficialCategory', function ($q) use ($category) {
-                    $q->where('idcategory', $category);
-                });
-            })->where('idoffice', Auth::user()->idoffice)->get();
+//            $posts = Post::with(['beneficialCategory', 'beneficialCategory.category'])->where(function ($q) use ($gramasewaDivision) {
+//                $q->whereHas('beneficialGramasewaDivision', function ($q) use ($gramasewaDivision) {
+//                    $q->where('idgramasewa_division', $gramasewaDivision);
+//                })->orWhereHas('beneficialPollingBooth', function ($q) use ($gramasewaDivision) {
+//                    $q->where('idpolling_booth', GramasewaDivision::find($gramasewaDivision)->idpolling_booth)->where('allChild', 1);
+//                })->orWhereHas('beneficialElectionDivision', function ($q) use ($gramasewaDivision) {
+//                    $q->where('idelection_division', ElectionDivision::find(GramasewaDivision::find($gramasewaDivision)->idpolling_booth)->idelection_division)->where('allChild', 1);
+//                })->orWhereHas('beneficialDistrict', function ($q) {
+//                    $q->where('iddistrict', Auth::user()->office->iddistrict)->where('allChild', 1);
+//                });
+//            })->where(function ($q) use ($category) {
+//                $q->whereHas('beneficialCategory', function ($q) use ($category) {
+//                    $q->where('idcategory', $category);
+//                });
+//            })->where('idoffice', Auth::user()->idoffice)->get();
 
         } else if ($pollingBooth != null) {
 
             $questions = Analysis::with(['category'])->where('idoffice', Auth::user()->idoffice)->where('idcategory', $category)->where('iddistrict', Auth::user()->office->iddistrict)->where('idpolling_booth', $pollingBooth)->get();
 
-            $posts = Post::with(['beneficialCategory', 'beneficialCategory.category'])->where(function ($q) use ($pollingBooth) {
-                $q->whereHas('beneficialPollingBooth', function ($q) use ($pollingBooth) {
-                    $q->where('idpolling_booth', $pollingBooth);
-                })->orWhereHas('beneficialElectionDivision', function ($q) use ($pollingBooth) {
-                    $q->where('idelection_division', PollingBooth::find($pollingBooth)->idelection_division)->where('allChild', 1);
-                })->orWhereHas('beneficialDistrict', function ($q) use ($pollingBooth) {
-                    $q->where('iddistrict', Auth::user()->office->iddistrict)->where('allChild', 1);
-                });
-            })->where(function ($q) use ($category) {
-                $q->whereHas('beneficialCategory', function ($q) use ($category) {
-                    $q->where('idcategory', $category);
-                });
-            })->where('idoffice', Auth::user()->idoffice)->get();
+//            $posts = Post::with(['beneficialCategory', 'beneficialCategory.category'])->where(function ($q) use ($pollingBooth) {
+//                $q->whereHas('beneficialPollingBooth', function ($q) use ($pollingBooth) {
+//                    $q->where('idpolling_booth', $pollingBooth);
+//                })->orWhereHas('beneficialElectionDivision', function ($q) use ($pollingBooth) {
+//                    $q->where('idelection_division', PollingBooth::find($pollingBooth)->idelection_division)->where('allChild', 1);
+//                })->orWhereHas('beneficialDistrict', function ($q) use ($pollingBooth) {
+//                    $q->where('iddistrict', Auth::user()->office->iddistrict)->where('allChild', 1);
+//                });
+//            })->where(function ($q) use ($category) {
+//                $q->whereHas('beneficialCategory', function ($q) use ($category) {
+//                    $q->where('idcategory', $category);
+//                });
+//            })->where('idoffice', Auth::user()->idoffice)->get();
 
         } else if ($electionDivision != null) {
 
             $questions = Analysis::with(['category'])->where('idoffice', Auth::user()->idoffice)->where('idcategory', $category)->where('iddistrict', Auth::user()->office->iddistrict)->where('idelection_division', $electionDivision)->get();
 
-            $posts = Post::with(['beneficialCategory', 'beneficialCategory.category'])->where(function ($q) use ($electionDivision) {
-                $q->whereHas('beneficialElectionDivision', function ($q) use ($electionDivision) {
-                    $q->where('idelection_division', $electionDivision);
-                })->orWhereHas('beneficialDistrict', function ($q) use ($electionDivision) {
-                    $q->where('iddistrict', Auth::user()->office->iddistrict)->where('allChild', 1);
-                });
-            })->where(function ($q) use ($category) {
-                $q->whereHas('beneficialCategory', function ($q) use ($category) {
-                    $q->where('idcategory', $category);
-                });
-            })->where('idoffice', Auth::user()->idoffice)->get();
+//            $posts = Post::with(['beneficialCategory', 'beneficialCategory.category'])->where(function ($q) use ($electionDivision) {
+//                $q->whereHas('beneficialElectionDivision', function ($q) use ($electionDivision) {
+//                    $q->where('idelection_division', $electionDivision);
+//                })->orWhereHas('beneficialDistrict', function ($q) use ($electionDivision) {
+//                    $q->where('iddistrict', Auth::user()->office->iddistrict)->where('allChild', 1);
+//                });
+//            })->where(function ($q) use ($category) {
+//                $q->whereHas('beneficialCategory', function ($q) use ($category) {
+//                    $q->where('idcategory', $category);
+//                });
+//            })->where('idoffice', Auth::user()->idoffice)->get();
 
         } else {
             $questions = Analysis::with(['category'])->where('idoffice', Auth::user()->idoffice)->where('idcategory', $category)->where('iddistrict', Auth::user()->office->iddistrict)->where('iddistrict', Auth::user()->office->iddistrict)->get();
-            $posts = Post::with(['beneficialCategory', 'beneficialCategory.category'])->whereHas('beneficialDistrict', function ($q) use ($district) {
-                $q->where('iddistrict', $district);
-            })->whereHas('beneficialCategory', function ($q) use ($category) {
-                $q->where('idcategory', $category);
-            })->where('idoffice', Auth::user()->idoffice)->get();
+//            $posts = Post::with(['beneficialCategory', 'beneficialCategory.category'])->whereHas('beneficialDistrict', function ($q) use ($district) {
+//                $q->where('iddistrict', $district);
+//            })->whereHas('beneficialCategory', function ($q) use ($category) {
+//                $q->where('idcategory', $category);
+//            })->where('idoffice', Auth::user()->idoffice)->get();
         }
 
-        return response()->json(['success' => $questions, 'posts' => $posts]);
+//        return response()->json(['success' => $questions, 'posts' => $posts]);
+        return response()->json(['success' => $questions]);
     }
 
     public function getCategoryData(Request $request){
@@ -223,36 +224,114 @@ class ReportController extends Controller
         $level = $request['level'];
         $category = $request['category'];
 
-        if($level == 2){
-            $questions = Analysis::with(['pollingBooth'])->whereHas('category', function ($q) use ($category) {
-                $q->where('idcategory', $category);
-            })->where('iddistrict', Auth::user()->office->iddistrict)->where('idpolling_booth', $id)->where('idoffice', Auth::user()->idoffice)->whereIn('idsub_category', [1, 2, 3])->get()->groupBy('idgramasewa_division');
+        if($level == 4){
+            $questions = Analysis::with(['village'])
+                ->where('idcategory', $category)
+                ->where('iddistrict', Auth::user()->office->iddistrict)
+                ->where('idvillage', $id)
+                ->where('idoffice', Auth::user()->idoffice)
+                ->whereIn('idsub_category', [1, 2, 3])
+                ->get()
+                ->groupBy('idvillage');
 
-            $posts = Post::with(['beneficialCategory', 'beneficialCategory.category'])->where(function ($q) use ($id) {
-                $q->whereHas('beneficialPollingBooth', function ($q) use ($id) {
-                    $q->where('idpolling_booth', $id);
-                })->orWhereHas('beneficialElectionDivision', function ($q) use ($id) {
-                    $q->where('idelection_division', PollingBooth::find($id)->idelection_division)->where('allChild', 1);
-                })->orWhereHas('beneficialDistrict', function ($q) use ($id) {
-                    $q->where('iddistrict', Auth::user()->office->iddistrict)->where('allChild', 1);
-                });
-            })->where(function ($q) use ($category) {
-                $q->whereHas('beneficialCategory', function ($q) use ($category) {
-                    $q->where('idcategory', $category);
-                });
-            })->where('idoffice', Auth::user()->idoffice)->get();
+//            $posts = Post::with(['beneficialCategory', 'beneficialCategory.category'])->where(function ($q) use ($id) {
+//                $q->whereHas('beneficialPollingBooth', function ($q) use ($id) {
+//                    $q->where('idpolling_booth', $id);
+//                })->orWhereHas('beneficialElectionDivision', function ($q) use ($id) {
+//                    $q->where('idelection_division', PollingBooth::find($id)->idelection_division)->where('allChild', 1);
+//                })->orWhereHas('beneficialDistrict', function ($q) use ($id) {
+//                    $q->where('iddistrict', Auth::user()->office->iddistrict)->where('allChild', 1);
+//                });
+//            })->where(function ($q) use ($category) {
+//                $q->whereHas('beneficialCategory', function ($q) use ($category) {
+//                    $q->where('idcategory', $category);
+//                });
+//            })->where('idoffice', Auth::user()->idoffice)->get();
+
+        }
+        else if($level == 3){
+            $questions = Analysis::with(['village'])
+                ->where('idcategory', $category)
+                ->where('iddistrict', Auth::user()->office->iddistrict)
+                ->where('idgramasewa_division', $id)
+                ->where('idoffice', Auth::user()->idoffice)
+                ->whereIn('idsub_category', [1, 2, 3])
+                ->get()
+                ->groupBy('idvillage');
+
+//            $posts = Post::with(['beneficialCategory', 'beneficialCategory.category'])->where(function ($q) use ($id) {
+//                $q->whereHas('beneficialPollingBooth', function ($q) use ($id) {
+//                    $q->where('idpolling_booth', $id);
+//                })->orWhereHas('beneficialElectionDivision', function ($q) use ($id) {
+//                    $q->where('idelection_division', PollingBooth::find($id)->idelection_division)->where('allChild', 1);
+//                })->orWhereHas('beneficialDistrict', function ($q) use ($id) {
+//                    $q->where('iddistrict', Auth::user()->office->iddistrict)->where('allChild', 1);
+//                });
+//            })->where(function ($q) use ($category) {
+//                $q->whereHas('beneficialCategory', function ($q) use ($category) {
+//                    $q->where('idcategory', $category);
+//                });
+//            })->where('idoffice', Auth::user()->idoffice)->get();
+
+        }
+        else if($level == 2){
+            $questions = Analysis::with(['gramasewaDivision'])
+                ->where('idcategory', $category)
+                ->where('iddistrict', Auth::user()->office->iddistrict)
+                ->where('idpolling_booth', $id)
+                ->where('idoffice', Auth::user()->idoffice)
+                ->whereIn('idsub_category', [1, 2, 3])
+                ->get()
+                ->groupBy('idgramasewa_division');
+
+//            $posts = Post::with(['beneficialCategory', 'beneficialCategory.category'])->where(function ($q) use ($id) {
+//                $q->whereHas('beneficialPollingBooth', function ($q) use ($id) {
+//                    $q->where('idpolling_booth', $id);
+//                })->orWhereHas('beneficialElectionDivision', function ($q) use ($id) {
+//                    $q->where('idelection_division', PollingBooth::find($id)->idelection_division)->where('allChild', 1);
+//                })->orWhereHas('beneficialDistrict', function ($q) use ($id) {
+//                    $q->where('iddistrict', Auth::user()->office->iddistrict)->where('allChild', 1);
+//                });
+//            })->where(function ($q) use ($category) {
+//                $q->whereHas('beneficialCategory', function ($q) use ($category) {
+//                    $q->where('idcategory', $category);
+//                });
+//            })->where('idoffice', Auth::user()->idoffice)->get();
+
+        }
+        else if($level == 1){
+            $questions = Analysis::with(['pollingBooth'])
+                ->where('idcategory', $category)
+                ->where('iddistrict', Auth::user()->office->iddistrict)
+                ->where('idelection_division', $id)
+                ->where('idoffice', Auth::user()->idoffice)
+                ->whereIn('idsub_category', [1, 2, 3])
+                ->get()
+                ->groupBy('idpolling_booth');
+
+//            $posts = Post::with(['beneficialCategory', 'beneficialCategory.category'])->where(function ($q) use ($id) {
+//                $q->whereHas('beneficialPollingBooth', function ($q) use ($id) {
+//                    $q->where('idpolling_booth', $id);
+//                })->orWhereHas('beneficialElectionDivision', function ($q) use ($id) {
+//                    $q->where('idelection_division', PollingBooth::find($id)->idelection_division)->where('allChild', 1);
+//                })->orWhereHas('beneficialDistrict', function ($q) use ($id) {
+//                    $q->where('iddistrict', Auth::user()->office->iddistrict)->where('allChild', 1);
+//                });
+//            })->where(function ($q) use ($category) {
+//                $q->whereHas('beneficialCategory', function ($q) use ($category) {
+//                    $q->where('idcategory', $category);
+//                });
+//            })->where('idoffice', Auth::user()->idoffice)->get();
 
         }
         else{
-            $questions = Analysis::with(['pollingBooth'])->whereHas('category', function ($q) use ($category) {
-                $q->where('idcategory', $category);
-            })->where('iddistrict', Auth::user()->office->iddistrict)->where('idoffice', Auth::user()->idoffice)->whereIn('idsub_category', [1, 2, 3])->get()->groupBy('idpolling_booth');
-            $posts = Post::with(['beneficialCategory', 'beneficialCategory.category'])->whereHas('beneficialCategory', function ($q) use ($category) {
-                $q->where('idcategory', $category);
-            })->get();
+            $questions = Analysis::with(['electionDivision'])->where('idcategory', $category)->where('iddistrict', Auth::user()->office->iddistrict)->where('idoffice', Auth::user()->idoffice)->whereIn('idsub_category', [1, 2, 3])->get()->groupBy('idelection_division');
+//            $posts = Post::with(['beneficialCategory', 'beneficialCategory.category'])->whereHas('beneficialCategory', function ($q) use ($category) {
+//                $q->where('idcategory', $category);
+//            })->get();
         }
 
-        return response()->json(['success' => 'success','posts'=>$posts,'questions'=>$questions]);
+        return response()->json(['success' => 'success','questions'=>$questions]);
 
     }
 }

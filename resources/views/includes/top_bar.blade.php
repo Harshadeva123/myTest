@@ -54,7 +54,7 @@
                             </ul>
 
                             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                                @csrf
+                                <input type="hidden" class="noClear" name="_token" value="{{csrf_token()}}">
                             </form>
                             <!-- Page title -->
                             <ul class="list-inline menu-left mb-0">

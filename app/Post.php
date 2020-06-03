@@ -73,6 +73,11 @@ class Post extends Model
         return  $this->responses()->count();
     }
 
+    public function userCommentsCount($userId){
+        return  $this->responses()->where('idUser',$userId)->count();
+    }
+
+
     //Location relationships
 
     public function postVillages(){

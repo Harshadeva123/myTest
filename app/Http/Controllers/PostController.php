@@ -170,7 +170,6 @@ class PostController extends Controller
 
         //-------------------------------------------Validation end---------------------------------------------------//
 
-
         //save in post table
         $post = new Post();
         $post->idUser = $user;
@@ -191,8 +190,8 @@ class PostController extends Controller
         $post->isOnce = $request['onlyOnce'] == 'on' ? 1 : 0;
         $post->job_sector = $request['jobSector'];
         $post->preferred_gender = $request['gender'];
-        $post->minAge = intval($request['minAge']);
-        $post->maxAge = intval($request['maxAge']);
+        $post->minAge = $request['minAge'];
+        $post->maxAge = $request['maxAge'];
         $post->response_panel = $request['responsePanel'];
         $post->response_panel = $request['responsePanel'];
         $post->categorized = 0;// uncategorized
