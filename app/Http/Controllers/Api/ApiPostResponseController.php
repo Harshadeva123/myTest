@@ -146,9 +146,9 @@ class ApiPostResponseController extends Controller
 
         $validator = \Validator::make($request->all(), [
             'post_id' => 'required|numeric',
-            'imageFiles.*' => 'nullable|file|image|mimes:jpeg,png,gif,webp|max:5048',
-            'videoFiles.*' => 'nullable|mimes:mp4,mov,ogg,qt | max:20000',
-            'audioFiles.*' => 'nullable|mimes:mpga,wav | max:10000',
+            'imageFiles.*' => 'nullable|file|image|mimes:jpeg,png,gif,webp',
+            'videoFiles.*' => 'nullable|mimes:mp4,mov,ogg,qt ',
+            'audioFiles.*' => 'nullable|mimes:mpga,wav',
 
 
         ], $validationMessages);

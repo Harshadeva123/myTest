@@ -98,6 +98,8 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
             Route::post('update_gramasewa_division', 'GramasewaDivisionController@update')->name('updateGramasewaDivision');
             Route::post('confirm_gramasewa_divisions', 'GramasewaDivisionController@confirm')->name('confirmGramasewaDivisions');
             Route::post('delete_gramasewa_division', 'GramasewaDivisionController@deleteRecord')->name('deleteGramasewaDivision');
+            Route::post('get_gramasewa_by_secretariat', 'GramasewaDivisionController@getBySecretariat')->name('getGramasewaBySecretariat');
+            Route::post('get_unassigned_gramasewa_divisions', 'GramasewaDivisionController@getUnAssigned')->name('getUnAssignedGramasewaDivisions');
 
             //Village
             Route::get('village', 'VillageController@index')->name('village');
@@ -118,6 +120,7 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
 
             //Task
             Route::get('assign_task', 'TaskController@index')->name('assignTask');
+            Route::get('default_task', 'TaskController@createDefault')->name('createDefaultTask');
             Route::get('view_task', 'TaskController@view')->name('viewTasks');
             Route::post('get_task_by_id', 'TaskController@getById')->name('getTaskById');
             Route::post('save_task', 'TaskController@store')->name('saveTask');
@@ -181,6 +184,17 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
 
             //Dashboard
             Route::post('dashboard-getStorage', 'DashboardController@getStorage')->name('dashboard-getStorage');
+
+
+            //Unit management
+            Route::get('divisional_secretariat', 'DivisionalSecretariatController@index')->name('divisionalSecretariat');
+            Route::post('save_divisional_secretariat', 'DivisionalSecretariatController@store')->name('saveDivisionalSecretariat');
+            Route::post('get_divisional_secretariat_by_auth', 'DivisionalSecretariatController@getByAuth')->name('getDivisionalSecretariatByAuth');
+            Route::post('update_divisional_secretariat', 'DivisionalSecretariatController@update')->name('updateDivisionalSecretariat');
+            Route::post('delete_divisional_secretariat', 'DivisionalSecretariatController@deleteRecord')->name('deleteDivisionalSecretariat');
+            Route::get('divisional_secretariat_view', 'DivisionalSecretariatController@view')->name('divisionalSecretariat-view');
+            Route::post('assign_gramasewa_divisions', 'DivisionalSecretariatController@assignDivisions')->name('assignedGramasewaDivisions');
+            Route::post('confirm_divisional_secretariat', 'DivisionalSecretariatController@confirm')->name('confirmDivisionalSecretariat');
 
         });
     });

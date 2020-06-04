@@ -55,6 +55,9 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('save_response', 'Api\ApiResponsePanelController@store')->name('saveResponse');
     //Response panel end
 
+    //Task
+    Route::post('get_tasks', 'Api\ApiTaskController@index')->name('getTask');
+
 });
 
 Route::post('get_polling_booths_by_election_division', 'Api\ApiPollingBoothController@getByElectionDivision')->name('getPollingBoothByElectionDivision');

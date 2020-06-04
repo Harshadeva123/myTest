@@ -75,7 +75,7 @@ class TaskController extends Controller
 
             $query = $query->whereBetween('created_at', [$startDate, $endDate]);
         }
-        $tasks = $query->where('assigned_by', Auth::user()->idUser)->latest()->paginate(10);
+        $tasks = $query->where('assigned_by', Auth::user()->idUser)->where('isDefault',0)->latest()->paginate(10);
 
         return view('task.view_tasks', ['title' =>  __('View Tasks'), 'tasks' => $tasks]);
     }
@@ -137,21 +137,30 @@ class TaskController extends Controller
             return response()->json(['errors' => ['error'=>'Min Age can not be equal or grater than max age!']]);
         }
 
+        $isDefault = $request['isDefault'] == 1 ? 1 : 0;
+        if($isDefault){
+            $userId  = null;
+        }
+        else{
+            $userId = $request['userId'];
+        }
         //Validation end
 
 
         //save in task table
         $task = new Task();
-        $task->idUser = $request['userId'];
+        $task->idUser = $userId;
         $task->assigned_by = Auth::user()->idUser;
+        $task->idoffice = Auth::user()->idoffice;
         $task->task_no = $task->getNextNo();
+        $task->isDefault = $isDefault;
         $task->target = intval($request['members']);
         $task->task_gender = $request['gender'];
         $task->task_job_sector = intval($request['jobSector']);
         $task->task_job_sector = intval($request['jobSector']);
         $task->completed_amount = 0;
         $task->description = $request['description'];
-        $task->status = 1;
+        $task->status = 2;//pending task
         $task->save();
         //save in task table end
 
@@ -262,4 +271,13 @@ class TaskController extends Controller
         }
     }
 
+    public function createDefault(){
+        $careers = Career::where('status', 1)->get();
+        $religions = Religion::where('status', 1)->get();
+        $incomes = NatureOfIncome::where('status', 1)->get();
+        $educations = EducationalQualification::where('status', 1)->get();
+        $ethnicities = Ethnicity::where('status', 1)->get();
+        return view('task.default')->with(['title'=>'Default Task','careers' => $careers, 'religions' => $religions, 'incomes' => $incomes, 'educations' => $educations, 'ethnicities' => $ethnicities]);
+
+    }
 }

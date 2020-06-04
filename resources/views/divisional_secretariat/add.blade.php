@@ -11,7 +11,7 @@
 
             <div class="card">
                 <div class="card-body">
-                    <form class="form-horizontal" id="form1" role="form">
+                    <form class="form-horizontal" id="saveForm" role="form">
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="alert alert-danger alert-dismissible " id="errorAlert" style="display:none">
@@ -19,53 +19,23 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="form-group col-md-6">
-                                <label for="pollingBooth" class="control-label">{{ __('Polling Booth') }}</label>
+                            <div class="form-group col-md-3">
+                                <label for="district">{{ __('District') }}</label>
                                 <div>
                                     <div class="input-group">
                                         <div class="input-group-append">
-                                            <span class="input-group-text"><em class="mdi mdi-bank"></em></span>
+                                            <span class="input-group-text"><em class="mdi mdi-account"></em></span>
                                         </div>
-                                        <select id="pollingBooth" name="pollingBooth" class="form-control noClear"
-                                                onchange="setCustomValidity('');showTableData()"
-                                                oninvalid="this.setCustomValidity('Please select polling booth')"
-                                                required>
-                                            <option value=""  selected>Select polling booth</option>
-                                            @if($pollingBooths != null)
-                                                @foreach($pollingBooths as $pollingBooth)
-                                                    <option value="{{$pollingBooth->idpolling_booth}}">{{strtoupper($pollingBooth->name_en)}}</option>
-                                                @endforeach
-                                            @endif
-
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label for="secretariat" class="control-label">{{ __('Divisional Secretariat') }}</label>
-                                <div>
-                                    <div class="input-group">
-                                        <div class="input-group-append">
-                                            <span class="input-group-text"><em class="mdi mdi-bank"></em></span>
-                                        </div>
-                                        <select id="secretariat" name="secretariat" class="form-control noClear"
-                                                onchange="setCustomValidity('');showTableData()"
-                                                oninvalid="this.setCustomValidity('Please select divisional secretariat')"
-                                                required>
-                                            <option value=""  selected>Select divisional secretariat</option>
-                                            @if($secretariats != null)
-                                                @foreach($secretariats as $secretariat)
-                                                    <option value="{{$secretariat->iddivisional_secretariat}}">{{strtoupper($secretariat->name_en)}}</option>
-                                                @endforeach
-                                            @endif
-
-                                        </select>
+                                        <input autocomplete="off" type="text" class="form-control noClear" readonly
+                                               value="{{\Illuminate\Support\Facades\Auth::user()->office->district->name_en}}"
+                                               name="district"
+                                               id="district">
                                     </div>
                                 </div>
                             </div>
 
                             <div class="form-group col-md-6">
-                                <label for="gramasewaDivision">{{ __('Gramasewa Division Name') }}</label>
+                                <label for="secretariat">{{ __('Secretariat Name') }}</label>
                                 <div>
                                     <div class="input-group">
                                         <div class="input-group-append">
@@ -73,60 +43,63 @@
                                         </div>
                                         <input autocomplete="off" type="text" class="form-control" required
                                                oninput="setCustomValidity('')"
-                                               oninvalid="this.setCustomValidity('Please enter gramasewa division name')"
-                                               placeholder="Enter gramasewa division name in english" name="gramasewaDivision"
-                                               id="gramasewaDivision">
+                                               oninvalid="this.setCustomValidity('Please enter secretariat name')"
+                                               placeholder="Secretariat name in english" name="secretariat"
+                                               id="secretariat">
                                     </div>
                                 </div>
                             </div>
 
                             <div class="form-group col-md-6">
-                                <label for="gramasewaDivision_si">ග්‍රාමසේවක වසම</label>
+                                <label for="secretariat_si">ප්‍රාදේශීය ලේකම් කාර්යාලය</label>
                                 <div>
                                     <div class="input-group">
                                         <div class="input-group-append">
                                             <span class="input-group-text">SI</span>
                                         </div>
                                         <input autocomplete="off" type="text" class="form-control"
-                                               oninput="setCustomValidity('')"
-                                               oninvalid="this.setCustomValidity('Please enter gramasewa division name')"
-                                               placeholder="Enter gramasewa division name in sinhala" name="gramasewaDivision_si"
-                                               id="gramasewaDivision_si">
+                                               oninput="setCustomValidity('')" required
+                                               oninvalid="this.setCustomValidity('Please enter secretariat name')"
+                                               placeholder="Secretariat name in sinhala"
+                                               name="secretariat_si"
+                                               id="secretariat_si">
                                     </div>
                                 </div>
                             </div>
 
                             <div class="form-group col-md-6">
-                                <label for="gramasewaDivision_ta">கிராம சேவா பிரிவு</label>
+                                <label for="secretariat_ta">பிரதேச செயலகம்</label>
                                 <div>
                                     <div class="input-group">
                                         <div class="input-group-append">
                                             <span class="input-group-text">TA</span>
                                         </div>
                                         <input autocomplete="off" type="text" class="form-control"
-                                               oninput="setCustomValidity('')"
-                                               oninvalid="this.setCustomValidity('Please enter gramasewa division name')"
-                                               placeholder="Enter gramasewa division name in tamil" name="gramasewaDivision_ta"
-                                               id="gramasewaDivision_ta">
+                                               oninput="setCustomValidity('')" required
+                                               oninvalid="this.setCustomValidity('Please enter secretariat name')"
+                                               placeholder="Secretariat name in tamil" name="secretariat_ta"
+                                               id="secretariat_ta">
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group col-md-3" style="margin-top: 28px;">
+                            <div class="form-group col-md-2" style="margin-top: 20px;">
                                 <button type="submit"
-                                        class="btn btn-primary btn-block ">{{ __('Add Gramasewa Division') }}</button>
+                                        class="btn btn-primary btn-block ">{{ __('Add Secretariat') }}</button>
                             </div>
                             <div class="form-group col-md-2" style="margin-top: 20px;">
-                                <button type="submit" onclick="clearAll();event.preventDefault();"
+                                <button type="button" onclick="clearAll();event.preventDefault();"
                                         class="btn btn-danger btn-block ">{{ __('Cancel') }}</button>
                             </div>
+
                         </div>
                         <hr/>
                         <div class="row">
                             <div class="col-md-8">
-                                <h6 class="text-secondary">Gramasewa Divisions</h6>
+                                <h6 class="text-secondary">Divisional Secretariat</h6>
                             </div>
                             <div class="col-md-4 mb-1">
-                                <input type="text" placeholder="Search gramasewa division name here" class="float-right form-control" id="searchBox">
+                                <input type="text" placeholder="Search secretariat name here"
+                                       class="float-right form-control" id="searchBox">
                             </div>
 
                             <div class="col-md-12">
@@ -137,15 +110,14 @@
                                                width="100%">
                                             <thead>
                                             <tr>
-                                                <th>POLLING BOOTH</th>
-                                                <th>SECRETARIAT</th>
+                                                <th>DISTRICT</th>
                                                 <th>ENGLISH</th>
                                                 <th>SINHALA</th>
                                                 <th>TAMIL</th>
                                                 <th style='text-align:center;'>OPTIONS</th>
                                             </tr>
                                             </thead>
-                                            <tbody id="gramasewaDivisionTBody">
+                                            <tbody id="divisionalSecretariatTBody">
                                             </tbody>
                                         </table>
                                     </div>
@@ -153,9 +125,9 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-12 " >
+                            <div class="col-md-12 ">
                                 <button type="button" id="confirmBtn" onclick="confirm();event.preventDefault();"
-                                        class="btn btn-primary btn-md float-right">{{ __('Confirm All Gramasewa Divisions') }}</button>
+                                        class="btn btn-primary btn-md float-right">{{ __('Confirm All Secretariats') }}</button>
                             </div>
                         </div>
                     </form> <!-- /form -->
@@ -175,7 +147,7 @@
         <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title mt-0">Update Gramasewa Division</h5>
+                    <h5 class="modal-title mt-0">Update Divisional Secretariat</h5>
                     <button type="button" class="close" data-dismiss="modal"
                             aria-hidden="true">×
                     </button>
@@ -184,60 +156,29 @@
                     <form class="form-horizontal" id="updateForm" role="form">
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="alert alert-danger alert-dismissible " id="errorAlertUpdate" style="display:none">
+                                <div class="alert alert-danger alert-dismissible " id="errorAlertUpdate"
+                                     style="display:none">
                                 </div>
                             </div>
                         </div>
                         <div class="row">
-
                             <div class="form-group col-md-12">
-                                <label for="pollingBoothU" class="control-label">{{ __('Polling Booth') }}</label>
+                                <label for="district">{{ __('District') }}</label>
                                 <div>
                                     <div class="input-group">
                                         <div class="input-group-append">
-                                            <span class="input-group-text"><em class="mdi mdi-bank"></em></span>
+                                            <span class="input-group-text"><em class="mdi mdi-account"></em></span>
                                         </div>
-                                        <select id="pollingBoothU" name="pollingBooth" class="form-control"
-                                                onchange="setCustomValidity('')"
-                                                oninvalid="this.setCustomValidity('Please select polling booth')"
-                                                required>
-                                            <option value="" disabled selected>Select polling booth</option>
-                                            @if($pollingBooths != null)
-                                                @foreach($pollingBooths as $pollingBooth)
-                                                    <option value="{{$pollingBooth->idpolling_booth}}">{{strtoupper($pollingBooth->name_en)}}</option>
-                                                @endforeach
-                                            @endif
-
-                                        </select>
+                                        <input autocomplete="off" type="text" class="form-control noClear" readonly
+                                               value="{{\Illuminate\Support\Facades\Auth::user()->office->district->name_en}}"
+                                               name="district"
+                                               id="districtU">
                                     </div>
                                 </div>
                             </div>
 
                             <div class="form-group col-md-12">
-                                <label for="secretariatU" class="control-label">{{ __('Divisional Secretariat') }}</label>
-                                <div>
-                                    <div class="input-group">
-                                        <div class="input-group-append">
-                                            <span class="input-group-text"><em class="mdi mdi-bank"></em></span>
-                                        </div>
-                                        <select id="secretariatU" name="secretariat" class="form-control noClear"
-                                                onchange="setCustomValidity('');showTableData()"
-                                                oninvalid="this.setCustomValidity('Please select divisional secretariat')"
-                                                required>
-                                            <option value=""  selected>Select divisional secretariat</option>
-                                            @if($secretariats != null)
-                                                @foreach($secretariats as $secretariat)
-                                                    <option value="{{$secretariat->iddivisional_secretariat}}">{{strtoupper($secretariat->name_en)}}</option>
-                                                @endforeach
-                                            @endif
-
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-group col-md-12">
-                                <label for="gramasewaDivisionU">{{ __('Gramasewa Division Name') }}</label>
+                                <label for="divisionalSecretariatU">{{ __('Divisional Secretariat Name') }}</label>
                                 <div>
                                     <div class="input-group">
                                         <div class="input-group-append">
@@ -245,15 +186,15 @@
                                         </div>
                                         <input autocomplete="off" type="text" class="form-control" required
                                                oninput="setCustomValidity('')"
-                                               oninvalid="this.setCustomValidity('Please enter gramasewa division name')"
-                                               placeholder="Enter gramasewa division name in english" name="gramasewaDivision"
-                                               id="gramasewaDivisionU">
+                                               oninvalid="this.setCustomValidity('Please enter divisional secretariat name')"
+                                               placeholder="Divisional Secretariat name in english" name="divisionalSecretariat"
+                                               id="divisionalSecretariatU">
                                     </div>
                                 </div>
                             </div>
 
                             <div class="form-group col-md-12">
-                                <label for="gramasewaDivision_siU">ග්‍රාමසේවක වසම</label>
+                                <label for="divisionalSecretariat_siU">ප්‍රාදේශීය ලේකම් කාර්යාලය</label>
                                 <div>
                                     <div class="input-group">
                                         <div class="input-group-append">
@@ -261,15 +202,16 @@
                                         </div>
                                         <input autocomplete="off" type="text" class="form-control"
                                                oninput="setCustomValidity('')" required
-                                               oninvalid="this.setCustomValidity('Please enter gramasewa division name')"
-                                               placeholder="Enter gramasewa division name in sinhala" name="gramasewaDivision_si"
-                                               id="gramasewaDivision_siU">
+                                               oninvalid="this.setCustomValidity('Please enter divisional secretariat name')"
+                                               placeholder="Divisional Secretariat name in sinhala"
+                                               name="divisionalSecretariat_si"
+                                               id="divisionalSecretariat_siU">
                                     </div>
                                 </div>
                             </div>
 
                             <div class="form-group col-md-12">
-                                <label for="gramasewaDivision_taU">கிராம சேவா பிரிவு</label>
+                                <label for="divisionalSecretariat_taU">பிரதேச செயலகம்</label>
                                 <div>
                                     <div class="input-group">
                                         <div class="input-group-append">
@@ -277,15 +219,15 @@
                                         </div>
                                         <input autocomplete="off" type="text" class="form-control"
                                                oninput="setCustomValidity('')" required
-                                               oninvalid="this.setCustomValidity('Please enter gramasewa division name')"
-                                               placeholder="Enter gramasewa division name in tamil" name="gramasewaDivision_ta"
-                                               id="gramasewaDivision_taU">
+                                               oninvalid="this.setCustomValidity('Please enter divisional secretariat name')"
+                                               placeholder="Divisional Secretariat name in tamil" name="divisionalSecretariat_ta"
+                                               id="divisionalSecretariat_taU">
                                     </div>
                                 </div>
                             </div>
-                            <input  type="hidden" name="updateId" id="updateId">
+                            <input type="hidden" name="updateId" id="updateId">
                             <div class="form-group col-md-6" style="margin-top: 20px;">
-                                <button type="submit" onclick="clearAll();event.preventDefault();"
+                                <button type="button" onclick="clearAll();event.preventDefault();"
                                         class="btn btn-danger btn-block ">{{ __('Cancel') }}</button>
                             </div>
                             <div class="form-group col-md-6" style="margin-top: 20px;">
@@ -316,45 +258,45 @@
         function clearAll() {
             $('input').not(".noClear").val('');
             $(":checkbox").attr('checked', false).trigger('change');
-            $('select').not(".noClear").val('').trigger('change');
+            $('select').val('').trigger('change');
             $('#updateModal').modal('hide');
-
         }
 
         function showTableData() {
-            let id = $('#pollingBooth').val();
+
+
             $.ajax({
-                url: '{{route('getGramasewaDivisionByAuth')}}',
-                data:{id:id},
+                url: '{{route('getDivisionalSecretariatByAuth')}}',
                 type: 'POST',
                 success: function (data) {
+
                     if (data.success != null) {
                         let array = data.success;
-                        if(array.length == 0){
+                        if (array.length == 0) {
                             $('#confirmBtn').hide();
                         }
-                        else{
+                        else {
                             $('#confirmBtn').show();
                         }
-                        $('#gramasewaDivisionTBody').html('');
-                        $.each(array, function (key1, value1) {
-                            if(value1.status == 2) {
-                                $('#gramasewaDivisionTBody').append(
-                                    "<tr data-s='" + value1.iddivisional_secretariat +"' data-id='" + value1.idpolling_booth + "' id='" + value1.idgramasewa_division + "'>" +
-                                    "<td>" + value1.polling_booth.name_en.toUpperCase() + "</td>" +
-                                    "<td>" + value1.divisional_secretariat.name_en.toUpperCase() + "</td>" +
-                                    "<td>" + value1.name_en.toUpperCase() + "</td>" +
-                                    "<td>" + value1.name_si.toUpperCase() + "</td>" +
-                                    "<td>" + value1.name_ta.toUpperCase() + "</td>" +
-                                    "<td style='text-align: center;'>" +
+                        $('#divisionalSecretariatTBody').html('');
+                        $.each(array, function (key, value) {
+                            if (value.status == 2) {
+                                $('#divisionalSecretariatTBody').append(
+                                    "<tr id='" + value.iddivisional_secretariat + "'>" +
+                                    "<td>{{ strtoupper( \Illuminate\Support\Facades\Auth::user()->office->district->name_en)}}</td>" +
+                                    "<td>" + value.name_en.toUpperCase() + "</td>" +
+                                    "<td>" + value.name_si.toUpperCase() + "</td>" +
+                                    "<td>" + value.name_ta.toUpperCase() + "</td>" +
+                                    " <td style='text-align:center;'>" +
                                     "<p>" +
                                     " <button type='button' " +
-                                    "class='btn btn-sm btn-warning  waves-effect waves-light' onclick='showUpdateModal(" + value1.idgramasewa_division + ")'>" +
+                                    "class='btn btn-sm btn-warning  waves-effect waves-light'" +
+                                    "onclick='showUpdateModal(" + value.iddivisional_secretariat + ")'>" +
                                     " <i class='fa fa-edit'></i>" +
                                     "</button>" +
                                     " <button type='button' " +
                                     "class='btn btn-sm btn-danger  waves-effect waves-light'" +
-                                    "onclick='deleteThis(" + value1.idgramasewa_division + ")'>" +
+                                    "onclick='deleteThis(" + value.iddivisional_secretariat + ")'>" +
                                     " <i class='fa fa-trash'></i>" +
                                     "</button>" +
                                     " </p>" +
@@ -362,15 +304,14 @@
                                     "</tr>"
                                 );
                             }
-                            else{
-                                $('#gramasewaDivisionTBody').append(
-                                    "<tr data-s='" + value1.iddivisional_secretariat +"' data-id='" + value1.idpolling_booth + "' id='" + value1.idgramasewa_division + "'>" +
-                                    "<td>" + value1.polling_booth.name_en.toUpperCase() + "</td>" +
-                                    "<td>" + value1.divisional_secretariat.name_en.toUpperCase() + "</td>" +
-                                    "<td>" + value1.name_en.toUpperCase() + "</td>" +
-                                    "<td>" + value1.name_si.toUpperCase() + "</td>" +
-                                    "<td>" + value1.name_ta.toUpperCase() + "</td>" +
-                                    "<td style='text-align: center;'>" +
+                            else {
+                                $('#divisionalSecretariatTBody').append(
+                                    "<tr id='" + value.iddivisional_secretariat + "'>" +
+                                    "<td>{{ strtoupper( \Illuminate\Support\Facades\Auth::user()->office->district->name_en)}}</td>" +
+                                    "<td>" + value.name_en.toUpperCase() + "</td>" +
+                                    "<td>" + value.name_si.toUpperCase() + "</td>" +
+                                    "<td>" + value.name_ta.toUpperCase() + "</td>" +
+                                    " <td style='text-align:center;'>" +
                                     "<p>" +
                                     " <button title='Can not use this option on confirmed records' disabled type='button' " +
                                     "class='btn btn-sm btn-muted  waves-effect waves-light'>" +
@@ -404,7 +345,7 @@
             });
         }
 
-        $("#form1").on("submit", function (event) {
+        $("#saveForm").on("submit", function (event) {
             event.preventDefault();
 
             //initialize alert and variables
@@ -422,7 +363,7 @@
             if (completed) {
 
                 $.ajax({
-                    url: '{{route('saveGramasewaDivision')}}',
+                    url: '{{route('saveDivisionalSecretariat')}}',
                     type: 'POST',
                     data: $(this).serialize(),
                     success: function (data) {
@@ -439,7 +380,7 @@
 
                             notify({
                                 type: "success", //alert | success | error | warning | info
-                                title: 'GRAMASEWA DIVISION SAVED!',
+                                title: 'DIVISIONAL SECRETARIAT SAVED!',
                                 autoHide: true, //true | false
                                 delay: 2500, //number ms
                                 position: {
@@ -448,7 +389,7 @@
                                 },
                                 icon: '<em class="mdi mdi-check-circle-outline"></em>',
 
-                                message: 'Gramasewa division details saved successfully.'
+                                message: 'Divisional secretariat saved successfully.'
                             });
                             clearAll();
                             showTableData();
@@ -487,13 +428,12 @@
             });
         });
 
+
         function showUpdateModal(id) {
             $('#updateId').val(id);
-            $('#secretariatU').val($('#'+id).attr('data-s')).trigger('change');
-            $('#pollingBoothU').val($('#'+id).attr('data-id')).trigger('change');
-            $('#gramasewaDivisionU').val($('#'+id).find("td").eq(2).html());
-            $('#gramasewaDivision_siU').val($('#'+id).find("td").eq(3).html());
-            $('#gramasewaDivision_taU').val($('#'+id).find("td").eq(4).html());
+            $('#divisionalSecretariatU').val($('#' + id).find("td").eq(1).html());
+            $('#divisionalSecretariat_siU').val($('#' + id).find("td").eq(2).html());
+            $('#divisionalSecretariat_taU').val($('#' + id).find("td").eq(3).html());
             $('#updateModal').modal('show');
         }
 
@@ -515,7 +455,7 @@
             if (completed) {
 
                 $.ajax({
-                    url: '{{route('updateGramasewaDivision')}}',
+                    url: '{{route('updateDivisionalSecretariat')}}',
                     type: 'POST',
                     data: $(this).serialize(),
                     success: function (data) {
@@ -532,7 +472,7 @@
 
                             notify({
                                 type: "success", //alert | success | error | warning | info
-                                title: 'GRAMASEWA DIVISION UPDATED!',
+                                title: 'DIVISIONAL SECRETARIAT UPDATED!',
                                 autoHide: true, //true | false
                                 delay: 2500, //number ms
                                 position: {
@@ -541,7 +481,7 @@
                                 },
                                 icon: '<em class="mdi mdi-check-circle-outline"></em>',
 
-                                message: 'Gramasewa division details updated successfully.'
+                                message: 'Divisional secretariat updated successfully.'
                             });
                             clearAll();
                             $('#updateModal').modal('hide');
@@ -564,7 +504,7 @@
         function confirm() {
             swal({
                 title: 'Confirm All?',
-                text:'You Will Need Administrator Permission To Revert This Process!',
+                text: 'You Will Need Administrator Permission To Revert This Process!',
                 type: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Yes, Confirm',
@@ -575,7 +515,7 @@
             }).then(function () {
 
                 $.ajax({
-                    url: '{{route('confirmGramasewaDivisions')}}',
+                    url: '{{route('confirmDivisionalSecretariat')}}',
                     type: 'POST',
                     success: function (data) {
                         if (data.errors != null) {
@@ -597,7 +537,7 @@
 
                             notify({
                                 type: "success", //alert | success | error | warning | info
-                                title: 'GRAMASEWA DIVISIONS CONFIRMED!',
+                                title: 'DIVISIONAL SECRETARIAT CONFIRMED!',
                                 autoHide: true, //true | false
                                 delay: 2500, //number ms
                                 position: {
@@ -606,7 +546,7 @@
                                 },
                                 icon: '<em class="mdi mdi-check-circle-outline"></em>',
 
-                                message: 'Gramasewa divisions confirmed successfully.'
+                                message: 'Divisional secretariat confirmed successfully.'
                             });
                             showTableData();
                         }
@@ -640,7 +580,7 @@
             }).then(function () {
 
                 $.ajax({
-                    url: '{{route('deleteGramasewaDivision')}}',
+                    url: '{{route('deleteDivisionalSecretariat')}}',
                     data: {id: id},
                     type: 'POST',
                     success: function (data) {
@@ -663,7 +603,7 @@
 
                             notify({
                                 type: "success", //alert | success | error | warning | info
-                                title: 'GRAMASEWA DIVISION DELETED!',
+                                title: 'DIVISIONAL SECRETARIATE DELETED!',
                                 autoHide: true, //true | false
                                 delay: 2500, //number ms
                                 position: {
@@ -672,7 +612,7 @@
                                 },
                                 icon: '<em class="mdi mdi-check-circle-outline"></em>',
 
-                                message: 'Gramasewa division deleted successfully.'
+                                message: 'Divisional Secreateriat deleted successfully.'
                             });
                             showTableData();
                         }

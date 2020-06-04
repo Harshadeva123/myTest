@@ -32,4 +32,8 @@ class GramasewaDivision extends Model
     public function analysis(){
         return $this->hasMany(Analysis::class,'idgramasewa_division');
     }
+
+    public function divisionalSecretariat(){
+        return $this->belongsTo(DivisionalSecretariat::class,'iddivisional_secretariat');
+    }
 }

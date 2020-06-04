@@ -1,13 +1,18 @@
 <?php
 
-namespace App;
+namespace App\Api;
 
+use App\Career;
+use App\Task;
 use Illuminate\Database\Eloquent\Model;
 
-class TaskCareer extends Model
+class ApiTaskCareer extends Model
 {
     protected $table = 'task_career';
     protected $primaryKey = 'idtask_career';
+    protected $appends = ['name'];
+    protected $visible = ['idtask_career','name'];
+
 
     public function task(){
         return $this->belongsTo(Task::class,'idtask');

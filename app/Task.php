@@ -2,6 +2,12 @@
 
 namespace App;
 
+use App\Api\ApiTaskAge;
+use App\Api\ApiTaskCareer;
+use App\Api\ApiTaskEducation;
+use App\Api\ApiTaskEthnicity;
+use App\Api\ApiTaskIncome;
+use App\Api\ApiTaskReligion;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
@@ -24,6 +30,32 @@ class Task extends Model
     public function assigned(){
         return $this->belongsTo(User::class,'assigned_by');
     }
+
+    //Api relations
+    public function apiEthnicities(){
+        return $this->hasMany(ApiTaskEthnicity::class,'idtask');
+    }
+
+    public function apiCareers(){
+        return $this->hasMany(ApiTaskCareer::class,'idtask');
+    }
+
+    public function apiEducation(){
+        return $this->hasMany(ApiTaskEducation::class,'idtask');
+    }
+
+    public function apiReligion(){
+        return $this->hasMany(ApiTaskReligion::class,'idtask');
+    }
+
+    public function apiIncome(){
+        return $this->hasMany(ApiTaskIncome::class,'idtask');
+    }
+
+    public function apiAge(){
+        return $this->hasOne(ApiTaskAge::class,'idtask');
+    }
+    //Api relations end
 
     public function ethnicities(){
         return $this->hasMany(TaskEthnicity::class,'idtask');

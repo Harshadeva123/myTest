@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Agent;
+use App\DivisionalSecretariat;
 use App\GramasewaDivision;
 use App\PollingBooth;
 use App\Village;
@@ -19,7 +20,8 @@ class GramasewaDivisionController extends Controller
     public function index()
     {
         $pollingBooths = PollingBooth::where('iddistrict',Auth::user()->office->iddistrict)->where('status','>=',1)->get();
-        return view('gramasewa_division.add')->with(['title'=>'Gramasewa Division','pollingBooths'=>$pollingBooths]);
+        $secretariat = DivisionalSecretariat::where('iddistrict',Auth::user()->office->iddistrict)->where('status',1)->get();
+        return view('gramasewa_division.add')->with(['title'=>'Gramasewa Division','pollingBooths'=>$pollingBooths,'secretariats'=>$secretariat]);
     }
 
     /**
@@ -34,7 +36,7 @@ class GramasewaDivisionController extends Controller
         if($request['id'] != null){
             $query  = $query->where('idpolling_booth',$request['id']);
         }
-        $gramasewaDivisions = $query->with(['pollingBooth'])->where('iddistrict',$district)->whereIn('status',[1,2])->orderBy('name_en')->get();
+        $gramasewaDivisions = $query->with(['pollingBooth','divisionalSecretariat'])->where('iddistrict',$district)->whereIn('status',[1,2])->orderBy('name_en')->get();
         return response()->json(['success'  => $gramasewaDivisions]);
     }
 
@@ -73,11 +75,13 @@ class GramasewaDivisionController extends Controller
             'pollingBooth' => 'required|exists:polling_booth,idpolling_booth',
             'gramasewaDivision' => 'required|max:100',
             'gramasewaDivision_si' => 'required|max:100',
-            'gramasewaDivision_ta' => 'required|max:100'
+            'gramasewaDivision_ta' => 'required|max:100',
+            'secretariat' => 'required'
 
         ], [
             'pollingBooth.required' => 'Polling Booth should be provided!',
             'pollingBooth.exists' => 'Polling Booth invalid!',
+            'secretariat.required' => 'Divisional Secretariat should be provided!',
             'gramasewaDivision.required' => 'Gramasewa Division should be provided!',
             'gramasewaDivision_si.required' => 'Gramasewa Division (Sinhala) should be provided!',
             'gramasewaDivision_ta.required' => 'Gramasewa Division (Tamil) should be provided!',
@@ -100,6 +104,7 @@ class GramasewaDivisionController extends Controller
         $division->name_en = $request['gramasewaDivision'];
         $division->name_si = $request['gramasewaDivision_si'];
         $division->name_ta = $request['gramasewaDivision_ta'];
+        $division->iddivisional_secretariat = $request['secretariat'];
         $division->status = 2;
         $division->idUser = Auth::user()->idUser;
         $division->save();
@@ -139,6 +144,7 @@ class GramasewaDivisionController extends Controller
     {
         $validator = \Validator::make($request->all(), [
             'updateId' => 'required',
+            'secretariat' => 'required',
             'pollingBooth' => 'required|exists:polling_booth,idpolling_booth',
             'gramasewaDivision' => 'required|max:100',
             'gramasewaDivision_si' => 'required|max:100',
@@ -148,6 +154,7 @@ class GramasewaDivisionController extends Controller
             'updateId.required' => 'Update process has failed!',
             'pollingBooth.required' => 'Polling Booth should be provided!',
             'pollingBooth.exists' => 'Polling Booth invalid!',
+            'secretariat.required' => 'Divisional Secretariat should be provided!',
             'gramasewaDivision.required' => 'Gramasewa Division should be provided!',
             'gramasewaDivision_si.required' => 'Gramasewa Division (Sinhala) should be provided!',
             'gramasewaDivision_ta.required' => 'Gramasewa Division (Tamil) should be provided!',
@@ -179,6 +186,7 @@ class GramasewaDivisionController extends Controller
         }
 
         //validation end
+        $division->iddivisional_secretariat = $request['secretariat'];
         $division->name_en = $request['gramasewaDivision'];
         $division->name_si = $request['gramasewaDivision_si'];
         $division->name_ta = $request['gramasewaDivision_ta'];
@@ -221,6 +229,15 @@ class GramasewaDivisionController extends Controller
         }
         return response()->json(['errors' => ['error'=>'You are not able to delete this record.']]);
 
+    }
+
+    public function getBySecretariat(Request $request){
+        $secretariat = $request['id'];
+        return response()->json(['success' => GramasewaDivision::with(['pollingBooth','pollingBooth.electionDivision'])->where('iddivisional_secretariat',$secretariat)->where('status',1)->get()]);
+    }
+
+    public function getUnAssigned(Request $request){
+        return response()->json(['success' => GramasewaDivision::with(['pollingBooth','pollingBooth.electionDivision'])->where('iddivisional_secretariat',null)->where('status',1)->get()]);
     }
 
     /**

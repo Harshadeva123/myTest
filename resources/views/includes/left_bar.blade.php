@@ -1,6 +1,5 @@
 <!-- Loader -->
-<div id="preloader">
-    <div id="status">
+<div id="preSecretariat  <div id="status">
         <div class="spinner"></div>
     </div>
 </div>
@@ -42,6 +41,19 @@
                                 <li><a href="{{route('pollingBooth')}}">{{ __('Polling Booth') }}</a></li>
                                 <li><a href="{{route('gramasewaDivision')}}">{{ __('Gramasewa Division') }}</a></li>
                                 <li><a href="{{route('village')}}">{{ __('Village') }}</a></li>
+                            </ul>
+                        </li>
+
+                        <li class="has_sub">
+                            <a href="javascript:void(0);" class="waves-effect"><i class="dripicons-suitcase"></i><span>{{ __('Unit') }}
+                                    <span
+                                            class="pull-right"><i class="mdi mdi-chevron-right"></i></span> </span></a>
+                            <ul class="list-unstyled">
+                                <li><a href="{{route('divisionalSecretariat')}}">{{ __('Divisional Secretariat') }}</a></li>
+                                <li><a href="{{route('divisionalSecretariat-view')}}">{{ __('Divisional Secretariat View') }}</a></li>
+                                {{--<li><a href="{{route('pollingBooth')}}">{{ __('Municipal council') }}</a></li>--}}
+                                {{--<li><a href="{{route('gramasewaDivision')}}">{{ __('Urban council') }}</a></li>--}}
+                                {{--<li><a href="{{route('village')}}">{{ __('Divisional council') }}</a></li>--}}
                             </ul>
                         </li>
                     @endif
@@ -223,6 +235,7 @@
                                     <span
                                             class="pull-right"><i class="mdi mdi-chevron-right"></i></span> </span></a>
                             <ul class="list-unstyled">
+                                <li><a href="{{route('createDefaultTask')}}">{{ __('Default Task') }}</a></li>
                                 <li><a href="{{route('assignTask')}}">{{ __('Assign Task') }}</a></li>
                                 <li><a href="{{route('viewTasks')}}">{{ __('View Task') }}</a></li>
                             </ul>
