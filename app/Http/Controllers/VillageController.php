@@ -206,6 +206,7 @@ class VillageController extends Controller
         $id  = $request['id'];
         $record  =  Village::find(intval($id));
         if($record->status == 2){
+
             $record->delete();
             return response()->json(['success' => 'Record deleted']);
         }

@@ -12,17 +12,17 @@
                 <div class="col-lg-12">
                     <div class="card m-b-20">
                         <div class="card-body">
-                            <form action="{{route('divisionalSecretariat-view')}}" method="GET">
+                            <form action="{{route('council-view')}}" method="GET">
                                 <div class="row">
                                     {{ csrf_field() }}
 
 
                                     <div class="form-group col-md-4 ">
-                                        <label for="secretariatName">Secretariat Name</label>
+                                        <label for="councilName">Council Name</label>
                                         <input class="form-control " type="text"
-                                               placeholder="Search secretariat name here"
-                                               id="secretariatName"
-                                               name="secretariatName">
+                                               placeholder="Search council name here"
+                                               id="councilName"
+                                               name="councilName">
                                     </div>
 
                                     <div class="form-group col-md-4">
@@ -56,24 +56,22 @@
                                                    width="100%">
                                                 <thead>
                                                 <tr>
-                                                    <th>SECRETARIAT NAME</th>
-                                                    <th>SINHALA</th>
-                                                    <th>TAMIL</th>
+                                                    <th>COUNCIL NAME</th>
+                                                    <th>COUNCIL TYPE</th>
                                                     <th>CREATED AT</th>
                                                     <th>DIVISIONS COUNT</th>
                                                     <th style="text-align: center;">OPTIONS</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody id="mainTBody">
-                                                @if(isset($secretariats))
-                                                    @if(count($secretariats) > 0)
-                                                        @foreach($secretariats as $secretariat)
-                                                            <tr id="{{$secretariat->iddivisional_secretariat}}">
-                                                                <td>{{strtoupper($secretariat->name_en)}} </td>
-                                                                <td>{{$secretariat->name_si}} </td>
-                                                                <td>{{$secretariat->name_ta}} </td>
-                                                                <td>{{$secretariat->created_at}} </td>
-                                                                <td>{{$secretariat->divisions()->where('status',1)->count(). ' DIVISIONS'}} </td>
+                                                @if(isset($councils))
+                                                    @if(count($councils) > 0)
+                                                        @foreach($councils as $council)
+                                                            <tr id="{{$council->idcouncil}}">
+                                                                <td>{{strtoupper($council->name_en)}} </td>
+                                                                <td>{{$council->councilType->name}} </td>
+                                                                <td>{{$council->created_at}} </td>
+                                                                <td>{{$council->gramasewaDivisions()->where('status',1)->count(). ' DIVISIONS'}} </td>
                                                                 <td style="text-align: center;">
                                                                     <div class="dropdown">
                                                                         <button class="btn btn-secondary btn-sm dropdown-toggle"
@@ -87,11 +85,11 @@
                                                                         <div class="dropdown-menu"
                                                                              aria-labelledby="dropdownMenuButton">
                                                                             <a href="#"
-                                                                               onclick="assignedDivision({{$secretariat->iddivisional_secretariat}})"
+                                                                               onclick="assignedDivision({{$council->idcouncil}})"
                                                                                class="dropdown-item">Assign New
                                                                             </a>
                                                                             <a href="#"
-                                                                               onclick="viewAssignedDivision({{$secretariat->iddivisional_secretariat}})"
+                                                                               onclick="viewAssignedDivision({{$council->idcouncil}})"
                                                                                class="dropdown-item">View
                                                                             </a>
                                                                         </div>
@@ -115,8 +113,8 @@
                                     </div>
                                 </div>
                             </div>
-                            @if(isset($secretariats))
-                                {{$secretariats->links()}}
+                            @if(isset($councils))
+                                {{$councils->links()}}
                             @endif
                         </div>
                     </div>
@@ -207,7 +205,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <input type="hidden" id="secretariatId" >
+                            <input type="hidden" id="councilId" >
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="table-rep-plugin">
@@ -255,7 +253,7 @@
 
         function viewAssignedDivision(id) {
             $.ajax({
-                url: '{{route('getGramasewaBySecretariat')}}',
+                url: '{{route('getGramasewaByCouncil')}}',
                 type: 'POST',
                 data: {id: id},
                 success: function (data) {
@@ -288,9 +286,9 @@
                         $.each(divisions, function (key, value) {
                             $('#viewTBody').append('' +
                                 '<tr>' +
-                                '<td>' + value.polling_booth.election_division.name_en + '</td>' +
-                                '<td>' + value.polling_booth.name_en + '</td>' +
-                                '<td>' + value.name_en + '</td>' +
+                                '<td>' + value.polling_booth.election_division.name_en.toUpperCase() + '</td>' +
+                                '<td>' + value.polling_booth.name_en.toUpperCase() + '</td>' +
+                                '<td>' + value.name_en.toUpperCase() + '</td>' +
                                 '</tr>');
                         });
                         $('#viewModal').modal('show');
@@ -300,12 +298,12 @@
         }
 
         function assignedDivision(id) {
-            $('#secretariatId').val(id);
+            $('#councilId').val(id);
             $('.alert').hide();
             $('.alert').html("");
 
             $.ajax({
-                url: '{{route('getUnAssignedGramasewaDivisions')}}',
+                url: '{{route('getNonCouncilledGramasewaDivisions')}}',
                 type: 'POST',
                 data: {id: id},
                 success: function (data) {
@@ -339,9 +337,9 @@
                             $.each(divisions, function (key, value) {
                                 $('#assignTBody').append("" +
                                     "<tr>" +
-                                    "<td>" + value.polling_booth.election_division.name_en + "</td>" +
-                                    "<td>" + value.polling_booth.name_en + "</td>" +
-                                    "<td>" + value.name_en + "</td>" +
+                                    "<td>" + value.polling_booth.election_division.name_en.toUpperCase() + "</td>" +
+                                    "<td>" + value.polling_booth.name_en.toUpperCase() + "</td>" +
+                                    "<td>" + value.name_en.toUpperCase() + "</td>" +
                                     "<td> <input type='checkbox' onchange='divisionSelected(" + value.idgramasewa_division + ")' id='check-" + value.idgramasewa_division + "' name='gramasewa'>" +
                                     "</tr>");
                             });
@@ -433,12 +431,12 @@
         });
 
         function assignDivision() {
-            let id = $('#secretariatId').val();
+            let id = $('#councilId').val();
             $('.alert').hide();
             $('.alert').html("");
 
             $.ajax({
-                url: '{{route('assignedGramasewaDivisions')}}',
+                url: '{{route('assignedGramasewaCouncil')}}',
                 type: 'POST',
                 data: {id: id,divisionsArray:divisionsArray},
                 success: function (data) {

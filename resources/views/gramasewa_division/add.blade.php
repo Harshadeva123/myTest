@@ -20,13 +20,14 @@
                         </div>
                         <div class="row">
                             <div class="form-group col-md-6">
-                                <label for="pollingBooth" class="control-label">{{ __('Polling Booth') }}</label>
+                                <label for="pollingBooth" class="control-label">{{ __('Member Division') }}</label>
                                 <div>
                                     <div class="input-group">
                                         <div class="input-group-append">
-                                            <span class="input-group-text"><em class="mdi mdi-bank"></em></span>
+                                            <span  style="padding: 10px;"  class="input-group-text"><em class="mdi mdi-bank"></em></span>
                                         </div>
-                                        <select id="pollingBooth" name="pollingBooth" class="form-control noClear"
+                                        <div class="flex-fill">
+                                        <select id="pollingBooth" name="pollingBooth" class="form-control noClear select2"
                                                 onchange="setCustomValidity('');showTableData()"
                                                 oninvalid="this.setCustomValidity('Please select polling booth')"
                                                 required>
@@ -38,28 +39,7 @@
                                             @endif
 
                                         </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label for="secretariat" class="control-label">{{ __('Divisional Secretariat') }}</label>
-                                <div>
-                                    <div class="input-group">
-                                        <div class="input-group-append">
-                                            <span class="input-group-text"><em class="mdi mdi-bank"></em></span>
                                         </div>
-                                        <select id="secretariat" name="secretariat" class="form-control noClear"
-                                                onchange="setCustomValidity('');showTableData()"
-                                                oninvalid="this.setCustomValidity('Please select divisional secretariat')"
-                                                required>
-                                            <option value=""  selected>Select divisional secretariat</option>
-                                            @if($secretariats != null)
-                                                @foreach($secretariats as $secretariat)
-                                                    <option value="{{$secretariat->iddivisional_secretariat}}">{{strtoupper($secretariat->name_en)}}</option>
-                                                @endforeach
-                                            @endif
-
-                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -115,7 +95,7 @@
                                 <button type="submit"
                                         class="btn btn-primary btn-block ">{{ __('Add Gramasewa Division') }}</button>
                             </div>
-                            <div class="form-group col-md-2" style="margin-top: 20px;">
+                            <div class="form-group col-md-2" style="margin-top: 28px;">
                                 <button type="submit" onclick="clearAll();event.preventDefault();"
                                         class="btn btn-danger btn-block ">{{ __('Cancel') }}</button>
                             </div>
@@ -137,8 +117,7 @@
                                                width="100%">
                                             <thead>
                                             <tr>
-                                                <th>POLLING BOOTH</th>
-                                                <th>SECRETARIAT</th>
+                                                <th>MEMBER DIVISION</th>
                                                 <th>ENGLISH</th>
                                                 <th>SINHALA</th>
                                                 <th>TAMIL</th>
@@ -191,7 +170,7 @@
                         <div class="row">
 
                             <div class="form-group col-md-12">
-                                <label for="pollingBoothU" class="control-label">{{ __('Polling Booth') }}</label>
+                                <label for="pollingBoothU" class="control-label">{{ __('Member Division') }}</label>
                                 <div>
                                     <div class="input-group">
                                         <div class="input-group-append">
@@ -205,29 +184,6 @@
                                             @if($pollingBooths != null)
                                                 @foreach($pollingBooths as $pollingBooth)
                                                     <option value="{{$pollingBooth->idpolling_booth}}">{{strtoupper($pollingBooth->name_en)}}</option>
-                                                @endforeach
-                                            @endif
-
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-group col-md-12">
-                                <label for="secretariatU" class="control-label">{{ __('Divisional Secretariat') }}</label>
-                                <div>
-                                    <div class="input-group">
-                                        <div class="input-group-append">
-                                            <span class="input-group-text"><em class="mdi mdi-bank"></em></span>
-                                        </div>
-                                        <select id="secretariatU" name="secretariat" class="form-control noClear"
-                                                onchange="setCustomValidity('');showTableData()"
-                                                oninvalid="this.setCustomValidity('Please select divisional secretariat')"
-                                                required>
-                                            <option value=""  selected>Select divisional secretariat</option>
-                                            @if($secretariats != null)
-                                                @foreach($secretariats as $secretariat)
-                                                    <option value="{{$secretariat->iddivisional_secretariat}}">{{strtoupper($secretariat->name_en)}}</option>
                                                 @endforeach
                                             @endif
 
@@ -323,11 +279,13 @@
 
         function showTableData() {
             let id = $('#pollingBooth').val();
+            let council = $('#councilType').val();
             $.ajax({
                 url: '{{route('getGramasewaDivisionByAuth')}}',
-                data:{id:id},
+                data:{id:id,council:council},
                 type: 'POST',
                 success: function (data) {
+
                     if (data.success != null) {
                         let array = data.success;
                         if(array.length == 0){
@@ -338,11 +296,12 @@
                         }
                         $('#gramasewaDivisionTBody').html('');
                         $.each(array, function (key1, value1) {
+
+
                             if(value1.status == 2) {
                                 $('#gramasewaDivisionTBody').append(
-                                    "<tr data-s='" + value1.iddivisional_secretariat +"' data-id='" + value1.idpolling_booth + "' id='" + value1.idgramasewa_division + "'>" +
+                                    "<tr data-c='" + value1.idcouncil +"' data-s='" + value1.iddivisional_secretariat +"' data-id='" + value1.idpolling_booth + "' id='" + value1.idgramasewa_division + "'>" +
                                     "<td>" + value1.polling_booth.name_en.toUpperCase() + "</td>" +
-                                    "<td>" + value1.divisional_secretariat.name_en.toUpperCase() + "</td>" +
                                     "<td>" + value1.name_en.toUpperCase() + "</td>" +
                                     "<td>" + value1.name_si.toUpperCase() + "</td>" +
                                     "<td>" + value1.name_ta.toUpperCase() + "</td>" +
@@ -364,9 +323,8 @@
                             }
                             else{
                                 $('#gramasewaDivisionTBody').append(
-                                    "<tr data-s='" + value1.iddivisional_secretariat +"' data-id='" + value1.idpolling_booth + "' id='" + value1.idgramasewa_division + "'>" +
+                                    "<tr data-c='" + value1.idcouncil +"'  data-s='" + value1.iddivisional_secretariat +"' data-id='" + value1.idpolling_booth + "' id='" + value1.idgramasewa_division + "'>" +
                                     "<td>" + value1.polling_booth.name_en.toUpperCase() + "</td>" +
-                                    "<td>" + value1.divisional_secretariat.name_en.toUpperCase() + "</td>" +
                                     "<td>" + value1.name_en.toUpperCase() + "</td>" +
                                     "<td>" + value1.name_si.toUpperCase() + "</td>" +
                                     "<td>" + value1.name_ta.toUpperCase() + "</td>" +
@@ -489,11 +447,10 @@
 
         function showUpdateModal(id) {
             $('#updateId').val(id);
-            $('#secretariatU').val($('#'+id).attr('data-s')).trigger('change');
             $('#pollingBoothU').val($('#'+id).attr('data-id')).trigger('change');
-            $('#gramasewaDivisionU').val($('#'+id).find("td").eq(2).html());
-            $('#gramasewaDivision_siU').val($('#'+id).find("td").eq(3).html());
-            $('#gramasewaDivision_taU').val($('#'+id).find("td").eq(4).html());
+            $('#gramasewaDivisionU').val($('#'+id).find("td").eq(1).html());
+            $('#gramasewaDivision_siU').val($('#'+id).find("td").eq(2).html());
+            $('#gramasewaDivision_taU').val($('#'+id).find("td").eq(3).html());
             $('#updateModal').modal('show');
         }
 
@@ -630,6 +587,7 @@
         function deleteThis(id) {
             swal({
                 title: 'Delete?',
+                text: 'All child records will be deleted.',
                 type: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Delete',
@@ -645,18 +603,20 @@
                     type: 'POST',
                     success: function (data) {
                         if (data.errors != null) {
-                            notify({
-                                type: "error", //alert | success | error | warning | info
-                                title: 'PROCESS INVALID!',
-                                autoHide: true, //true | false
-                                delay: 2500, //number ms
-                                position: {
-                                    x: "right",
-                                    y: "top"
-                                },
-                                icon: '<em class="mdi mdi-check-circle-outline"></em>',
+                            $.each(data.errors, function (key, value) {
+                                notify({
+                                    type: "error", //alert | success | error | warning | info
+                                    title: 'PROCESS INVALID!',
+                                    autoHide: true, //true | false
+                                    delay: 5000, //number ms
+                                    position: {
+                                        x: "right",
+                                        y: "top"
+                                    },
+                                    icon: '<em class="mdi mdi-check-circle-outline"></em>',
 
-                                message: 'Something wrong with process.contact administrator..'
+                                    message: value
+                                });
                             });
                         }
                         if (data.success != null) {

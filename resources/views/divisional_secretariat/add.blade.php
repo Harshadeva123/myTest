@@ -82,11 +82,11 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group col-md-2" style="margin-top: 20px;">
+                            <div class="form-group col-md-2" style="margin-top: 27px;">
                                 <button type="submit"
                                         class="btn btn-primary btn-block ">{{ __('Add Secretariat') }}</button>
                             </div>
-                            <div class="form-group col-md-2" style="margin-top: 20px;">
+                            <div class="form-group col-md-2" style="margin-top: 27px;">
                                 <button type="button" onclick="clearAll();event.preventDefault();"
                                         class="btn btn-danger btn-block ">{{ __('Cancel') }}</button>
                             </div>

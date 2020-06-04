@@ -20,7 +20,7 @@ class PollingBoothController extends Controller
     public function index()
     {
         $electionDivisions = ElectionDivision::where('iddistrict',Auth::user()->office->iddistrict)->where('status','>=',1)->get();
-        return view('polling_booth.add')->with(['title'=>'Polling Booth','electionDivisions'=>$electionDivisions]);
+        return view('polling_booth.add')->with(['title'=>'Member Division','electionDivisions'=>$electionDivisions]);
     }
 
     /**
@@ -108,7 +108,7 @@ class PollingBoothController extends Controller
         $booth->status = 2;
         $booth->idUser = Auth::user()->idUser;
         $booth->save();
-        return response()->json(['success' => 'Polling Booth saved']);
+        return response()->json(['success' => 'Member division saved']);
     }
 
     /**
@@ -153,12 +153,12 @@ class PollingBoothController extends Controller
             'updateId.required' => 'Update process has failed!',
             'electionDivision.required' => 'Election Division should be provided!',
             'electionDivision.exists' => 'Election Division invalid!',
-            'pollingBooth.required' => 'Polling Booth should be provided!',
-            'pollingBooth_si.required' => 'Polling Booth (Sinhala) should be provided!',
-            'pollingBooth_ta.required' => 'Polling Booth (Tamil) should be provided!',
-            'pollingBooth.max' => 'Polling Booth should be less than 100 characters long!',
-            'pollingBooth_si.max' => 'Polling Booth (Sinhala) should be less than 100 characters long!',
-            'pollingBooth_ta.max' => 'Polling Booth (Tamil) should be less than 100 characters long!',
+            'pollingBooth.required' => 'Member division should be provided!',
+            'pollingBooth_si.required' => 'Member division (Sinhala) should be provided!',
+            'pollingBooth_ta.required' => 'Member division (Tamil) should be provided!',
+            'pollingBooth.max' => 'Member division should be less than 100 characters long!',
+            'pollingBooth_si.max' => 'Member division (Sinhala) should be less than 100 characters long!',
+            'pollingBooth_ta.max' => 'Member division (Tamil) should be less than 100 characters long!',
 
         ]);
 
@@ -212,7 +212,7 @@ class PollingBoothController extends Controller
         }
         //save in relation table end
 
-        return response()->json(['success' => 'Polling Booth updated']);
+        return response()->json(['success' => 'Member division updated']);
     }
 
     public function confirm(Request $request){
@@ -229,8 +229,18 @@ class PollingBoothController extends Controller
         $record  =  PollingBooth::find(intval($id));
         if($record->status == 2){
 
-            GramasewaDivision::where('idpolling_booth',$id)->where('status',2)->delete();
-            Village::where('idpolling_booth',$id)->where('status',2)->delete();
+            $confirmedVillage = Village::where('idpolling_booth',$id)->where('status', '!=' ,2)->count();
+            if($confirmedVillage > 0){
+                return response()->json(['errors' => ['error'=>'This division has some confirmed villages.']]);
+            }
+            $confirmedGramasewa  = GramasewaDivision::where('idpolling_booth',$id)->where('status','!=',2)->count();
+            if($confirmedGramasewa > 0){
+                return response()->json(['errors' => ['error'=>'This division has some confirmed gramasewa divisions.']]);
+            }
+
+            Village::where('idpolling_booth',$id)->delete();
+            GramasewaDivision::where('idpolling_booth',$id)->delete();
+
             $record->delete();
 
             return response()->json(['success' => 'Record deleted']);

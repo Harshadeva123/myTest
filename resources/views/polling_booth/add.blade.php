@@ -23,11 +23,12 @@
                                 <label for="electionDivision"
                                        class="control-label">{{ __('Election Division') }}</label>
                                 <div>
-                                    <div class="input-group">
-                                        <div class="input-group-append">
-                                            <span class="input-group-text"><em class="mdi mdi-bank"></em></span>
+                                    <div class="input-group " >
+                                        <div  class="input-group-append">
+                                            <span style="padding: 10px;" class="input-group-text"><em class="mdi mdi-bank"></em></span>
                                         </div>
-                                        <select id="electionDivision" name="electionDivision" class="form-control noClear"
+                                        <div class="flex-fill">
+                                        <select  id="electionDivision" name="electionDivision" class="form-control noClear select2"
                                                 onchange="setCustomValidity('');showTableData()"
                                                 oninvalid="this.setCustomValidity('Please select election division')"
                                                 required>
@@ -39,12 +40,13 @@
                                             @endif
 
                                         </select>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="form-group col-md-6">
-                                <label for="pollingBooth">{{ __('Polling Booth Name') }}</label>
+                                <label for="pollingBooth">{{ __('Member Division Name') }}</label>
                                 <div>
                                     <div class="input-group">
                                         <div class="input-group-append">
@@ -52,8 +54,8 @@
                                         </div>
                                         <input autocomplete="off" type="text" class="form-control" required
                                                oninput="setCustomValidity('')"
-                                               oninvalid="this.setCustomValidity('Please enter polling booth name')"
-                                               placeholder="Enter polling booth name in english" name="pollingBooth"
+                                               oninvalid="this.setCustomValidity('Please enter member division name')"
+                                               placeholder="Enter member division name in english" name="pollingBooth"
                                                id="pollingBooth">
                                     </div>
                                 </div>
@@ -68,8 +70,8 @@
                                         </div>
                                         <input autocomplete="off" type="text" class="form-control"
                                                oninput="setCustomValidity('')"
-                                               oninvalid="this.setCustomValidity('Please enter polling booth name')"
-                                               placeholder="Enter polling booth name in sinhala" name="pollingBooth_si"
+                                               oninvalid="this.setCustomValidity('Please enter member division name')"
+                                               placeholder="Enter member division name in sinhala" name="pollingBooth_si"
                                                id="pollingBooth_si">
                                     </div>
                                 </div>
@@ -84,15 +86,15 @@
                                         </div>
                                         <input autocomplete="off" type="text" class="form-control"
                                                oninput="setCustomValidity('')"
-                                               oninvalid="this.setCustomValidity('Please enter polling booth name')"
-                                               placeholder="Enter polling booth name in tamil" name="pollingBooth_ta"
+                                               oninvalid="this.setCustomValidity('Please enter member division name')"
+                                               placeholder="Enter member division name in tamil" name="pollingBooth_ta"
                                                id="pollingBooth_ta">
                                     </div>
                                 </div>
                             </div>
                             <div class="form-group col-md-3" style="margin-top: 20px;">
                                 <button type="submit"
-                                        class="btn btn-primary btn-block ">{{ __('Add Polling Booth') }}</button>
+                                        class="btn btn-primary btn-block ">{{ __('Add Member Division') }}</button>
                             </div>
                             <div class="form-group col-md-2" style="margin-top: 20px;">
                                 <button type="submit" onclick="clearAll();event.preventDefault();"
@@ -102,10 +104,10 @@
                         <hr/>
                         <div class="row">
                             <div class="col-md-8">
-                                <h6 class="text-secondary">Polling Booths</h6>
+                                <h6 class="text-secondary">Member Divisions</h6>
                             </div>
                             <div class="col-md-4 mb-1">
-                                <input type="text" placeholder="Search polling booth name here"
+                                <input type="text" placeholder="Search member division name here"
                                        class="float-right form-control" id="searchBox">
                             </div>
 
@@ -134,7 +136,7 @@
                         <div class="row">
                             <div class="col-md-12 " >
                                 <button type="button" id="confirmBtn" onclick="confirm();event.preventDefault();"
-                                        class="btn btn-primary btn-md float-right">{{ __('Confirm All Polling Booths') }}</button>
+                                        class="btn btn-primary btn-md float-right">{{ __('Confirm All Member Divisions') }}</button>
                             </div>
                         </div>
                     </form> <!-- /form -->
@@ -154,7 +156,7 @@
         <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title mt-0">Update Polling Booth</h5>
+                    <h5 class="modal-title mt-0">Update Member Division</h5>
                     <button type="button" class="close" data-dismiss="modal"
                             aria-hidden="true">×
                     </button>
@@ -176,7 +178,7 @@
                                         <div class="input-group-append">
                                             <span class="input-group-text"><em class="mdi mdi-bank"></em></span>
                                         </div>
-                                        <select id="electionDivisionU" name="electionDivision" class="form-control"
+                                        <select id="electionDivisionU" name="electionDivision" class="form-control select2"
                                                 onchange="setCustomValidity('')"
                                                 oninvalid="this.setCustomValidity('Please select election division')"
                                                 required>
@@ -193,7 +195,7 @@
                             </div>
 
                             <div class="form-group col-md-12">
-                                <label for="pollingBoothU">{{ __('Polling Booth Name') }}</label>
+                                <label for="pollingBoothU">{{ __('Member Division Name') }}</label>
                                 <div>
                                     <div class="input-group">
                                         <div class="input-group-append">
@@ -201,8 +203,8 @@
                                         </div>
                                         <input autocomplete="off" type="text" class="form-control" required
                                                oninput="setCustomValidity('')"
-                                               oninvalid="this.setCustomValidity('Please enter polling booth name')"
-                                               placeholder="Enter polling booth name in english" name="pollingBooth"
+                                               oninvalid="this.setCustomValidity('Please enter member division name')"
+                                               placeholder="Enter member division name in english" name="pollingBooth"
                                                id="pollingBoothU">
                                     </div>
                                 </div>
@@ -217,8 +219,8 @@
                                         </div>
                                         <input autocomplete="off" type="text" class="form-control"
                                                oninput="setCustomValidity('')" required
-                                               oninvalid="this.setCustomValidity('Please enter polling booth name')"
-                                               placeholder="Enter polling booth name in sinhala" name="pollingBooth_si"
+                                               oninvalid="this.setCustomValidity('Please enter member division name')"
+                                               placeholder="Enter member division name in sinhala" name="pollingBooth_si"
                                                id="pollingBooth_siU">
                                     </div>
                                 </div>
@@ -233,8 +235,8 @@
                                         </div>
                                         <input autocomplete="off" type="text" class="form-control"
                                                oninput="setCustomValidity('')" required
-                                               oninvalid="this.setCustomValidity('Please enter polling booth name')"
-                                               placeholder="Enter polling booth name in tamil" name="pollingBooth_ta"
+                                               oninvalid="this.setCustomValidity('Please enter member division name')"
+                                               placeholder="Enter member division name in tamil" name="pollingBooth_ta"
                                                id="pollingBooth_taU">
                                     </div>
                                 </div>
@@ -246,7 +248,7 @@
                             </div>
                             <div class="form-group col-md-6" style="margin-top: 20px;">
                                 <button type="submit" form="updateForm"
-                                        class="btn btn-primary btn-block ">{{ __('Update Polling Booth') }}</button>
+                                        class="btn btn-primary btn-block ">{{ __('Update Member Division') }}</button>
                             </div>
                         </div>
                     </form> <!-- /form -->
@@ -395,7 +397,7 @@
 
                             notify({
                                 type: "success", //alert | success | error | warning | info
-                                title: 'POLLING BOOTH SAVED!',
+                                title: 'MEMBER DIVISION SAVED!',
                                 autoHide: true, //true | false
                                 delay: 2500, //number ms
                                 position: {
@@ -487,7 +489,7 @@
 
                             notify({
                                 type: "success", //alert | success | error | warning | info
-                                title: 'POLLING BOOTH UPDATED!',
+                                title: 'MEMBER DIVISION UPDATED!',
                                 autoHide: true, //true | false
                                 delay: 2500, //number ms
                                 position: {
@@ -561,7 +563,7 @@
                                 },
                                 icon: '<em class="mdi mdi-check-circle-outline"></em>',
 
-                                message: 'Polling booths confirmed successfully.'
+                                message: 'Member divisions confirmed successfully.'
                             });
                             showTableData();
                         }
@@ -585,6 +587,7 @@
         function deleteThis(id) {
             swal({
                 title: 'Delete?',
+                text: 'All child records will be deleted.',
                 type: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Delete',
@@ -600,18 +603,20 @@
                     type: 'POST',
                     success: function (data) {
                         if (data.errors != null) {
-                            notify({
-                                type: "error", //alert | success | error | warning | info
-                                title: 'PROCESS INVALID!',
-                                autoHide: true, //true | false
-                                delay: 2500, //number ms
-                                position: {
-                                    x: "right",
-                                    y: "top"
-                                },
-                                icon: '<em class="mdi mdi-check-circle-outline"></em>',
+                            $.each(data.errors, function (key, value) {
+                                notify({
+                                    type: "error", //alert | success | error | warning | info
+                                    title: 'PROCESS INVALID!',
+                                    autoHide: true, //true | false
+                                    delay: 5000, //number ms
+                                    position: {
+                                        x: "right",
+                                        y: "top"
+                                    },
+                                    icon: '<em class="mdi mdi-check-circle-outline"></em>',
 
-                                message: 'Something wrong with process.contact administrator..'
+                                    message: value
+                                });
                             });
                         }
                         if (data.success != null) {
@@ -627,7 +632,7 @@
                                 },
                                 icon: '<em class="mdi mdi-check-circle-outline"></em>',
 
-                                message: 'Polling Booth deleted successfully.'
+                                message: 'Member division deleted successfully.'
                             });
                             showTableData();
                         }

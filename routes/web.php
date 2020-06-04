@@ -80,7 +80,7 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
             Route::post('delete_election_division', 'ElectionDivisionController@deleteRecord')->name('deleteElectionDivision');
 
             //Polling Booth
-            Route::get('polling_booth', 'PollingBoothController@index')->name('pollingBooth');
+            Route::get('member_division', 'PollingBoothController@index')->name('pollingBooth');
             Route::post('get_polling_booth_by_auth', 'PollingBoothController@getByAuth')->name('getPollingBoothByAuth');
             Route::post('get_polling_booth_by_election_division', 'PollingBoothController@getByElectionDivision')->name('getPollingBoothByElectionDivision');
             Route::post('get_polling_booth_by_election_divisions', 'PollingBoothController@getByElectionDivisions')->name('getPollingBoothByElectionDivisions');
@@ -99,7 +99,9 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
             Route::post('confirm_gramasewa_divisions', 'GramasewaDivisionController@confirm')->name('confirmGramasewaDivisions');
             Route::post('delete_gramasewa_division', 'GramasewaDivisionController@deleteRecord')->name('deleteGramasewaDivision');
             Route::post('get_gramasewa_by_secretariat', 'GramasewaDivisionController@getBySecretariat')->name('getGramasewaBySecretariat');
+            Route::post('get_gramasewa_by_council', 'GramasewaDivisionController@getByCouncil')->name('getGramasewaByCouncil');
             Route::post('get_unassigned_gramasewa_divisions', 'GramasewaDivisionController@getUnAssigned')->name('getUnAssignedGramasewaDivisions');
+            Route::post('get_noncouncilled_gramasewa_divisions', 'GramasewaDivisionController@getUnCouncilled')->name('getNonCouncilledGramasewaDivisions');
 
             //Village
             Route::get('village', 'VillageController@index')->name('village');
@@ -186,7 +188,7 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
             Route::post('dashboard-getStorage', 'DashboardController@getStorage')->name('dashboard-getStorage');
 
 
-            //Unit management
+            //Divisional secretariat management
             Route::get('divisional_secretariat', 'DivisionalSecretariatController@index')->name('divisionalSecretariat');
             Route::post('save_divisional_secretariat', 'DivisionalSecretariatController@store')->name('saveDivisionalSecretariat');
             Route::post('get_divisional_secretariat_by_auth', 'DivisionalSecretariatController@getByAuth')->name('getDivisionalSecretariatByAuth');
@@ -195,6 +197,16 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
             Route::get('divisional_secretariat_view', 'DivisionalSecretariatController@view')->name('divisionalSecretariat-view');
             Route::post('assign_gramasewa_divisions', 'DivisionalSecretariatController@assignDivisions')->name('assignedGramasewaDivisions');
             Route::post('confirm_divisional_secretariat', 'DivisionalSecretariatController@confirm')->name('confirmDivisionalSecretariat');
+
+            //Council management
+            Route::get('council', 'CouncilController@index')->name('council');
+            Route::post('save_council', 'CouncilController@store')->name('saveCouncil');
+            Route::post('get_council_by_auth', 'CouncilController@getByAuth')->name('getCouncilByAuth');
+            Route::post('update_council', 'CouncilController@update')->name('updateCouncil');
+            Route::post('delete_council', 'CouncilController@deleteRecord')->name('deleteCouncil');
+            Route::get('council_view', 'CouncilController@view')->name('council-view');
+            Route::post('assigned_gramasewa_divisions_council', 'CouncilController@assignDivisions')->name('assignedGramasewaCouncil');
+            Route::post('confirm_council', 'CouncilController@confirm')->name('confirmCouncil');
 
         });
     });

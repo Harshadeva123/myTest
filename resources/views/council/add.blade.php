@@ -11,7 +11,7 @@
 
             <div class="card">
                 <div class="card-body">
-                    <form class="form-horizontal" id="form1" role="form">
+                    <form class="form-horizontal" id="saveForm" role="form">
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="alert alert-danger alert-dismissible " id="errorAlert" style="display:none">
@@ -19,33 +19,44 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="form-group col-md-6">
-                                <label for="gramasewaDivision" class="control-label">{{ __('Gramasewa Division') }}</label>
+                            <div class="form-group col-md-3">
+                                <label for="district">{{ __('District') }}</label>
                                 <div>
                                     <div class="input-group">
                                         <div class="input-group-append">
-                                            <span style="padding: 10px;"  class="input-group-text"><em class="mdi mdi-bank"></em></span>
+                                            <span class="input-group-text"><em class="mdi mdi-account"></em></span>
                                         </div>
-                                        <div  class="flex-fill">
-                                        <select id="gramasewaDivision" name="gramasewaDivision" class="form-control noClear select2"
+                                        <input autocomplete="off" type="text" class="form-control noClear" readonly
+                                               value="{{\Illuminate\Support\Facades\Auth::user()->office->district->name_en}}"
+                                               name="district"
+                                               id="district">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="councilType" class="control-label">{{ __('Council Type') }}</label>
+                                <div>
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text"><em class="mdi mdi-bank"></em></span>
+                                        </div>
+                                        <select id="councilType" name="councilType" class="form-control noClear"
                                                 onchange="setCustomValidity('');showTableData()"
-                                                oninvalid="this.setCustomValidity('Please select gramasewa division')"
+                                                oninvalid="this.setCustomValidity('Please select council type')"
                                                 required>
-                                            <option value=""  selected>Select  gramasewa division</option>
-                                            @if($gramasewaDivisions != null)
-                                                @foreach($gramasewaDivisions as $gramasewaDivision)
-                                                    <option value="{{$gramasewaDivision->idgramasewa_division}}">{{strtoupper($gramasewaDivision->name_en)}}</option>
+                                            <option value=""  selected>Select council type</option>
+                                            @if($types != null)
+                                                @foreach($types as $type)
+                                                    <option value="{{$type->idcouncil_types}}">{{strtoupper($type->name)}}</option>
                                                 @endforeach
                                             @endif
 
                                         </select>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="form-group col-md-6">
-                                <label for="village">{{ __('Village Name') }}</label>
+                            <div class="form-group col-md-5">
+                                <label for="council">{{ __('Council Name') }}</label>
                                 <div>
                                     <div class="input-group">
                                         <div class="input-group-append">
@@ -53,60 +64,63 @@
                                         </div>
                                         <input autocomplete="off" type="text" class="form-control" required
                                                oninput="setCustomValidity('')"
-                                               oninvalid="this.setCustomValidity('Please enter village name')"
-                                               placeholder="Enter village name in english" name="village"
-                                               id="village">
+                                               oninvalid="this.setCustomValidity('Please enter council name')"
+                                               placeholder="Council name in english" name="council"
+                                               id="council">
                                     </div>
                                 </div>
                             </div>
 
                             <div class="form-group col-md-6">
-                                <label for="village_si">ගම</label>
+                                <label for="council_si">සභා නාමය</label>
                                 <div>
                                     <div class="input-group">
                                         <div class="input-group-append">
                                             <span class="input-group-text">SI</span>
                                         </div>
                                         <input autocomplete="off" type="text" class="form-control"
-                                               oninput="setCustomValidity('')"
-                                               oninvalid="this.setCustomValidity('Please enter village name')"
-                                               placeholder="Enter village name in sinhala" name="village_si"
-                                               id="village_si">
+                                               oninput="setCustomValidity('')" required
+                                               oninvalid="this.setCustomValidity('Please enter council name')"
+                                               placeholder="Council name in sinhala"
+                                               name="council_si"
+                                               id="council_si">
                                     </div>
                                 </div>
                             </div>
 
                             <div class="form-group col-md-6">
-                                <label for="village_ta">கிராமம்</label>
+                                <label for="council_ta">சபை பெயர்</label>
                                 <div>
                                     <div class="input-group">
                                         <div class="input-group-append">
                                             <span class="input-group-text">TA</span>
                                         </div>
                                         <input autocomplete="off" type="text" class="form-control"
-                                               oninput="setCustomValidity('')"
-                                               oninvalid="this.setCustomValidity('Please enter village name')"
-                                               placeholder="Enter village name in tamil" name="village_ta"
-                                               id="village_ta">
+                                               oninput="setCustomValidity('')" required
+                                               oninvalid="this.setCustomValidity('Please enter council name')"
+                                               placeholder="Council name in tamil" name="council_ta"
+                                               id="council_ta">
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group col-md-3" style="margin-top: 20px;">
+                            <div class="form-group col-md-2" style="margin-top: 20px;">
                                 <button type="submit"
-                                        class="btn btn-primary btn-block ">{{ __('Add Village') }}</button>
+                                        class="btn btn-primary btn-block ">{{ __('Add Council') }}</button>
                             </div>
                             <div class="form-group col-md-2" style="margin-top: 20px;">
-                                <button type="submit" onclick="clearAll();event.preventDefault();"
+                                <button type="button" onclick="clearAll();event.preventDefault();"
                                         class="btn btn-danger btn-block ">{{ __('Cancel') }}</button>
                             </div>
+
                         </div>
                         <hr/>
                         <div class="row">
                             <div class="col-md-8">
-                                <h6 class="text-secondary">Villages</h6>
+                                <h6 class="text-secondary">Council</h6>
                             </div>
                             <div class="col-md-4 mb-1">
-                                <input type="text" placeholder="Search gramasewa division name here" class="float-right form-control" id="searchBox">
+                                <input type="text" placeholder="Search council name here"
+                                       class="float-right form-control" id="searchBox">
                             </div>
 
                             <div class="col-md-12">
@@ -117,14 +131,15 @@
                                                width="100%">
                                             <thead>
                                             <tr>
-                                                <th>GRAMASEWA DIVISION</th>
+                                                <th>DISTRICT</th>
+                                                <th>COUNCIL TYPE</th>
                                                 <th>ENGLISH</th>
                                                 <th>SINHALA</th>
                                                 <th>TAMIL</th>
                                                 <th style='text-align:center;'>OPTIONS</th>
                                             </tr>
                                             </thead>
-                                            <tbody id="villageTBody">
+                                            <tbody id="councilTBody">
                                             </tbody>
                                         </table>
                                     </div>
@@ -132,9 +147,9 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-12 " >
+                            <div class="col-md-12 ">
                                 <button type="button" id="confirmBtn" onclick="confirm();event.preventDefault();"
-                                        class="btn btn-primary btn-md float-right">{{ __('Confirm All Villages') }}</button>
+                                        class="btn btn-primary btn-md float-right">{{ __('Confirm All Councils') }}</button>
                             </div>
                         </div>
                     </form> <!-- /form -->
@@ -145,6 +160,7 @@
     </div><!-- ./wrapper -->
 
 
+
     <!-- modal start -->
 
     <div class="modal fade" id="updateModal" tabindex="-1"
@@ -153,7 +169,7 @@
         <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title mt-0">Update Village</h5>
+                    <h5 class="modal-title mt-0">Update Council</h5>
                     <button type="button" class="close" data-dismiss="modal"
                             aria-hidden="true">×
                     </button>
@@ -162,26 +178,41 @@
                     <form class="form-horizontal" id="updateForm" role="form">
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="alert alert-danger alert-dismissible " id="errorAlertUpdate" style="display:none">
+                                <div class="alert alert-danger alert-dismissible " id="errorAlertUpdate"
+                                     style="display:none">
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="form-group col-md-12">
-                                <label for="gramasewaDivisionU" class="control-label">{{ __('Gramasewa Division') }}</label>
+                                <label for="district">{{ __('District') }}</label>
+                                <div>
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text"><em class="mdi mdi-account"></em></span>
+                                        </div>
+                                        <input autocomplete="off" type="text" class="form-control noClear" readonly
+                                               value="{{\Illuminate\Support\Facades\Auth::user()->office->district->name_en}}"
+                                               name="district"
+                                               id="districtU">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-12">
+                                <label for="councilTypeU" class="control-label">{{ __('Council Type') }}</label>
                                 <div>
                                     <div class="input-group">
                                         <div class="input-group-append">
                                             <span class="input-group-text"><em class="mdi mdi-bank"></em></span>
                                         </div>
-                                        <select id="gramasewaDivisionU" name="gramasewaDivision" class="form-control"
-                                                onchange="setCustomValidity('')"
-                                                oninvalid="this.setCustomValidity('Please select gramasewa division')"
+                                        <select id="councilTypeU" name="councilType" class="form-control noClear"
+                                                onchange="setCustomValidity('');showTableData()"
+                                                oninvalid="this.setCustomValidity('Please select council type')"
                                                 required>
-                                            <option value="" disabled selected>Select  gramasewa division</option>
-                                            @if($gramasewaDivisions != null)
-                                                @foreach($gramasewaDivisions as $gramasewaDivision)
-                                                    <option value="{{$gramasewaDivision->idgramasewa_division}}">{{strtoupper($gramasewaDivision->name_en)}}</option>
+                                            <option value="" disabled  selected>Select council type</option>
+                                            @if($types != null)
+                                                @foreach($types as $type)
+                                                    <option value="{{$type->idcouncil_types}}">{{strtoupper($type->name)}}</option>
                                                 @endforeach
                                             @endif
 
@@ -189,9 +220,8 @@
                                     </div>
                                 </div>
                             </div>
-
                             <div class="form-group col-md-12">
-                                <label for="villageU">{{ __('Village Name') }}</label>
+                                <label for="councilU">{{ __('Council Name') }}</label>
                                 <div>
                                     <div class="input-group">
                                         <div class="input-group-append">
@@ -199,15 +229,15 @@
                                         </div>
                                         <input autocomplete="off" type="text" class="form-control" required
                                                oninput="setCustomValidity('')"
-                                               oninvalid="this.setCustomValidity('Please enter village name')"
-                                               placeholder="Enter village name in english" name="village"
-                                               id="villageU">
+                                               oninvalid="this.setCustomValidity('Please enter council name')"
+                                               placeholder="Council name in english" name="council"
+                                               id="councilU">
                                     </div>
                                 </div>
                             </div>
 
                             <div class="form-group col-md-12">
-                                <label for="village_siU">ගම</label>
+                                <label for="council_siU">ප්‍රාදේශීය ලේකම් කාර්යාලය</label>
                                 <div>
                                     <div class="input-group">
                                         <div class="input-group-append">
@@ -215,15 +245,16 @@
                                         </div>
                                         <input autocomplete="off" type="text" class="form-control"
                                                oninput="setCustomValidity('')" required
-                                               oninvalid="this.setCustomValidity('Please enter village name')"
-                                               placeholder="Enter village name in sinhala" name="village_si"
-                                               id="village_siU">
+                                               oninvalid="this.setCustomValidity('Please enter council name')"
+                                               placeholder="Council name in sinhala"
+                                               name="council_si"
+                                               id="council_siU">
                                     </div>
                                 </div>
                             </div>
 
                             <div class="form-group col-md-12">
-                                <label for="village_taU">கிராமம்</label>
+                                <label for="council_taU">பிரதேச செயலகம்</label>
                                 <div>
                                     <div class="input-group">
                                         <div class="input-group-append">
@@ -231,20 +262,20 @@
                                         </div>
                                         <input autocomplete="off" type="text" class="form-control"
                                                oninput="setCustomValidity('')" required
-                                               oninvalid="this.setCustomValidity('Please enter village name')"
-                                               placeholder="Enter village name in tamil" name="village_ta"
-                                               id="village_taU">
+                                               oninvalid="this.setCustomValidity('Please enter council name')"
+                                               placeholder="Council name in tamil" name="council_ta"
+                                               id="council_taU">
                                     </div>
                                 </div>
                             </div>
-                            <input  type="hidden" name="updateId" id="updateId">
+                            <input type="hidden" name="updateId" id="updateId">
                             <div class="form-group col-md-6" style="margin-top: 20px;">
-                                <button type="submit" onclick="clearAll();event.preventDefault();"
+                                <button type="button" onclick="clearAll();event.preventDefault();"
                                         class="btn btn-danger btn-block ">{{ __('Cancel') }}</button>
                             </div>
                             <div class="form-group col-md-6" style="margin-top: 20px;">
                                 <button type="submit" form="updateForm"
-                                        class="btn btn-primary btn-block ">{{ __('Update Village') }}</button>
+                                        class="btn btn-primary btn-block ">{{ __('Update Council') }}</button>
                             </div>
                         </div>
                     </form> <!-- /form -->
@@ -270,58 +301,61 @@
         function clearAll() {
             $('input').not(".noClear").val('');
             $(":checkbox").attr('checked', false).trigger('change');
-            $('select').not(".noClear").val('').trigger('change');
+            $('select').val('').trigger('change');
             $('#updateModal').modal('hide');
-
         }
 
         function showTableData() {
-            let id = $('#gramasewaDivision').val();
+
+
             $.ajax({
-                url: '{{route('getVillageByAuth')}}',
+                url: '{{route('getCouncilByAuth')}}',
                 type: 'POST',
-                data:{id:id},
                 success: function (data) {
                     if (data.success != null) {
                         let array = data.success;
-                        if(array.length == 0){
+                        if (array.length == 0) {
                             $('#confirmBtn').hide();
                         }
-                        else{
+                        else {
                             $('#confirmBtn').show();
                         }
-                        $('#villageTBody').html('');
-                        $.each(array, function (key1, value1) {
-                            if(value1.status == 2) {
-                                $('#villageTBody').append(
-                                    "<tr data-id='" + value1.idgramasewa_division + "' id='" + value1.idvillage + "'>" +
-                                    "<td>" + value1.gramasewa_division.name_en.toUpperCase() + "</td>" +
-                                    "<td>" + value1.name_en.toUpperCase() + "</td>" +
-                                    "<td>" + value1.name_si.toUpperCase() + "</td>" +
-                                    "<td>" + value1.name_ta.toUpperCase() + "</td>" +
-                                    "<td style='text-align: center;'>" +
+                        $('#councilTBody').html('');
+                        $.each(array, function (key, value) {
+                            if (value.status == 2) {
+                                $('#councilTBody').append(
+                                    "<tr data-s='" + value.idcouncil_types +"' id='" + value.idcouncil + "'>" +
+                                    "<td>{{ strtoupper( \Illuminate\Support\Facades\Auth::user()->office->district->name_en)}}</td>" +
+                                    "<td>" + value.council_type.name.toUpperCase() + "</td>" +
+                                    "<td>" + value.name_en.toUpperCase() + "</td>" +
+                                    "<td>" + value.name_si.toUpperCase() + "</td>" +
+                                    "<td>" + value.name_ta.toUpperCase() + "</td>" +
+                                    " <td style='text-align:center;'>" +
                                     "<p>" +
                                     " <button type='button' " +
-                                    "class='btn btn-sm btn-warning  waves-effect waves-light' onclick='showUpdateModal(" + value1.idvillage + ")'>" +
+                                    "class='btn btn-sm btn-warning  waves-effect waves-light'" +
+                                    "onclick='showUpdateModal(" + value.idcouncil + ")'>" +
                                     " <i class='fa fa-edit'></i>" +
                                     "</button>" +
                                     " <button type='button' " +
                                     "class='btn btn-sm btn-danger  waves-effect waves-light'" +
-                                    "onclick='deleteThis(" + value1.idvillage + ")'>" +
+                                    "onclick='deleteThis(" + value.idcouncil + ")'>" +
                                     " <i class='fa fa-trash'></i>" +
                                     "</button>" +
                                     " </p>" +
                                     " </td>" +
                                     "</tr>"
                                 );
-                            }else{
-                                $('#villageTBody').append(
-                                    "<tr data-id='" + value1.idgramasewa_division + "' id='" + value1.idvillage + "'>" +
-                                    "<td>" + value1.gramasewa_division.name_en.toUpperCase() + "</td>" +
-                                    "<td>" + value1.name_en.toUpperCase() + "</td>" +
-                                    "<td>" + value1.name_si.toUpperCase() + "</td>" +
-                                    "<td>" + value1.name_ta.toUpperCase() + "</td>" +
-                                    "<td style='text-align: center;'>" +
+                            }
+                            else {
+                                $('#councilTBody').append(
+                                    "<tr data-s='" + value.idcouncil_types +"' id='" + value.idcouncil + "'>" +
+                                    "<td>{{ strtoupper( \Illuminate\Support\Facades\Auth::user()->office->district->name_en)}}</td>" +
+                                    "<td>" + value.council_type.name.toUpperCase() + "</td>" +
+                                    "<td>" + value.name_en.toUpperCase() + "</td>" +
+                                    "<td>" + value.name_si.toUpperCase() + "</td>" +
+                                    "<td>" + value.name_ta.toUpperCase() + "</td>" +
+                                    " <td style='text-align:center;'>" +
                                     "<p>" +
                                     " <button title='Can not use this option on confirmed records' disabled type='button' " +
                                     "class='btn btn-sm btn-muted  waves-effect waves-light'>" +
@@ -355,7 +389,7 @@
             });
         }
 
-        $("#form1").on("submit", function (event) {
+        $("#saveForm").on("submit", function (event) {
             event.preventDefault();
 
             //initialize alert and variables
@@ -373,7 +407,7 @@
             if (completed) {
 
                 $.ajax({
-                    url: '{{route('saveVillage')}}',
+                    url: '{{route('saveCouncil')}}',
                     type: 'POST',
                     data: $(this).serialize(),
                     success: function (data) {
@@ -390,7 +424,7 @@
 
                             notify({
                                 type: "success", //alert | success | error | warning | info
-                                title: 'VILLAGE SAVED!',
+                                title: 'COUNCIL SAVED!',
                                 autoHide: true, //true | false
                                 delay: 2500, //number ms
                                 position: {
@@ -399,7 +433,7 @@
                                 },
                                 icon: '<em class="mdi mdi-check-circle-outline"></em>',
 
-                                message: 'Village details saved successfully.'
+                                message: 'Council saved successfully.'
                             });
                             clearAll();
                             showTableData();
@@ -438,12 +472,13 @@
             });
         });
 
+
         function showUpdateModal(id) {
             $('#updateId').val(id);
-            $('#gramasewaDivisionU').val($('#'+id).attr('data-id')).trigger('change');
-            $('#villageU').val($('#'+id).find("td").eq(1).html());
-            $('#village_siU').val($('#'+id).find("td").eq(2).html());
-            $('#village_taU').val($('#'+id).find("td").eq(3).html());
+            $('#councilTypeU').val($('#'+id).attr('data-s')).trigger('change');
+            $('#councilU').val($('#' + id).find("td").eq(2).html());
+            $('#council_siU').val($('#' + id).find("td").eq(3).html());
+            $('#council_taU').val($('#' + id).find("td").eq(4).html());
             $('#updateModal').modal('show');
         }
 
@@ -465,7 +500,7 @@
             if (completed) {
 
                 $.ajax({
-                    url: '{{route('updateVillage')}}',
+                    url: '{{route('updateCouncil')}}',
                     type: 'POST',
                     data: $(this).serialize(),
                     success: function (data) {
@@ -482,7 +517,7 @@
 
                             notify({
                                 type: "success", //alert | success | error | warning | info
-                                title: 'GRAMASEWA DIVISION UPDATED!',
+                                title: 'COUNCIL UPDATED!',
                                 autoHide: true, //true | false
                                 delay: 2500, //number ms
                                 position: {
@@ -491,7 +526,7 @@
                                 },
                                 icon: '<em class="mdi mdi-check-circle-outline"></em>',
 
-                                message: 'Gramasewa division details updated successfully.'
+                                message: 'Council updated successfully.'
                             });
                             clearAll();
                             $('#updateModal').modal('hide');
@@ -514,7 +549,7 @@
         function confirm() {
             swal({
                 title: 'Confirm All?',
-                text:'You Will Need Administrator Permission To Revert This Process!',
+                text: 'You Will Need Administrator Permission To Revert This Process!',
                 type: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Yes, Confirm',
@@ -525,7 +560,7 @@
             }).then(function () {
 
                 $.ajax({
-                    url: '{{route('confirmVillages')}}',
+                    url: '{{route('confirmCouncil')}}',
                     type: 'POST',
                     success: function (data) {
                         if (data.errors != null) {
@@ -547,7 +582,7 @@
 
                             notify({
                                 type: "success", //alert | success | error | warning | info
-                                title: 'VILLAGES CONFIRMED!',
+                                title: 'COUNCIL CONFIRMED!',
                                 autoHide: true, //true | false
                                 delay: 2500, //number ms
                                 position: {
@@ -556,10 +591,9 @@
                                 },
                                 icon: '<em class="mdi mdi-check-circle-outline"></em>',
 
-                                message: 'villages confirmed successfully.'
+                                message: 'Council confirmed successfully.'
                             });
                             showTableData();
-
                         }
 
                     }
@@ -578,8 +612,6 @@
             })
         }
 
-
-
         function deleteThis(id) {
             swal({
                 title: 'Delete?',
@@ -593,32 +625,14 @@
             }).then(function () {
 
                 $.ajax({
-                    url: '{{route('deleteVillage')}}',
+                    url: '{{route('deleteCouncil')}}',
                     data: {id: id},
                     type: 'POST',
                     success: function (data) {
                         if (data.errors != null) {
-                            $.each(data.errors, function (key, value) {
-                                notify({
-                                    type: "error", //alert | success | error | warning | info
-                                    title: 'PROCESS INVALID!',
-                                    autoHide: true, //true | false
-                                    delay: 5000, //number ms
-                                    position: {
-                                        x: "right",
-                                        y: "top"
-                                    },
-                                    icon: '<em class="mdi mdi-check-circle-outline"></em>',
-
-                                    message: value
-                                });
-                            });
-                        }
-                        if (data.success != null) {
-
                             notify({
-                                type: "success", //alert | success | error | warning | info
-                                title: 'VILLAGE DELETED!',
+                                type: "error", //alert | success | error | warning | info
+                                title: 'PROCESS INVALID!',
                                 autoHide: true, //true | false
                                 delay: 2500, //number ms
                                 position: {
@@ -627,7 +641,23 @@
                                 },
                                 icon: '<em class="mdi mdi-check-circle-outline"></em>',
 
-                                message: 'Village deleted successfully.'
+                                message: 'Something wrong with process.contact administrator..'
+                            });
+                        }
+                        if (data.success != null) {
+
+                            notify({
+                                type: "success", //alert | success | error | warning | info
+                                title: 'COUNCIL DELETED!',
+                                autoHide: true, //true | false
+                                delay: 2500, //number ms
+                                position: {
+                                    x: "right",
+                                    y: "top"
+                                },
+                                icon: '<em class="mdi mdi-check-circle-outline"></em>',
+
+                                message: 'Council deleted successfully.'
                             });
                             showTableData();
                         }

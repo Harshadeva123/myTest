@@ -36,4 +36,10 @@ class GramasewaDivision extends Model
     public function divisionalSecretariat(){
         return $this->belongsTo(DivisionalSecretariat::class,'iddivisional_secretariat');
     }
+
+    public function council()
+    {
+        return $this->belongsTo(Council::class, 'idcouncil');
+    }
+
 }

@@ -585,6 +585,15 @@ class ApiUserController extends Controller
             $memberAgent['id'] = $memberAgent->idmember_agent;
             $memberAgent['name'] = User::find(Member::find($memberAgent->idmember)->idUser)->fName.' '.User::find(Member::find($memberAgent->idmember)->idUser)->lName;
             $memberAgent['requested'] = $memberAgent->created_at->format('Y-m-d');
+            if($memberAgent->status == 0){
+                $memberAgent['status'] = 2;
+            }
+            else if($memberAgent->status == 1){
+                $memberAgent['status'] = 0;
+            }
+            else{
+                $memberAgent['status'] = 1;
+            }
             unset($memberAgent->idmember_agent);
             unset($memberAgent->idmember);
             unset($memberAgent->idagent);
@@ -633,7 +642,15 @@ class ApiUserController extends Controller
             $memberAgent['id'] = $memberAgent->idagent;
             $memberAgent['name'] = User::find(Agent::find($memberAgent->idagent)->idUser)->fName.' '.User::find(Agent::find($memberAgent->idagent)->idUser)->lName;
             $memberAgent['office'] = User::find(Agent::find($memberAgent->idagent)->idUser)->office->office_name;
-            $memberAgent['availability'] = $memberAgent->status;
+            if($memberAgent->status == 0){
+                $memberAgent['availability'] = 2;
+            }
+            else if($memberAgent->status == 1){
+                $memberAgent['availability'] = 0;
+            }
+            else{
+                $memberAgent['availability'] = 1;
+            }
             $memberAgent['isSelected'] = Member::find(intval($memberAgent->idmember))->current_agent == $memberAgent->idagent ? 1 : 0;
             unset($memberAgent->idmember_agent);
             unset($memberAgent->idmember);

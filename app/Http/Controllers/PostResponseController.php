@@ -69,7 +69,12 @@ class PostResponseController extends Controller
         $response->idPost = $post->idPost;
         $response->idUser = $request['user_id'];
         $response->response = $request['comment'];
-        $response->categorized = 0;// uncategorized when creating
+        if($post->office->analysis_available == 1){
+            $response->categorized = 0;// uncategorized when creating
+        }
+        else{
+            $response->categorized = 2;// analysis module unpurchased
+        }
         $response->is_admin = 1;// value for admin creating response
         $response->attachment = '';// no value for text
         $response->size = 0; // not value for text
@@ -145,7 +150,12 @@ class PostResponseController extends Controller
                 $response->idUser = $request['user'];
                 $response->idUser = $request['user_id'];
                 $response->response = '';
-                $response->categorized = 0;// uncategorized when creating
+                if($post->office->analysis_available == 1){
+                    $response->categorized = 0;// uncategorized when creating
+                }
+                else{
+                    $response->categorized = 2;// analysis module unpurchased
+                }
                 $response->is_admin = 1;// value for admin creating response
                 $response->attachment = $imageName;
                 $response->size = $image->getSize();

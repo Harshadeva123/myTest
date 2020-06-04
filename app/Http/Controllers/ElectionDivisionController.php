@@ -145,10 +145,25 @@ class ElectionDivisionController extends Controller
         $record  =  ElectionDivision::find(intval($id));
         if($record->status == 2){
 
-            Village::where('idelection_division',$id)->where('status',2)->delete();
-            GramasewaDivision::where('idelection_division',$id)->where('status',2)->delete();
-            PollingBooth::where('idelection_division',$id)->where('status',2)->delete();
+
+            $confirmedVillage = Village::where('idelection_division',$id)->where('status', '!=' ,2)->count();
+            if($confirmedVillage > 0){
+                return response()->json(['errors' => ['error'=>'This division has some confirmed villages.']]);
+            }
+            $confirmedGramasewa  = GramasewaDivision::where('idelection_division',$id)->where('status','!=',2)->count();
+            if($confirmedGramasewa > 0){
+                return response()->json(['errors' => ['error'=>'This division has some confirmed gramasewa divisions.']]);
+            }
+            $confirmedBooths  = PollingBooth::where('idelection_division',$id)->where('status','!=',2)->count();
+            if($confirmedBooths > 0){
+                return response()->json(['errors' => ['error'=>'This division has some confirmed member divisions.']]);
+            }
+
+            Village::where('idelection_division',$id)->delete();
+            GramasewaDivision::where('idelection_division',$id)->delete();
+            PollingBooth::where('idelection_division',$id)->delete();
             $record->delete();
+
             return response()->json(['success' => 'Record deleted']);
         }
         return response()->json(['errors' => ['error'=>'You are not able to delete this record.']]);
