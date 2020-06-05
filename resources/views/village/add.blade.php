@@ -103,7 +103,7 @@
                         <hr/>
                         <div class="row">
                             <div class="col-md-8">
-                                <h6 class="text-secondary">Villages</h6>
+                                <h6 class="text-secondary">Villages <em id="count"></em></h6>
                             </div>
                             <div class="col-md-4 mb-1">
                                 <input type="text" placeholder="Search gramasewa division name here" class="float-right form-control" id="searchBox">
@@ -291,6 +291,7 @@
                             $('#confirmBtn').show();
                         }
                         $('#villageTBody').html('');
+                        $('#count').html(' ( '+array.length+' )');
                         $.each(array, function (key1, value1) {
                             if(value1.status == 2) {
                                 $('#villageTBody').append(

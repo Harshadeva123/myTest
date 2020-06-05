@@ -137,6 +137,7 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
             Route::post('get_comment_by_user_and_post', 'PostResponseController@getCommentByUserAndPost')->name('getCommentByUserAndPost');
             Route::post('publish_management_comment', 'PostResponseController@publishManagementComment')->name('publishManagementComment');
             Route::post('reject_management_comment', 'PostResponseController@rejectManagementComment')->name('rejectManagementComment');
+            Route::post('pending_responses', 'PostResponseController@pendingResponses')->name('pendingResponses');
 
             //Staff management
             Route::get('assign_staff', 'StaffController@index')->name('assignStaff');

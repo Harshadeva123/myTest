@@ -273,4 +273,11 @@ class PostResponseController extends Controller
         }
         return response()->json(['success' =>'success']);
     }
+
+    public function pendingResponses(Request $request){
+        $query = PostResponse::query();
+
+        $responses = $query->where('idoffice',Auth::user()->idoffice)->where('status',2)->get();
+        return response()->json(['success' =>$responses]);
+    }
 }

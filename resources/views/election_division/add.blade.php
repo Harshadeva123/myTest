@@ -95,7 +95,7 @@
                         <hr/>
                         <div class="row">
                             <div class="col-md-8">
-                                <h6 class="text-secondary">Election Divisions</h6>
+                                <h6 class="text-secondary">Election Divisions <em id="count"></em></h6>
                             </div>
                             <div class="col-md-4 mb-1">
                                 <input type="text" placeholder="Search division name here"
@@ -279,6 +279,7 @@
                             $('#confirmBtn').show();
                         }
                         $('#electionDivisionTBody').html('');
+                        $('#count').html(' ( '+array.length+' )');
                         $.each(array, function (key, value) {
                             if (value.status == 2) {
                                 $('#electionDivisionTBody').append(

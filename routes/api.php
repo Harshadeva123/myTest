@@ -49,6 +49,8 @@ Route::group(['middleware' => 'auth:api'], function () {
     ////Get members by agent
     Route::post('get_members', 'Api\ApiUserController@getMembers')->name('getPendingMembers');
     Route::post('approve_member', 'Api\ApiUserController@approveMember')->name('approveMember');
+    Route::post('activate_member', 'Api\ApiUserController@activateMember')->name('activateMember');
+    Route::post('deactivate_member', 'Api\ApiUserController@deactivateMember')->name('deactivateMember');
     //Get members by agent end
 
     //Response panel
@@ -58,15 +60,20 @@ Route::group(['middleware' => 'auth:api'], function () {
     //Task
     Route::post('get_tasks', 'Api\ApiTaskController@index')->name('getTask');
 
+    //Save SMS member
+    Route::post('register_member', 'Api\ApiRegistrationController@storeSmsUser')->name('registerMember');
+    //Save SMS member end
+
 });
 
 Route::post('get_polling_booths_by_election_division', 'Api\ApiPollingBoothController@getByElectionDivision')->name('getPollingBoothByElectionDivision');
 Route::post('get_gramasewa_divisions_by_polling_booth', 'Api\ApiGramasewaDivisionController@getByPollingBooth')->name('getGramasewaDivisionByPollingBooth');
 Route::post('get_villages_by_gramasewa_division', 'Api\ApiVillageController@getByGramasewaDivision')->name('getVillageByGramasewaDivision');
+Route::post('get_careers_by_job_sector', 'Api\ApiRegistrationController@getByJobSector')->name('getCareersByJobSector');
 
 
 //user management
-Route::post('save_user', 'Api\ApiUserController@store')->name('saveUser');
+Route::post('save_user', 'Api\ApiRegistrationController@store')->name('saveUser');
 Route::post('login', 'Api\ApiUserController@login')->name('loginUser');
 Route::post('get_office_by_referral', 'Api\ApiUserController@getOfficeAdminByReferral')->name('getOfficeByReferral');
 Route::post('get_agent_by_referral', 'Api\ApiUserController@getAgentByReferral')->name('getAgentByReferral');

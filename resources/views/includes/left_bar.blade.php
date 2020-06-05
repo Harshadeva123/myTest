@@ -70,7 +70,7 @@
                     @endif
 
 
-                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3)
+                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3 && \Illuminate\Support\Facades\Auth::user()->office->analysis_available == 1)
                         <li class="has_sub">
                             <a href="javascript:void(0);" class="waves-effect">
                                 <i class="dripicons-suitcase"></i>
@@ -100,6 +100,17 @@
                         </li>
                     @endif
                     @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3)
+                        <li class="has_sub">
+                            <a href="javascript:void(0);" class="waves-effect"><i
+                                        class="dripicons-suitcase"></i><span>{{ __('Responses') }}
+                                    <span
+                                            class="pull-right"><i class="mdi mdi-chevron-right"></i></span> </span></a>
+                            <ul class="list-unstyled">
+                                <li><a href="{{route('pendingResponses')}}">{{ __('Pending Responses') }}</a></li>
+                            </ul>
+                        </li>
+                    @endif
+                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3)
 
                         {{--<li>--}}
                             {{--<a href="{{route('directMessages')}}" class="waves-effect"><i--}}
@@ -121,7 +132,7 @@
                     @endif
 
 
-                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 5)
+                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 5 && \Illuminate\Support\Facades\Auth::user()->office->analysis_available == 1)
 
                         <li class="has_sub">
                             <a href="javascript:void(0);" class="waves-effect">
@@ -138,7 +149,7 @@
                             </ul>
                         </li>
                     @endif
-                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 4)
+                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 4  && \Illuminate\Support\Facades\Auth::user()->office->analysis_available == 1)
 
                         <li class="has_sub">
                             <a href="javascript:void(0);" class="waves-effect">
@@ -155,11 +166,11 @@
                             </ul>
                         </li>
                     @endif
-                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3)
+                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3 && \Illuminate\Support\Facades\Auth::user()->office->attendence_available == 1)
 
                         <li class="menu-title">{{ __('ATTENDANCE') }}</li>
                     @endif
-                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3)
+                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3  && \Illuminate\Support\Facades\Auth::user()->office->attendence_available == 1)
 
                         <li class="has_sub">
                             <a href="javascript:void(0);" class="waves-effect">

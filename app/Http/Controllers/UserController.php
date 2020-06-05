@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Agent;
 use App\District;
 use App\ElectionDivision;
+use App\MemberAgent;
 use App\Office;
 use App\OfficeAdmin;
 use App\OfficeStaff;
@@ -596,4 +597,6 @@ class UserController extends Controller
 
         return response()->json(['success' => 'enabled']);
     }
+
+
 }

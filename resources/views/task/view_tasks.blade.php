@@ -79,13 +79,13 @@
                                                                 <td>{{strtoupper($task->user->agent->village->name_en)}} </td>
                                                                 <td>{{strtoupper($task->target)}} </td>
                                                                 <td>{{strtoupper($task->completed_amount)}} </td>
-                                                                @if($task->status == 1)
+                                                                @if($task->status == 2)
                                                                     <td>
                                                                         <em style="color: #00a5bb"
                                                                             class="mdi mdi-checkbox-blank-circle"></em>
                                                                         ON GOING
                                                                     </td>
-                                                                @elseif($task->status == 2)
+                                                                @elseif($task->status == 1)
                                                                     <td>
                                                                         <em style="color: #0dbb2f"
                                                                             class="mdi mdi-checkbox-blank-circle"></em>

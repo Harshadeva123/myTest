@@ -103,7 +103,7 @@
                         <hr/>
                         <div class="row">
                             <div class="col-md-8">
-                                <h6 class="text-secondary">Gramasewa Divisions</h6>
+                                <h6 class="text-secondary">Gramasewa Divisions <em id="count"></em></h6>
                             </div>
                             <div class="col-md-4 mb-1">
                                 <input type="text" placeholder="Search gramasewa division name here" class="float-right form-control" id="searchBox">
@@ -295,6 +295,7 @@
                             $('#confirmBtn').show();
                         }
                         $('#gramasewaDivisionTBody').html('');
+                        $('#count').html(' ( '+array.length+' )');
                         $.each(array, function (key1, value1) {
 
 

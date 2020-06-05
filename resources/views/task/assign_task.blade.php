@@ -238,7 +238,7 @@
                                 @endif
                             </select>
                         </div>
-                        <div class="form-group col-md-12">
+                        <div class="form-group col-md-6">
                             <label for="careers"
                                    class="control-label">{{ __('Career') }}</label>
 
@@ -293,6 +293,11 @@
                                             style="margin-left: 5px;" type="radio" value="2"
                                             name="jobSector">&nbsp;{{ __('Private') }}</label>
                             </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <textarea id="taskDescription" name="taskDescription">
+
+                            </textarea>
                         </div>
                     </div>
                     <input name="userId" id="userId" type="hidden">
