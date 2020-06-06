@@ -85,7 +85,7 @@ class UserController extends Controller
             'title' => 'required|numeric',
             'firstName' => 'required',
             'lastName' => 'required',
-            'gender' => 'required|boolean',
+            'gender' => 'required|numeric',
 
         ],$validationMessages );
 
@@ -127,7 +127,7 @@ class UserController extends Controller
             }
         }
 
-        if(isset(UserTitle::find(intval($request['title']))->gender) && UserTitle::find(intval($request['title']))->gender != $request['gender'] ){
+        if(isset(UserTitle::find(intval($request['title']))->gender) && UserTitle::find(intval($request['title']))->gender != $request['gender'] && $request['gender'] != 3){
 
             return response()->json(['errors' => ['title'=>'Please re-check title and gender!']]);
 
@@ -332,7 +332,7 @@ class UserController extends Controller
             'title' => 'required|numeric',
             'firstName' => 'required',
             'lastName' => 'required',
-            'gender' => 'required|boolean',
+            'gender' => 'required|numeric',
             'username' => 'required|max:50',
             'password' => 'nullable|confirmed',
 
@@ -395,11 +395,12 @@ class UserController extends Controller
             }
         }
 
-        if(isset(UserTitle::find(intval($request['title']))->gender) && UserTitle::find(intval($request['title']))->gender != $request['gender'] ){
+        if(isset(UserTitle::find(intval($request['title']))->gender) && UserTitle::find(intval($request['title']))->gender != $request['gender'] && $request['gender'] != 3){
 
             return response()->json(['errors' => ['title'=>'Please re-check title and gender!']]);
 
         }
+
 
         //validation end
 

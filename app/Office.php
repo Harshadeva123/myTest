@@ -20,4 +20,8 @@ class Office extends Model
     public function district(){
         return $this->belongsTo(District::class,'iddistrict');
     }
+
+    public function posts(){
+        return $this->belongsTo(Post::class,'idoffice');
+    }
 }

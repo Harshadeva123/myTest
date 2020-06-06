@@ -22,6 +22,9 @@ Route::get('/signin', function () {
 })->name('signin')->middleware('guest');
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('privacy', function (){
+    return view('profile.privacy');
+})->name('privacy');
 
 
 Route::group(['middleware' => 'auth', 'prefix' => ''], function () {

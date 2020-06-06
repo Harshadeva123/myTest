@@ -37,10 +37,8 @@ class GramasewaDivisionController extends Controller
         if($request['id'] != null){
             $query  = $query->where('idpolling_booth',$request['id']);
         }
-        if($request['council'] != null){
-            $query  = $query->where('idcouncil',$request['council']);
-        }
-        $gramasewaDivisions = $query->with(['pollingBooth','divisionalSecretariat','council'])->where('iddistrict',$district)->whereIn('status',[1,2])->orderBy('name_en')->get();
+
+        $gramasewaDivisions = $query->with(['pollingBooth'])->where('iddistrict',$district)->whereIn('status',[1,2])->orderBy('name_en')->get();
         return response()->json(['success'  => $gramasewaDivisions]);
     }
 

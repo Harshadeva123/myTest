@@ -344,29 +344,29 @@ class TaskController extends Controller
 //                }
 //            }
 //
-            if ($task->age != null) {
-                if ($task->age->comparison == 0 && $task->age->minAge != $member->user->age) {
+//            if ($task->age != null) {
+//                if ($task->age->comparison == 0 && $task->age->minAge != $member->user->age) {
+//
+//                    continue;
+//                }
+//                if ($task->age->comparison == 1 && $task->age->minAge <= $member->user->age) {
+//
+//                    continue;
+//                }
+//                if ($task->age->comparison == 2 && $task->age->minAge >= $member->user->age) {
+//
+//                    continue;
+//                }
+//                if ($task->age->comparison == 3 && ($task->age->minAge >= $member->user->age || $task->age->maxAge <= $member->user->age)) {
+//
+//                    continue;
+//                }
+//            }
 
-                    continue;
-                }
-                if ($task->age->comparison == 1 && $task->age->minAge <= $member->user->age) {
-
-                    continue;
-                }
-                if ($task->age->comparison == 2 && $task->age->minAge >= $member->user->age) {
-
-                    continue;
-                }
-                if ($task->age->comparison == 3 && ($task->age->minAge >= $member->user->age || $task->age->maxAge <= $member->user->age)) {
-
-                    continue;
-                }
-            }
-
-            $task->completed_amount += 1;
-            $task->save();
-            $this->isComplete($task->idtask);
-            break;
+//            $task->completed_amount += 1;
+//            $task->save();
+//            $this->isComplete($task->idtask);
+//            break;
         }
     }
 

@@ -143,7 +143,7 @@ class ApiRegistrationController extends Controller
             if ($officeAdmin == null) {
                 return response()->json(['error' => 'Referral code invalid!', 'statusCode' => -99]);
             }
-            $office = $officeAdmin->user->idoffice;
+            $office = User::find($officeAdmin->idUser)->idoffice;
             $district = Office::find(intval($office))->iddistrict;
 
             if ($request['electionDivision'] == null) {
@@ -181,8 +181,10 @@ class ApiRegistrationController extends Controller
             return response()->json(['error' => 'User role unknown!', 'statusCode' => -99]);
         }
 
-        if (isset(UserTitle::find(intval($request['title']))->gender) && UserTitle::find(intval($request['title']))->gender != $request['gender']) {
-            return response()->json(['error' => 'Please re-check title and gender!', 'statusCode' => -99]);
+        if(isset(UserTitle::find(intval($request['title']))->gender) && UserTitle::find(intval($request['title']))->gender != $request['gender'] && $request['gender'] != 3){
+
+            return response()->json(['errors' => ['title'=>'Please re-check title and gender!']]);
+
         }
 
         //validation end
@@ -336,7 +338,7 @@ class ApiRegistrationController extends Controller
             $memberAgent->status = 2; //pending member
             $memberAgent->save();
 
-            app(TaskController::class)->updateTask($member->idUser, $referralAgent->idUser);
+//            app(TaskController::class)->updateTask($member->idUser, $referralAgent->idUser);
 
         }
 //        save in selected user role table end
@@ -457,8 +459,10 @@ class ApiRegistrationController extends Controller
             return response()->json(['error' => 'User role unknown!', 'statusCode' => -99]);
         }
 
-        if (isset(UserTitle::find(intval($request['title']))->gender) && UserTitle::find(intval($request['title']))->gender != $request['gender']) {
-            return response()->json(['error' => 'Please re-check title and gender!', 'statusCode' => -99]);
+        if(isset(UserTitle::find(intval($request['title']))->gender) && UserTitle::find(intval($request['title']))->gender != $request['gender'] && $request['gender'] != 3){
+
+            return response()->json(['errors' => ['title'=>'Please re-check title and gender!']]);
+
         }
 
         //validation end
@@ -510,7 +514,7 @@ class ApiRegistrationController extends Controller
         $memberAgent->status = 1; //pending member
         $memberAgent->save();
 
-        app(TaskController::class)->updateTask($member->idUser, $agent->idUser);
+//        app(TaskController::class)->updateTask($member->idUser, $agent->idUser);
 
 //        save in selected user role table end
 

@@ -14,6 +14,10 @@ class Post extends Model
         return $this->belongsTo(User::class,'idUser');
     }
 
+    public function office(){
+        return $this->belongsTo(Office::class,'idoffice');
+    }
+
     public function attachments(){
         return $this->hasMany(PostAttachment::class,'idPost');
     }

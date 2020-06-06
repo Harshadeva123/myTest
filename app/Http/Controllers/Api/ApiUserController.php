@@ -56,16 +56,19 @@ class ApiUserController extends Controller
         if ($userMaster != null) {
             if ($userMaster->iduser_role > 2 && $userMaster->iduser_role != 7) {
                 if ($userMaster->status != 1) {
-                    return response()->json(['error' => 'Account is not activated!', 'statusCode' => -99]);
+                    return response()->json(['error' => 'Your account is not activated yet!', 'statusCode' => -99]);
                 }
                 if ($userMaster->office->status != 1) {
                     return response()->json(['error' => 'Your office has been disabled.Please contact your administrator!', 'statusCode' => -99]);
                 }
             }
+        } else {
+            return response()->json(['error' => 'Username or Password Incorrect!', 'statusCode' => -99]);
         }
 
         if ($userMaster->iduser_role == 6) {
             //not specific action .only check user role
+
         } elseif ($userMaster->iduser_role == 7) {
             if ($userMaster->member->memberAgents()->where('idAgent', $userMaster->member->current_agent)->first()->status != 1) {
                 return response()->json(['error' => 'You are not a active member of selected agent!', 'statusCode' => -99]);
@@ -84,7 +87,13 @@ class ApiUserController extends Controller
 
         $token = Auth::user()->createToken('authToken')->accessToken; //generate access token
 
-        return response()->json(['success' => ['userRole' => Auth::user()->iduser_role, 'accessToken' => $token], 'statusCode' => 0]);
+        if ($userMaster->iduser_role == 6) {
+            return response()->json(['success' => ['userRole' => Auth::user()->iduser_role, 'accessToken' => $token,'referral_code'=>Auth::user()->agent->referral_code], 'statusCode' => 0]);
+
+        } elseif ($userMaster->iduser_role == 7) {
+            return response()->json(['success' => ['userRole' => Auth::user()->iduser_role, 'accessToken' => $token], 'statusCode' => 0]);
+
+        }
 
     }
 
@@ -243,6 +252,14 @@ class ApiUserController extends Controller
         $fallBack = 'name_en';
         $referral = $request['referral_code'];
 
+        $officeAdmin = OfficeAdmin::where('referral_code', $referral)->where('status', 1)->first();
+
+        if ($officeAdmin == null) {
+            return response()->json(['error' => 'Office admin referral code invalid!', 'statusCode' => -99]);
+        }
+
+        $user = User::find($officeAdmin->idUser);
+
         if ($apiLang == 'si') {
             $lang = 'name_si';
         } elseif ($apiLang == 'ta') {
@@ -265,25 +282,19 @@ class ApiUserController extends Controller
         $natureOfIncomes = NatureOfIncome::where('status', 1)->select(['idnature_of_income', $lang, 'name_en'])->get();
         $natureOfIncomes = $this->filterLanguage($natureOfIncomes, $lang, $fallBack, 'idnature_of_income');
 
-        $electionDivisions = ElectionDivision::where('status', 1)->select(['idelection_division', $lang, 'name_en'])->get();
+        $electionDivisions = ElectionDivision::where('status', 1)->where('iddistrict', $user->office->iddistrict)->select(['idelection_division', $lang, 'name_en'])->get();
         $electionDivisions = $this->filterLanguage($electionDivisions, $lang, $fallBack, 'idelection_division');
 
-        $officeAdmin = OfficeAdmin::where('referral_code', $referral)->where('status', 1)->first();
-
-        if ($officeAdmin != null) {
-            return response()->json(['success' =>
-                ['referral_code' => $referral,
-                    'titles' => $titles,
-                    'ethnicities' => $ethnicities,
-                    'religions' => $religions,
-                    'educationQualifications' => $educationQualifications,
-                    'natureOfIncomes' => $natureOfIncomes,
-                    'electionDivisions' => $electionDivisions
-                ], 'statusCode' => 0], 200, ['Content-Type' => 'application/json;charset=UTF-8', 'Charset' => 'utf-8'],
-                JSON_UNESCAPED_UNICODE);
-        } else {
-            return response()->json(['error' => 'Office admin referral code invalid!', 'statusCode' => -99]);
-        }
+        return response()->json(['success' =>
+            ['referral_code' => $referral,
+                'titles' => $titles,
+                'ethnicities' => $ethnicities,
+                'religions' => $religions,
+                'educationQualifications' => $educationQualifications,
+                'natureOfIncomes' => $natureOfIncomes,
+                'electionDivisions' => $electionDivisions
+            ], 'statusCode' => 0], 200, ['Content-Type' => 'application/json;charset=UTF-8', 'Charset' => 'utf-8'],
+            JSON_UNESCAPED_UNICODE);
     }
 
     public function getAgentByReferral(Request $request)
@@ -397,13 +408,12 @@ class ApiUserController extends Controller
             return response()->json(['error' => 'Record invalid', 'statusCode' => -99]);
         }
 
-        if($memberAgent->status == 2) {
+        if ($memberAgent->status == 2) {
             $memberAgent->status = 1;
             $memberAgent->save();
             return response()->json(['success' => 'Member Approved!', 'statusCode' => 0]);
 
-        }
-        else{
+        } else {
             return response()->json(['error' => 'Member is not in pending list!', 'statusCode' => -99]);
 
         }
@@ -528,7 +538,8 @@ class ApiUserController extends Controller
 
     }
 
-    public function activateMember(Request $request){
+    public function activateMember(Request $request)
+    {
         //validation start
         $validationMessages = [
             'id.required' => 'Member id not provided!',
@@ -538,21 +549,21 @@ class ApiUserController extends Controller
         $validator = \Validator::make($request->all(), [
             'id' => 'required|numeric',
 
-        ],$validationMessages );
+        ], $validationMessages);
 
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()->first(), 'statusCode' => -99]);
         }
-        if(Auth::user()->iduser_role != 6){
+        if (Auth::user()->iduser_role != 6) {
             return response()->json(['error' => 'You are not an agent', 'statusCode' => -99]);
         }
         $id = $request['id'];
 
-        $memberAgent = MemberAgent::where('idagent',Auth::user()->agent->idagent)->where('idmember_agent',$id)->first();
-        if($memberAgent == null){
+        $memberAgent = MemberAgent::where('idagent', Auth::user()->agent->idagent)->where('idmember_agent', $id)->first();
+        if ($memberAgent == null) {
             return response()->json(['error' => 'Id invalid.', 'statusCode' => -99]);
         }
-        if($memberAgent->status == 0){
+        if ($memberAgent->status == 0) {
             $memberAgent->status = 1;
             $memberAgent->save();
             return response()->json(['success' => 'Member activated.', 'statusCode' => 0]);
@@ -562,7 +573,8 @@ class ApiUserController extends Controller
 
     }
 
-    public function deactivateMember(Request $request){
+    public function deactivateMember(Request $request)
+    {
         //validation start
         $validationMessages = [
             'id.required' => 'Member id not provided!',
@@ -572,21 +584,21 @@ class ApiUserController extends Controller
         $validator = \Validator::make($request->all(), [
             'id' => 'required|numeric',
 
-        ],$validationMessages );
+        ], $validationMessages);
 
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()->first(), 'statusCode' => -99]);
         }
-        if(Auth::user()->iduser_role != 6){
+        if (Auth::user()->iduser_role != 6) {
             return response()->json(['error' => 'You are not an agent', 'statusCode' => -99]);
         }
         $id = $request['id'];
 
-        $memberAgent = MemberAgent::where('idagent',Auth::user()->agent->idagent)->where('idmember_agent',$id)->first();
-        if($memberAgent == null){
+        $memberAgent = MemberAgent::where('idagent', Auth::user()->agent->idagent)->where('idmember_agent', $id)->first();
+        if ($memberAgent == null) {
             return response()->json(['error' => 'Id invalid.', 'statusCode' => -99]);
         }
-        if($memberAgent->status == 1){
+        if ($memberAgent->status == 1) {
             $memberAgent->status = 0;
             $memberAgent->save();
             return response()->json(['success' => 'Member deactivated.', 'statusCode' => 0]);

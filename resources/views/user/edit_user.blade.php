@@ -256,14 +256,17 @@
                                 <label style="margin-left: 5px;" class="control-label ">{{ __('Gender') }}</label>
                                 <div class="row">
                                     <label style="margin-left: 5px;" class="radio-inline"><input
-                                                style="margin-left: 5px;" type="radio" value="0"
+                                                style="margin-left: 5px;" type="radio" value="1"
                                                 name="gender">&nbsp;{{ __('Male') }}
                                     </label>
                                     &nbsp;
                                     &nbsp;
                                     <label style="margin-left: 5px;" class="radio-inline"><input
-                                                style="margin-left: 5px;" type="radio" value="1"
+                                                style="margin-left: 5px;" type="radio" value="2"
                                                 name="gender">&nbsp;{{ __('Female') }}</label>
+                                    <label style="margin-left: 5px;" class="radio-inline"><input
+                                                style="margin-left: 5px;" type="radio" value="3"
+                                                name="gender">&nbsp;{{ __('Other') }}</label>
                                 </div>
                             </div>
                         </div>

@@ -393,15 +393,20 @@
                                 <label style="margin-left: 5px;" class="radio-inline"><input disabled
                                                                                              style="margin-left: 5px;"
                                                                                              type="radio" required
-                                                                                             value="0" name="genderV"
+                                                                                             value="1" name="genderV"
                                                                                              checked>&nbsp;{{ __('Male') }}
                                 </label>
                                 &nbsp;
                                 &nbsp;
                                 <label style="margin-left: 5px;" class="radio-inline"><input disabled
                                                                                              style="margin-left: 5px;"
-                                                                                             type="radio" value="1"
+                                                                                             type="radio" value="2"
                                                                                              name="genderV">&nbsp;{{ __('Female') }}
+                                </label>
+                                <label style="margin-left: 5px;" class="radio-inline"><input disabled
+                                                                                             style="margin-left: 5px;"
+                                                                                             type="radio" value="3"
+                                                                                             name="genderV">&nbsp;{{ __('Other') }}
                                 </label>
                             </div>
                         </div>

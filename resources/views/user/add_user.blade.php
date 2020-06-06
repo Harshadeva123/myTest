@@ -233,14 +233,17 @@
                             <div class="form-group col-md-4">
                                 <label style="margin-left: 5px;" class="control-label">{{ __('Gender') }}</label>
                                 <div class="row">
-                                    <label style="margin-left: 5px;" class="radio-inline"><input
-                                                style="margin-left: 5px;" type="radio" required value="0" name="gender" checked>&nbsp;{{ __('Male') }}
+                                    <label style="margin-left: 5px;text-align: center;" class="radio-inline"><input
+                                                style="margin-left: 5px;" type="radio" required value="1" name="gender" checked>&nbsp;{{ __('Male') }}
                                     </label>
                                     &nbsp;
                                     &nbsp;
-                                    <label style="margin-left: 5px;" class="radio-inline"><input
-                                                style="margin-left: 5px;" type="radio" value="1"
+                                    <label style="margin-left: 5px;text-align: center;" class="radio-inline"><input
+                                                style="margin-left: 5px;" type="radio" value="2"
                                                 name="gender">&nbsp;{{ __('Female') }}</label>
+                                    <label style="margin-left: 5px;text-align: center;" class="radio-inline"><input
+                                                style="margin-left: 5px;" type="radio" value="3"
+                                                name="gender">&nbsp;&nbsp;{{ __('Other') }}</label>
                                 </div>
                             </div>
                         </div>

@@ -153,7 +153,8 @@ class ApiPostResponseController extends Controller
             'post_id' => 'required|numeric',
             'imageFiles.*' => 'nullable|file|image|mimes:jpeg,png,gif,webp',
             'videoFiles.*' => 'nullable|mimes:mp4,mov,ogg,qt ',
-            'audioFiles.*' => 'nullable|mimes:mpga,wav',
+//            'audioFiles.*' => 'nullable|mimes:mpga,wav',
+            'audioFiles.*' => 'nullable',
 
 
         ], $validationMessages);
