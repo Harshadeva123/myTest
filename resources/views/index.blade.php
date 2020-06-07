@@ -127,26 +127,31 @@
             <div class="row">
                 @if(isset($currentStorage))
                     <div class="col-xl-4">
-                        <div class="card m-b-30">
-                            <div class="card-body">
-                                <h4 class="mt-0 header-title">Office Storage</h4>
+                        <div class="row">
+                            <div class="col-xl-12">
+                                <div class="card m-b-30">
+                                    <div class="card-body">
+                                        <h4 class="mt-0 header-title">Office Storage</h4>
 
-                                <div class="row text-center m-t-20">
-                                    <div class="col-6">
-                                        <h5 class="">{{round($currentStorage / 1000000,2)}} MB</h5>
-                                        <p class="text-muted font-14">Used</p>
-                                    </div>
-                                    <div class="col-6">
-                                        <h5 class="">2 GB</h5>
-                                        <p class="text-muted font-14">Total</p>
+                                        <div class="row text-center m-t-20">
+                                            <div class="col-6">
+                                                <h5 class="">{{round($currentStorage / 1000000,2)}} MB</h5>
+                                                <p class="text-muted font-14">Used</p>
+                                            </div>
+                                            <div class="col-6">
+                                                <h5 class="">2 GB</h5>
+                                                <p class="text-muted font-14">Total</p>
+                                            </div>
+                                        </div>
+                                        <div id="storageChart" class="dash-chart" style="height: 250px;"></div>
+                                        {{--<div id="morris-donut-example" class="dash-chart"></div>--}}
                                     </div>
                                 </div>
-                                <div id="storageChart" class="dash-chart" style="height: 250px;"></div>
-                                {{--<div id="morris-donut-example" class="dash-chart"></div>--}}
                             </div>
                         </div>
                     </div>
                 @endif
+
                 @if(isset($totalStorage))
                     <div class="col-xl-4">
                         <div class="card m-b-30">
@@ -169,16 +174,43 @@
                         </div>
                     </div>
                 @endif
-                @if(isset($referralCode))
-                    <div class="col-md-6 col-xl-3">
-                        <div class="card text-center m-b-30">
-                            <div  class="mb-2 card-body text-muted">
-                                <h3 title="Send this code to agents to join with your office." style="color: #1853ef">{{$referralCode}}</h3>
-                                 Referral Code
+                    <div class="col-xl-8">
+                        <div class="row">
+                        @if(isset($referralCode))
+                            <div class="col-md-6 col-xl-6">
+                                <div class="card text-center m-b-30">
+                                    <div class="mb-2 card-body text-muted">
+                                        <h3 title="Send this code to agents to join with your office."
+                                            style="color: #1853ef">{{$referralCode}}</h3>
+                                        Referral Code
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                        @endif
+                        @if(isset($smsLimit) && $smsLimit != null)
+                            <div class="col-md-6 col-xl-6">
+                                <div class="card text-center m-b-30">
+                                    <div class="mb-2 card-body text-muted">
+                                        <h3 title="Send this code to agents to join with your office."
+                                            style="color: rgb(9,118,36)">{{$smsLimit}}</h3>
+                                        SMS Usage
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                        @if(isset($referralCode))
+                            {{--<div class="col-md-6 col-xl-6">--}}
+                                {{--<div class="card text-center m-b-30">--}}
+                                    {{--<div class="mb-2 card-body text-muted">--}}
+                                        {{--<h3 title="Send this code to agents to join with your office."--}}
+                                            {{--style="color: #1853ef">{{$referralCode}}</h3>--}}
+                                        {{--Referral Code--}}
+                                    {{--</div>--}}
+                                {{--</div>--}}
+                            {{--</div>--}}
+                        @endif
                     </div>
-                @endif
+                </div>
                 @if(isset($offices))
                     <div class="col-xl-8">
                         <div class="card m-b-30">

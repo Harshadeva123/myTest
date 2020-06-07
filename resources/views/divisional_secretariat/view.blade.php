@@ -283,7 +283,6 @@
                     if (data.success != null) {
 
                         let divisions = data.success;
-                        console.log(divisions);
                         $('#viewTBody').html('');
                         $.each(divisions, function (key, value) {
                             $('#viewTBody').append('' +
@@ -333,7 +332,6 @@
                     if (data.success != null) {
 
                         let divisions = data.success;
-                        console.log(divisions);
                         $('#assignTBody').html('');
                         if(divisions.length > 0) {
                             $.each(divisions, function (key, value) {
@@ -389,45 +387,102 @@
         });
 
 
-        $(".filters").keyup(function () {
+//        $(".filters").keyup(function () {
+//
+//            $("#assignTBody tr").each(function () {
+//                var filter0 = $('#searchE').val();
+//                // If the list item does not contain the text phrase fade it out
+//                if ($(this).find("td").eq(0).text().search(new RegExp(filter0, "i")) < 0) {
+//                    $(this).fadeOut();
+//
+//                    // Show the list item if the phrase matches and increase the count by 1
+//                } else {
+//                    // Retrieve the input field text and reset the count to zero
+//                    var filter = $('#searchP').val();
+//
+//                    // Loop through the comment list
+//                    $("#assignTBody tr").each(function () {
+//
+//                        // If the list item does not contain the text phrase fade it out
+//                        if ($(this).find("td").eq(1).text().search(new RegExp(filter, "i")) < 0) {
+//                            $(this).fadeOut();
+//
+//                            // Show the list item if the phrase matches and increase the count by 1
+//                        } else {
+//                            // Retrieve the input field text and reset the count to zero
+//                            var filter3 = $('#searchG').val();
+//
+//                            // Loop through the comment list
+//                            $("#assignTBody tr").each(function () {
+//
+//                                // If the list item does not contain the text phrase fade it out
+//                                if ($(this).find("td").eq(2).text().search(new RegExp(filter3, "i")) < 0) {
+//                                    $(this).fadeOut();
+//
+//                                    // Show the list item if the phrase matches and increase the count by 1
+//                                } else {
+//                                    $(this).show();
+//                                }
+//                            });
+//                        }
+//                    });
+//                }
+//            });
+//        });
 
+        $("#searchE").keyup(function () {
+
+            // Retrieve the input field text and reset the count to zero
+            var filter = $(this).val();
+
+            // Loop through the comment list
             $("#assignTBody tr").each(function () {
-                var filter0 = $('#searchE').val();
+
                 // If the list item does not contain the text phrase fade it out
-                if ($(this).find("td").eq(0).text().search(new RegExp(filter0, "i")) < 0) {
+                if ($(this).find("td").eq(0).text().search(new RegExp(filter, "i")) < 0) {
                     $(this).fadeOut();
 
                     // Show the list item if the phrase matches and increase the count by 1
                 } else {
-                    // Retrieve the input field text and reset the count to zero
-                    var filter = $('#searchP').val();
+                    $(this).show();
+                }
+            });
+        });
 
-                    // Loop through the comment list
-                    $("#assignTBody tr").each(function () {
+        $("#searchP").keyup(function () {
 
-                        // If the list item does not contain the text phrase fade it out
-                        if ($(this).find("td").eq(1).text().search(new RegExp(filter, "i")) < 0) {
-                            $(this).fadeOut();
+            // Retrieve the input field text and reset the count to zero
+            var filter = $(this).val();
 
-                            // Show the list item if the phrase matches and increase the count by 1
-                        } else {
-                            // Retrieve the input field text and reset the count to zero
-                            var filter3 = $('#searchG').val();
+            // Loop through the comment list
+            $("#assignTBody tr").each(function () {
 
-                            // Loop through the comment list
-                            $("#assignTBody tr").each(function () {
+                // If the list item does not contain the text phrase fade it out
+                if ($(this).find("td").eq(1).text().search(new RegExp(filter, "i")) < 0) {
+                    $(this).fadeOut();
 
-                                // If the list item does not contain the text phrase fade it out
-                                if ($(this).find("td").eq(2).text().search(new RegExp(filter3, "i")) < 0) {
-                                    $(this).fadeOut();
+                    // Show the list item if the phrase matches and increase the count by 1
+                } else {
+                    $(this).show();
+                }
+            });
+        });
 
-                                    // Show the list item if the phrase matches and increase the count by 1
-                                } else {
-                                    $(this).show();
-                                }
-                            });
-                        }
-                    });
+        $("#searchG").keyup(function () {
+
+            // Retrieve the input field text and reset the count to zero
+            var filter = $(this).val();
+
+            // Loop through the comment list
+            $("#assignTBody tr").each(function () {
+
+                // If the list item does not contain the text phrase fade it out
+                if ($(this).find("td").eq(2).text().search(new RegExp(filter, "i")) < 0) {
+                    $(this).fadeOut();
+
+                    // Show the list item if the phrase matches and increase the count by 1
+                } else {
+                    $(this).show();
                 }
             });
         });

@@ -279,7 +279,7 @@
 
         function clearAll() {
             $('select').val('').trigger('change');
-            $('input').not(':radio').val('');
+            $('input').not(':radio').not('.noClear').val('');
             $(':radio').attr('checked', false);
         }
 

@@ -212,6 +212,16 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
             Route::post('assigned_gramasewa_divisions_council', 'CouncilController@assignDivisions')->name('assignedGramasewaCouncil');
             Route::post('confirm_council', 'CouncilController@confirm')->name('confirmCouncil');
 
+
+            //SMS
+            Route::get('welcome_message', 'SmsController@index')->name('welcomeMessage');
+            Route::get('sms_configuration', 'SmsController@config')->name('smsConfiguration');
+            Route::post('updateSmsLimit', 'SmsController@limit')->name('updateSmsLimit');
+            Route::post('saveWelcomeSms', 'SmsController@saveWelcome')->name('saveWelcomeSms');
+            Route::get('create_sms', 'SmsController@create')->name('createSms');
+            Route::post('create_sms', 'SmsController@send')->name('createSms');
+            Route::post('get_number_of_users', 'SmsController@getNumberOfReceivers')->name('getNumberOfReceivers');
+
         });
     });
 

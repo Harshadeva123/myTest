@@ -33,7 +33,7 @@ class VillageController extends Controller
         if($request['id'] != null){
             $query  = $query->where('idgramasewa_division',$request['id']);
         }
-        $villages = $query->with(['gramasewaDivision'])->where('iddistrict',$district)->where('iduser',Auth::user()->idUser)->whereIn('status',[1,2])->orderBy('name_en')->get();
+        $villages = $query->with(['gramasewaDivision'])->where('iddistrict',$district)->whereIn('status',[1,2])->orderBy('name_en')->get();
         return response()->json(['success'  => $villages]);
     }
 

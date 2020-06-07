@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Task;
+use App\VotersCount;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -120,4 +121,36 @@ class ApiTaskController extends Controller
         }
         return response()->json(['success' => $tasks, 'statusCode' => 0]);
     }
+
+    public function storeVotersCount(Request $request){
+
+        if (Auth::user()->iduser_role != 6) {
+            return response()->json(['error' => 'You are not an agent', 'statusCode' => -99]);
+        }
+
+        $voters = VotersCount::where('idoffice',Auth::user()->idoffice)->where('status',1)->first();
+        if($voters != null){
+            $voters->total= $request['total'];
+            $voters->forecasting= $request['forecasting'];
+            $voters->houses= $request['noOfHouses'];
+            $voters->save();
+        }
+        else{
+            $voters = new VotersCount();
+            $voters->idvillage = Auth::user()->agent->idvillage;
+            $voters->idoffice = Auth::user()->idoffice;
+            $voters->idUser = Auth::user()->idUser;
+            $voters->total= $request['total'];
+            $voters->forecasting= $request['forecasting'];
+            $voters->houses= $request['noOfHouses'];
+            $voters->status  = 1;
+            $voters->save();
+        }
+
+
+        return response()->json(['success' => 'Value saved', 'statusCode' => 0]);
+
+    }
+
+
 }

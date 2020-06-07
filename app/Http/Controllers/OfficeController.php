@@ -68,6 +68,13 @@ class OfficeController extends Controller
             $attendance = 0;
         }
 
+        if ($request['sms'] == 'on') {
+            $sms = 1;
+            $subTotal += 5000;
+        } else {
+            $sms = 0;
+        }
+
         $netTotal = round($subTotal - $request['discount'], 2);
         if ($netTotal < 0) {
             return response()->json(['errors' => ['error' => 'Total monthly payment must be grater than zero(0)']]);
@@ -87,6 +94,7 @@ class OfficeController extends Controller
         $office->payment_date = date('Y-m-d', strtotime($request['paymentDate']));
         $office->analysis_available = $analysis;
         $office->attendence_available = $attendance;
+        $office->sms_module = $sms;
         $office->status = 1; // default value for active office
         $office->save();
 
@@ -176,6 +184,14 @@ class OfficeController extends Controller
             $attendance = 0;
         }
 
+        if ($request['sms'] == 'on') {
+            $sms = 1;
+            $subTotal += 5000;
+        } else {
+            $sms = 0;
+        }
+
+
         $netTotal = round($subTotal - $request['discount'], 2);
         if ($netTotal < 0) {
             return response()->json(['errors' => ['error' => 'Total monthly payment must be grater than zero(0)']]);
@@ -210,6 +226,7 @@ class OfficeController extends Controller
         $office->payment_date = date('Y-m-d', strtotime($request['paymentDate']));
         $office->analysis_available = $analysis;
         $office->attendence_available = $attendance;
+        $office->sms_module = $sms;
         $office->status = 1; // default value for active office
         $office->save();
 

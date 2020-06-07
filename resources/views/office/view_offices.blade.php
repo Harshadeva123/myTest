@@ -76,6 +76,7 @@
                                                     <th>PAYMENT DATE</th>
                                                     <th>ANALYSIS MODULE</th>
                                                     <th>ATTENDANCE MODULE</th>
+                                                    <th>SMS MODULE</th>
                                                     <th>OFFICE  STATUS</th>
                                                     <th>CREATED AT</th>
                                                     <th>OPTION</th>
@@ -97,6 +98,11 @@
                                                                     <td nowrap><em class="mdi mdi-checkbox-blank-circle text-danger"></em> DISABLED</td>
                                                                 @endif
                                                                 @if($office->attendence_available)
+                                                                    <td nowrap><em class="mdi mdi-checkbox-blank-circle text-success"></em> ENABLED</td>
+                                                                @else
+                                                                    <td nowrap><em class="mdi mdi-checkbox-blank-circle text-danger"></em> DISABLED</td>
+                                                                @endif
+                                                                @if($office->sms_module)
                                                                     <td nowrap><em class="mdi mdi-checkbox-blank-circle text-success"></em> ENABLED</td>
                                                                 @else
                                                                     <td nowrap><em class="mdi mdi-checkbox-blank-circle text-danger"></em> DISABLED</td>
@@ -233,7 +239,7 @@
                         <h6 class="text-secondary">Additional Features</h6>
                         <hr/>
                         <div class="row">
-                            <div style="text-align: center;" class="form-group col-md-2">
+                            <div style="text-align: center;" class="form-group col-md-4">
                                 <label style="margin-left: 5px;"
                                        class="control-label ">{{ __('Analysis Feature') }}</label>
                                 <div class="row">
@@ -245,7 +251,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div style="text-align: center;" class="form-group col-md-2">
+                            <div style="text-align: center;" class="form-group col-md-4">
                                 <label style="margin-left: 5px;"
                                        class="control-label ">{{ __('Attendance Feature') }}</label>
                                 <div class="row">
@@ -257,7 +263,18 @@
                                     </div>
                                 </div>
                             </div>
-
+                            <div style="text-align: center;" class="form-group col-md-4">
+                                <label style="margin-left: 5px;"
+                                       class="control-label ">{{ __('SMS Feature') }}</label>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <input name="sms" onchange="calTotal()" type="checkbox"
+                                               id="smsBtnU" switch="none"/>
+                                        <label for="smsBtnU" data-on-label="On"
+                                               data-off-label="Off"></label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <br/>
                         <h6 class="text-secondary">Payment Details</h6>
@@ -377,6 +394,13 @@
                     }
                     else {
                         $('#attendanceBtnU').prop('checked', false);
+                    }
+                    if (data.sms_module) {
+                        subTotal -= 5000;
+                        $('#smsBtnU').prop('checked', true);
+                    }
+                    else {
+                        $('#smsBtnU').prop('checked', false);
                     }
                     $('#paymentU').val(subTotal);
                     $('#discountU').val(data.discount);

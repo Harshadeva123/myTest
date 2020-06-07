@@ -15,6 +15,7 @@ use App\NatureOfIncome;
 use App\Office;
 use App\OfficeAdmin;
 use App\PollingBooth;
+use App\Position;
 use App\Religion;
 use App\Task;
 use App\TaskAge;
@@ -87,13 +88,7 @@ class ApiUserController extends Controller
 
         $token = Auth::user()->createToken('authToken')->accessToken; //generate access token
 
-        if ($userMaster->iduser_role == 6) {
-            return response()->json(['success' => ['userRole' => Auth::user()->iduser_role, 'accessToken' => $token,'referral_code'=>Auth::user()->agent->referral_code], 'statusCode' => 0]);
-
-        } elseif ($userMaster->iduser_role == 7) {
-            return response()->json(['success' => ['userRole' => Auth::user()->iduser_role, 'accessToken' => $token], 'statusCode' => 0]);
-
-        }
+        return response()->json(['success' => ['userRole' => Auth::user()->iduser_role, 'accessToken' => $token], 'statusCode' => 0]);
 
     }
 
@@ -285,6 +280,10 @@ class ApiUserController extends Controller
         $electionDivisions = ElectionDivision::where('status', 1)->where('iddistrict', $user->office->iddistrict)->select(['idelection_division', $lang, 'name_en'])->get();
         $electionDivisions = $this->filterLanguage($electionDivisions, $lang, $fallBack, 'idelection_division');
 
+        $positions = Position::where('status',1)->select(['idposition', $lang, 'name_en'])->get();
+        $positions = $this->filterLanguage($positions, $lang, $fallBack, 'idposition');
+
+
         return response()->json(['success' =>
             ['referral_code' => $referral,
                 'titles' => $titles,
@@ -292,7 +291,8 @@ class ApiUserController extends Controller
                 'religions' => $religions,
                 'educationQualifications' => $educationQualifications,
                 'natureOfIncomes' => $natureOfIncomes,
-                'electionDivisions' => $electionDivisions
+                'electionDivisions' => $electionDivisions,
+                'positions'=>$positions
             ], 'statusCode' => 0], 200, ['Content-Type' => 'application/json;charset=UTF-8', 'Charset' => 'utf-8'],
             JSON_UNESCAPED_UNICODE);
     }
@@ -331,6 +331,9 @@ class ApiUserController extends Controller
         $natureOfIncomes = NatureOfIncome::where('status', 1)->select(['idnature_of_income', 'name_en', $lang])->get();
         $natureOfIncomes = $this->filterLanguage($natureOfIncomes, $lang, $fallBack, 'idnature_of_income');
 
+        $positions = Position::where('status',1)->select(['idposition', $lang, 'name_en'])->get();
+        $positions = $this->filterLanguage($positions, $lang, $fallBack, 'idposition');
+
         if ($agent != null) {
             return response()->json(['success' =>
                 ['referral_code' => $referral,
@@ -340,6 +343,7 @@ class ApiUserController extends Controller
                     'religions' => $religions,
                     'educationQualifications' => $educationQualifications,
                     'natureOfIncomes' => $natureOfIncomes,
+                    'positions'=>$positions
                 ], 'statusCode' => 0], 200, ['Content-Type' => 'application/json;charset=UTF-8', 'Charset' => 'utf-8'],
                 JSON_UNESCAPED_UNICODE);
         } else {
@@ -607,4 +611,5 @@ class ApiUserController extends Controller
         return response()->json(['success' => 'Member already deactivated.', 'statusCode' => 0]);
 
     }
+
 }

@@ -1,7 +1,7 @@
 <!-- Loader -->
-<div id="preSecretariat  <div id="status">
-        <div class="spinner"></div>
-    </div>
+<div id="preSecretariat  <div id=" status">
+<div class="spinner"></div>
+</div>
 </div>
 
 
@@ -15,7 +15,8 @@
         <div class="topbar-left">
             <div class="">
                 {{--<a href="" class="logo"><img src="{{ URL::asset('assets/images/resources/leftBar.jpg')}}" height="45" alt="logo"></a>--}}
-                <a href="" class="logo text-center"><img width="80%" src="{{ \Illuminate\Support\Facades\URL::asset('assets/images/resources/deplogo.svg')}}"></a>
+                <a href="" class="logo text-center"><img width="80%"
+                                                         src="{{ \Illuminate\Support\Facades\URL::asset('assets/images/resources/deplogo.svg')}}"></a>
             </div>
         </div>
         <br/>
@@ -49,7 +50,8 @@
                                     <span class="pull-right"><i class="mdi mdi-chevron-right"></i></span> </span></a>
                             <ul class="list-unstyled">
                                 <li><a href="{{route('divisionalSecretariat')}}">{{ __('Create Secretariat') }}</a></li>
-                                <li><a href="{{route('divisionalSecretariat-view')}}">{{ __('View Secretariats') }}</a></li>
+                                <li><a href="{{route('divisionalSecretariat-view')}}">{{ __('View Secretariats') }}</a>
+                                </li>
                             </ul>
                         </li>
 
@@ -100,21 +102,21 @@
                         </li>
                     @endif
                     @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3)
-                        <li class="has_sub">
-                            <a href="javascript:void(0);" class="waves-effect"><i
-                                        class="dripicons-suitcase"></i><span>{{ __('Responses') }}
-                                    <span
-                                            class="pull-right"><i class="mdi mdi-chevron-right"></i></span> </span></a>
-                            <ul class="list-unstyled">
-                                <li><a href="{{route('pendingResponses')}}">{{ __('Pending Responses') }}</a></li>
-                            </ul>
-                        </li>
+                        {{--<li class="has_sub">--}}
+                            {{--<a href="javascript:void(0);" class="waves-effect"><i--}}
+                                        {{--class="dripicons-suitcase"></i><span>{{ __('Responses') }}--}}
+                                    {{--<span--}}
+                                            {{--class="pull-right"><i class="mdi mdi-chevron-right"></i></span> </span></a>--}}
+                            {{--<ul class="list-unstyled">--}}
+                                {{--<li><a href="{{route('pendingResponses')}}">{{ __('Pending Responses') }}</a></li>--}}
+                            {{--</ul>--}}
+                        {{--</li>--}}
                     @endif
                     @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3)
 
                         {{--<li>--}}
-                            {{--<a href="{{route('directMessages')}}" class="waves-effect"><i--}}
-                                        {{--class="dripicons-suitcase"></i><span>{{ __('Direct Messages') }} </span></a>--}}
+                        {{--<a href="{{route('directMessages')}}" class="waves-effect"><i--}}
+                        {{--class="dripicons-suitcase"></i><span>{{ __('Direct Messages') }} </span></a>--}}
                         {{--</li>--}}
 
                     @endif
@@ -145,7 +147,7 @@
                             </a>
                             <ul class="list-unstyled">
                                 <li><a href="{{route('pendingResponse')}}">{{ __('Post Response') }}</a></li>
-{{--                                <li><a href="{{route('assignStaff')}}">{{ __('Direct Messages') }}</a></li>--}}
+                                {{--                                <li><a href="{{route('assignStaff')}}">{{ __('Direct Messages') }}</a></li>--}}
                             </ul>
                         </li>
                     @endif
@@ -192,31 +194,31 @@
                         <li class="menu-title">{{ __('REPORTS') }}</li>
                     @endif
                     @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3)
-                    <li class="has_sub">
-                        <a href="javascript:void(0);" class="waves-effect">
-                            <i class="dripicons-suitcase"></i>
-                            <span>{{ __('Reports') }}
-                                <span class="pull-right">
+                        <li class="has_sub">
+                            <a href="javascript:void(0);" class="waves-effect">
+                                <i class="dripicons-suitcase"></i>
+                                <span>{{ __('Reports') }}
+                                    <span class="pull-right">
                                        <i class="mdi mdi-chevron-right"></i>
                                    </span>
                                </span>
-                        </a>
-                        <ul class="list-unstyled">
-                            <li><a href="{{route('report-agents')}}">{{ __('Agents Report') }}</a></li>
-                            <li><a href="{{route('report-members')}}">{{ __('Member Report') }}</a></li>
-                            <li><a href="{{route('report-age')}}">{{ __('Age Report') }}</a></li>
-                            <li><a href="{{route('report-education')}}">{{ __('Education Report') }}</a></li>
-                            <li><a href="{{route('report-income')}}">{{ __('Income Report') }}</a></li>
-                            <li><a href="{{route('report-career')}}">{{ __('Career Report') }}</a></li>
-                            <li><a href="{{route('report-religion')}}">{{ __('Religion Report') }}</a></li>
-                            <li><a href="{{route('report-ethnicity')}}">{{ __('Ethnicity Report') }}</a></li>
-                        </ul>
-                    </li>
+                            </a>
+                            <ul class="list-unstyled">
+                                <li><a href="{{route('report-agents')}}">{{ __('Agents Report') }}</a></li>
+                                <li><a href="{{route('report-members')}}">{{ __('Member Report') }}</a></li>
+                                <li><a href="{{route('report-age')}}">{{ __('Age Report') }}</a></li>
+                                <li><a href="{{route('report-education')}}">{{ __('Education Report') }}</a></li>
+                                <li><a href="{{route('report-income')}}">{{ __('Income Report') }}</a></li>
+                                <li><a href="{{route('report-career')}}">{{ __('Career Report') }}</a></li>
+                                <li><a href="{{route('report-religion')}}">{{ __('Religion Report') }}</a></li>
+                                <li><a href="{{route('report-ethnicity')}}">{{ __('Ethnicity Report') }}</a></li>
+                            </ul>
+                        </li>
                     @endif
 
-                @if(\Illuminate\Support\Facades\Auth::user()->iduser_role <= 3)
+                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role <= 3)
 
-                    <li class="menu-title">{{ __('ADMINISTRATION') }}</li>
+                        <li class="menu-title">{{ __('ADMINISTRATION') }}</li>
                     @endif
 
                     @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 2)
@@ -258,7 +260,27 @@
                             </ul>
                         </li>
                     @endif
+                    @if(( \Illuminate\Support\Facades\Auth::user()->iduser_role == 3 && \Illuminate\Support\Facades\Auth::user()->office->sms_module == 1) || \Illuminate\Support\Facades\Auth::user()->iduser_role == 2 )
 
+
+                        <li class="has_sub">
+                            <a href="javascript:void(0);" class="waves-effect"><i
+                                        class="dripicons-suitcase"></i><span>{{ __('SMS') }}
+                                    <span
+                                            class="pull-right"><i class="mdi mdi-chevron-right"></i></span> </span></a>
+                            <ul class="list-unstyled">
+                                @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3 )
+                                    <li><a href="{{route('welcomeMessage')}}">{{ __('Welcome SMS') }}</a></li>
+                                    <li><a href="{{route('createSms')}}">{{ __('Create SMS') }}</a></li>
+                                @endif
+                                @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 2 )
+                                    <li><a href="{{route('smsConfiguration')}}">{{ __('SMS Configurations') }}</a></li>
+                                @endif
+                                {{--<li><a href="{{route('assignTask')}}">{{ __('Assign Task') }}</a></li>--}}
+                                {{--<li><a href="{{route('viewTasks')}}">{{ __('View Task') }}</a></li>--}}
+                            </ul>
+                        </li>
+                    @endif
                     @if(\Illuminate\Support\Facades\Auth::user()->iduser_role <=3)
                         <li class="has_sub">
                             <a href="javascript:void(0);" class="waves-effect"><i
@@ -269,7 +291,7 @@
                                 <li><a href="{{route('addUser')}}">{{ __('Add Users') }}</a></li>
                                 @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3)
 
-                                <li><a href="{{route('pendingAgents')}}">{{ __('Pending Users') }}</a></li>
+                                    <li><a href="{{route('pendingAgents')}}">{{ __('Pending Users') }}</a></li>
                                 @endif
                                 <li><a href="{{route('viewUser')}}">{{ __('View Users') }}</a></li>
                             </ul>

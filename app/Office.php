@@ -24,4 +24,8 @@ class Office extends Model
     public function posts(){
         return $this->belongsTo(Post::class,'idoffice');
     }
+
+    public function smaLimit(){
+        return $this->hasOne(SmsLimit::class,'idoffice');
+    }
 }

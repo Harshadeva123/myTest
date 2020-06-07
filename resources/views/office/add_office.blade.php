@@ -88,6 +88,18 @@
                                     </div>
                                 </div>
                             </div>
+                            <div style="text-align: center;" class="form-group col-md-2">
+                                <label style="margin-left: 5px;"
+                                       class="control-label ">{{ __('SMS Feature') }}</label>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <input name="sms" onchange="calTotal()" type="checkbox"
+                                               id="smsBtn" switch="none"/>
+                                        <label for="smsBtn" data-on-label="On"
+                                               data-off-label="Off"></label>
+                                    </div>
+                                </div>
+                            </div>
 
                         </div>
                         <br/>
@@ -263,6 +275,7 @@
         function calTotal() {
             attendance = $('#attendanceBtn').prop('checked');
             analysis = $('#analysisBtn').prop('checked');
+            sms = $('#smsBtn').prop('checked');
             payment = $('#payment').val() ? parseFloat($('#payment').val()) < 0 ? 0 : parseFloat($('#payment').val()) : 0;
             discount = $('#discount').val() ? parseFloat($('#discount').val()) < 0 ? 0 : parseFloat($('#discount').val()) : 0;
 
@@ -271,6 +284,9 @@
                 total += 5000;
             }
             if (analysis) {
+                total += 5000;
+            }
+            if (sms) {
                 total += 5000;
             }
 

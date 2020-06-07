@@ -39,6 +39,7 @@ class DashboardController extends Controller
                 'posts' => $this->latestPost(),
                 'responseChart' => $this->getResponseCategories(),
                 'referralCode' => $this->getReferral(),
+                'smsLimit' => $this->getSmsLimit(),
 //                'bars' => $this->createBarChart()
             ]);
         } else if (Auth::user()->iduser_role == 4) {
@@ -282,5 +283,15 @@ class DashboardController extends Controller
             return '';
         }
         //get referral code end
+    }
+
+    public function getSmsLimit(){
+        if(Auth::user()->office->sms_module != 1){
+            return null;
+        }
+        $limit = Auth::user()->office->smaLimit != null ? Auth::user()->office->smaLimit->limit : 0;
+        $used = Auth::user()->office->smaLimit != null ? Auth::user()->office->smaLimit->current : 0;
+
+        return $used.'/'.$limit;
     }
 }

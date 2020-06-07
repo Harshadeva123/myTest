@@ -61,8 +61,19 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('get_tasks', 'Api\ApiTaskController@index')->name('getTask');
 
     //Save SMS member
+    Route::post('get_registration_form', 'Api\ApiRegistrationController@getRegistrationForm')->name('getRegistrationForm');
     Route::post('register_member', 'Api\ApiRegistrationController@storeSmsUser')->name('registerMember');
     //Save SMS member end
+
+    //Voters
+    Route::post('store_voters_count', 'Api\ApiTaskController@storeVotersCount')->name('storeVotersCount');
+    //Voters end
+
+    //Profile
+    Route::post('profile', 'Api\ApiProfileController@index')->name('profile');
+    //Profile end
+
+
 
 });
 

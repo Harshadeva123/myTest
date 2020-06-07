@@ -4,14 +4,19 @@ namespace App\Http\Controllers\Api;
 
 use App\Agent;
 use App\Career;
+use App\EducationalQualification;
 use App\ElectionDivision;
+use App\Ethnicity;
 use App\GramasewaDivision;
 use App\Http\Controllers\TaskController;
 use App\Member;
 use App\MemberAgent;
+use App\NatureOfIncome;
 use App\Office;
 use App\OfficeAdmin;
 use App\PollingBooth;
+use App\Position;
+use App\Religion;
 use App\Task;
 use App\TaskAge;
 use App\TaskCareer;
@@ -20,8 +25,11 @@ use App\TaskEthnicity;
 use App\TaskIncome;
 use App\TaskReligion;
 use App\User;
+use App\UserSociety;
 use App\UserTitle;
 use App\Village;
+use App\WelcomeSms;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -89,7 +97,9 @@ class ApiRegistrationController extends Controller
             'career' => 'required|exists:career,idcareer',
             'educationalQualification' => 'required|exists:educational_qualification,ideducational_qualification',
             'natureOfIncome' => 'required|exists:nature_of_income,idnature_of_income',
-
+            'branchSociety' => 'nullable|numeric',
+            'womenSociety' => 'nullable|numeric',
+            'youthSociety' => 'nullable|numeric',
 
         ], [
             'nic.required' => 'NIC No should be provided!',
@@ -129,6 +139,9 @@ class ApiRegistrationController extends Controller
             'educationalQualification.exists' => 'Educational qualification invalid!',
             'natureOfIncome.required' => 'Nature of income should be provided!',
             'natureOfIncome.exists' => 'Nature of income invalid!',
+            'branchSociety.numeric' => 'Branch society invalid!',
+            'womenSociety.numeric' => 'Women\'s society invalid!',
+            'youthSociety.numeric' => 'Youth invalid!',
         ]);
 
         if ($validator->fails()) {
@@ -187,7 +200,7 @@ class ApiRegistrationController extends Controller
 
         }
 
-        //validation end
+        //---------------------------------------------validation end-------------------------------------------------//
 
         //save in user table
         $user = new User();
@@ -210,143 +223,154 @@ class ApiRegistrationController extends Controller
         $user->save();
         //save in user table  end
 
-
         //save in selected user role table
         if ($user->iduser_role == 6) {
-
-            $agent = new Agent();
-            $agent->idUser = $user->idUser;
-            $agent->iddistrict = $district;
-            $agent->idelection_division = $request['electionDivision'];
-            $agent->idpolling_booth = $request['pollingBooth'];
-            $agent->idgramasewa_division = $request['gramasewaDivision'];
-            $agent->idvillage = $request['village'];
-            $agent->idethnicity = $request['ethnicity'];
-            $agent->idreligion = $request['religion'];
-            $agent->ideducational_qualification = $request['educationalQualification'];
-            $agent->idnature_of_income = $request['natureOfIncome'];
-            $agent->idcareer = $request['career'];
-            $agent->referral_code = $this->generateReferral($user->idUser);
-            $agent->is_government = $request['isGovernment'];
-            $agent->isSms = 0;// non sms user
-            $agent->status = 2;// value for pending user
-            $agent->save();
-
-            $defaultTask = Task::where('idoffice', $user->idoffice)->where('status', 3)->where('isDefault', 1)->first();
-            if ($defaultTask != null) {
-                $task = new Task();
-                $task->idUser = $user->idUser;
-                $task->idoffice = $user->idoffice;
-                $task->assigned_by = $defaultTask->assigned_by;
-                $task->task_no = 1;
-                $task->target = $defaultTask->target;
-                $task->task_gender = $defaultTask->task_gender;
-                $task->task_job_sector = $defaultTask->task_job_sector;
-                $task->completed_amount = $defaultTask->completed_amount;
-                $task->description = $defaultTask->description;
-                $task->isDefault = 0;
-                $task->status = 2;//pending
-                $task->save();
-
-                if ($defaultTask->religions != null) {
-                    foreach ($defaultTask->religions as $religion) {
-                        $new = new TaskReligion();
-                        $new->idtask = $task->idtask;
-                        $new->idreligion = $religion->idreligion;
-                        $new->status = 1;
-                        $new->save();
-                    }
-                }
-
-                if ($defaultTask->ethnicities != null) {
-                    foreach ($defaultTask->ethnicities as $ethnicities) {
-                        $new = new TaskEthnicity();
-                        $new->idtask = $task->idtask;
-                        $new->idethnicity = $ethnicities->idethnicity;
-                        $new->status = 1;
-                        $new->save();
-                    }
-                }
-
-                if ($defaultTask->careers != null) {
-                    foreach ($defaultTask->careers as $careers) {
-                        $new = new TaskCareer();
-                        $new->idtask = $task->idtask;
-                        $new->idcareer = $careers->idcareer;
-                        $new->status = 1;
-                        $new->save();
-                    }
-                }
-
-                if ($defaultTask->incomes != null) {
-                    foreach ($defaultTask->incomes as $incomes) {
-                        $new = new TaskIncome();
-                        $new->idtask = $task->idtask;
-                        $new->idnature_of_income = $incomes->idnature_of_income;
-                        $new->status = 1;
-                        $new->save();
-                    }
-                }
-
-                if ($defaultTask->educations != null) {
-                    foreach ($defaultTask->educations as $educations) {
-                        $new = new TaskEducation();
-                        $new->idtask = $task->idtask;
-                        $new->ideducational_qualification = $educations->ideducational_qualification;
-                        $new->status = 1;
-                        $new->save();
-                    }
-                }
-
-                if ($defaultTask->age != null) {
-                    $new = new TaskAge();
-                    $new->idtask = $task->idtask;
-                    $new->comparison = $defaultTask->age->comparison;
-                    $new->minAge = $defaultTask->age->minAge;
-                    $new->maxAge = $defaultTask->age->maxAge;
-                    $new->status = 1;
-                    $new->save();
-                }
-
-            }
+            $this->registerAgent($user,$request,$district);
 
         } else if ($user->iduser_role == 7) {
-            $referralAgent = Agent::where('referral_code', $request['referral_code'])->first();
-
-            $member = new Member();
-            $member->idUser = $user->idUser;
-            $member->iddistrict = $district;
-            $member->idelection_division = $agent->idelection_division;
-            $member->idpolling_booth = $agent->idpolling_booth;
-            $member->idgramasewa_division = $agent->idgramasewa_division;
-            $member->idvillage = $agent->idvillage;
-            $member->idethnicity = $request['ethnicity'];
-            $member->idreligion = $request['religion'];
-            $member->ideducational_qualification = $request['educationalQualification'];
-            $member->idnature_of_income = $request['natureOfIncome'];
-            $member->idcareer = $request['career'];
-            $member->current_agent = $referralAgent->idagent;
-            $member->is_government = $request['isGovernment'];
-            $member->isSms = 0;// non sms user
-            $member->status = 1;// always 1 for member . only change member_agent table status
-            $member->save();
-
-            $memberAgent = new MemberAgent();
-            $memberAgent->idmember = $member->idmember;
-            $memberAgent->idagent = $referralAgent->idagent;
-            $memberAgent->idoffice = User::find($referralAgent->idUser)->idoffice;
-            $memberAgent->status = 2; //pending member
-            $memberAgent->save();
-
-//            app(TaskController::class)->updateTask($member->idUser, $referralAgent->idUser);
-
+            $this->registerMember($user,$request,$district,$agent);
         }
-//        save in selected user role table end
+        // save in selected user role table end
 
-//        $token = $user->createToken('authToken')->accessToken; //generate access token
+        //save in society table
+        $this->storeUserSocieties($request,$user,$office);
+        //$token = $user->createToken('authToken')->accessToken; //generate access token
 
         return response()->json(['success' => 'User registered successfully!', 'statusCode' => 0]);
     }
+
+    public function registerAgent($user,$request,$district){
+
+        $agent = new Agent();
+        $agent->idUser = $user->idUser;
+        $agent->iddistrict = $district;
+        $agent->idelection_division = $request['electionDivision'];
+        $agent->idpolling_booth = $request['pollingBooth'];
+        $agent->idgramasewa_division = $request['gramasewaDivision'];
+        $agent->idvillage = $request['village'];
+        $agent->idethnicity = $request['ethnicity'];
+        $agent->idreligion = $request['religion'];
+        $agent->ideducational_qualification = $request['educationalQualification'];
+        $agent->idnature_of_income = $request['natureOfIncome'];
+        $agent->idcareer = $request['career'];
+        $agent->homeNo = $request['houseNo'];
+        $agent->referral_code = $this->generateReferral($user->idUser);
+        $agent->is_government = $request['isGovernment'];
+        $agent->isSms = 0;// non sms user
+        $agent->status = 2;// value for pending user
+        $agent->save();
+
+        $defaultTask = Task::where('idoffice', $user->idoffice)->where('status', 3)->where('isDefault', 1)->first();
+        if ($defaultTask != null) {
+            $task = new Task();
+            $task->idUser = $user->idUser;
+            $task->idoffice = $user->idoffice;
+            $task->assigned_by = $defaultTask->assigned_by;
+            $task->task_no = 1;
+            $task->target = $defaultTask->target;
+            $task->task_gender = $defaultTask->task_gender;
+            $task->task_job_sector = $defaultTask->task_job_sector;
+            $task->completed_amount = $defaultTask->completed_amount;
+            $task->description = $defaultTask->description;
+            $task->isDefault = 0;
+            $task->status = 2;//pending
+            $task->save();
+
+            if ($defaultTask->religions != null) {
+                foreach ($defaultTask->religions as $religion) {
+                    $new = new TaskReligion();
+                    $new->idtask = $task->idtask;
+                    $new->idreligion = $religion->idreligion;
+                    $new->status = 1;
+                    $new->save();
+                }
+            }
+
+            if ($defaultTask->ethnicities != null) {
+                foreach ($defaultTask->ethnicities as $ethnicities) {
+                    $new = new TaskEthnicity();
+                    $new->idtask = $task->idtask;
+                    $new->idethnicity = $ethnicities->idethnicity;
+                    $new->status = 1;
+                    $new->save();
+                }
+            }
+
+            if ($defaultTask->careers != null) {
+                foreach ($defaultTask->careers as $careers) {
+                    $new = new TaskCareer();
+                    $new->idtask = $task->idtask;
+                    $new->idcareer = $careers->idcareer;
+                    $new->status = 1;
+                    $new->save();
+                }
+            }
+
+            if ($defaultTask->incomes != null) {
+                foreach ($defaultTask->incomes as $incomes) {
+                    $new = new TaskIncome();
+                    $new->idtask = $task->idtask;
+                    $new->idnature_of_income = $incomes->idnature_of_income;
+                    $new->status = 1;
+                    $new->save();
+                }
+            }
+
+            if ($defaultTask->educations != null) {
+                foreach ($defaultTask->educations as $educations) {
+                    $new = new TaskEducation();
+                    $new->idtask = $task->idtask;
+                    $new->ideducational_qualification = $educations->ideducational_qualification;
+                    $new->status = 1;
+                    $new->save();
+                }
+            }
+
+            if ($defaultTask->age != null) {
+                $new = new TaskAge();
+                $new->idtask = $task->idtask;
+                $new->comparison = $defaultTask->age->comparison;
+                $new->minAge = $defaultTask->age->minAge;
+                $new->maxAge = $defaultTask->age->maxAge;
+                $new->status = 1;
+                $new->save();
+            }
+
+        }
+    }
+
+    public function registerMember($user,$request,$district,$agent){
+        $referralAgent = Agent::where('referral_code', $request['referral_code'])->first();
+
+        $member = new Member();
+        $member->idUser = $user->idUser;
+        $member->iddistrict = $district;
+        $member->idelection_division = $agent->idelection_division;
+        $member->idpolling_booth = $agent->idpolling_booth;
+        $member->idgramasewa_division = $agent->idgramasewa_division;
+        $member->idvillage = $agent->idvillage;
+        $member->idethnicity = $request['ethnicity'];
+        $member->idreligion = $request['religion'];
+        $member->ideducational_qualification = $request['educationalQualification'];
+        $member->idnature_of_income = $request['natureOfIncome'];
+        $member->idcareer = $request['career'];
+        $member->current_agent = $referralAgent->idagent;
+        $member->is_government = $request['isGovernment'];
+        $member->homeNo = $request['houseNo'];
+        $member->isSms = 0;// non sms user
+        $member->status = 1;// always 1 for member . only change member_agent table status
+        $member->save();
+
+        $memberAgent = new MemberAgent();
+        $memberAgent->idmember = $member->idmember;
+        $memberAgent->idagent = $referralAgent->idagent;
+        $memberAgent->idoffice = User::find($referralAgent->idUser)->idoffice;
+        $memberAgent->status = 2; //pending member
+        $memberAgent->save();
+
+//            app(TaskController::class)->updateTask($member->idUser, $referralAgent->idUser);
+    }
+
 
     public function generateReferral($uid)
     {
@@ -375,6 +399,38 @@ class ApiRegistrationController extends Controller
         }
     }
 
+    public function storeUserSocieties($request,$user,$office){
+
+        if($request['branchSociety'] != null){
+            $userSociety = new UserSociety();
+            $userSociety->idposition = $request['branchSociety'];
+            $userSociety->idoffice = $office;
+            $userSociety->idsociety = 1;
+            $userSociety->idUser = $user->idUser;
+            $userSociety->status = 1;
+            $userSociety->save();
+        }
+        if($request['womenSociety'] != null){
+            $userSociety = new UserSociety();
+            $userSociety->idposition = $request['womenSociety'];
+            $userSociety->idoffice = $office;
+            $userSociety->idsociety = 2;
+            $userSociety->idUser = $user->idUser;
+            $userSociety->status = 1;
+            $userSociety->save();
+        }
+        if($request['youthSociety'] != null){
+            $userSociety = new UserSociety();
+            $userSociety->idposition = $request['youthSociety'];
+            $userSociety->idoffice = $office;
+            $userSociety->idsociety = 3;
+            $userSociety->idUser = $user->idUser;
+            $userSociety->status = 1;
+            $userSociety->save();
+        }
+    }
+
+
     public function storeSmsUser(Request $request)
     {
         //validation start
@@ -396,7 +452,9 @@ class ApiRegistrationController extends Controller
             'career' => 'required|exists:career,idcareer',
             'educationalQualification' => 'required|exists:educational_qualification,ideducational_qualification',
             'natureOfIncome' => 'required|exists:nature_of_income,idnature_of_income',
-
+            'branchSociety' => 'nullable|numeric',
+            'womenSociety' => 'nullable|numeric',
+            'youthSociety' => 'nullable|numeric',
 
         ], [
             'nic.required' => 'NIC No should be provided!',
@@ -436,6 +494,9 @@ class ApiRegistrationController extends Controller
             'educationalQualification.exists' => 'Educational qualification invalid!',
             'natureOfIncome.required' => 'Nature of income should be provided!',
             'natureOfIncome.exists' => 'Nature of income invalid!',
+            'branchSociety.numeric' => 'Branch society invalid!',
+            'womenSociety.numeric' => 'Women\'s society invalid!',
+            'youthSociety.numeric' => 'Youth invalid!',
         ]);
 
         if ($validator->fails()) {
@@ -464,7 +525,6 @@ class ApiRegistrationController extends Controller
             return response()->json(['errors' => ['title'=>'Please re-check title and gender!']]);
 
         }
-
         //validation end
 
         //save in user table
@@ -501,6 +561,7 @@ class ApiRegistrationController extends Controller
         $member->ideducational_qualification = $request['educationalQualification'];
         $member->idnature_of_income = $request['natureOfIncome'];
         $member->idcareer = $request['career'];
+        $member->homeNo = $request['houseNo'];
         $member->current_agent = $agent->idagent;
         $member->is_government = $request['isGovernment'];
         $member->isSms = 1;// sms user
@@ -514,6 +575,17 @@ class ApiRegistrationController extends Controller
         $memberAgent->status = 1; //pending member
         $memberAgent->save();
 
+        //save in society table
+        $this->storeUserSocieties($request,$user,$office);
+
+        $welcome = WelcomeSms::where('idoffice', Auth::user()->idoffice)->where('status', 1)->latest()->first();
+        $message = $welcome->body. '  You have registerd with your NIC no : '. $request['nic'];
+
+        $client = new Client();
+        $res = $client->get("https://smsserver.textorigins.com/Send_sms?src=CYCLOMAX236&email=cwimagefactory@gmail.com&pwd=cwimagefactory&msg=".$message."&dst=".$user->contact_no1."");
+        $result = json_decode($res->getBody(), true);
+        $results[] = $result;
+
 //        app(TaskController::class)->updateTask($member->idUser, $agent->idUser);
 
 //        save in selected user role table end
@@ -522,4 +594,61 @@ class ApiRegistrationController extends Controller
 
         return response()->json(['success' => 'User registered successfully!', 'statusCode' => 0]);
     }
+
+    public function getRegistrationForm(Request $request){
+        $apiLang = $request['lang'];
+        $fallBack = 'name_en';
+
+
+        if ($apiLang == 'si') {
+            $lang = 'name_si';
+        } elseif ($apiLang == 'ta') {
+            $lang = 'name_ta';
+        } else {
+            $lang = 'name_en';
+        }
+
+        if(Auth::user()->iduser_role != 6){
+            return response()->json(['error' => 'You are not an agent', 'statusCode' => -99]);
+        }
+
+        $agent = Auth::user()->agent;
+
+        $titles = UserTitle::where('status', 1)->select(['iduser_title', 'name_en', $lang, 'gender'])->get();
+        $titles = app(ApiUserController::class)->filterLanguage($titles, $lang, $fallBack, 'iduser_title');
+
+        $careers = Career::where('status', 1)->select(['idcareer', 'name_en', $lang])->get();
+        $careers = app(ApiUserController::class)->filterLanguage($careers, $lang, $fallBack, 'idcareer');
+
+        $ethnicities = Ethnicity::where('status', 1)->select(['idethnicity', 'name_en', $lang])->get();
+        $ethnicities = app(ApiUserController::class)->filterLanguage($ethnicities, $lang, $fallBack, 'idethnicity');
+
+        $religions = Religion::where('status', 1)->select(['idreligion', 'name_en', $lang])->get();
+        $religions = app(ApiUserController::class)->filterLanguage($religions, $lang, $fallBack, 'idreligion');
+
+        $educationQualifications = EducationalQualification::where('status', 1)->select(['ideducational_qualification', 'name_en', $lang])->get();
+        $educationQualifications = app(ApiUserController::class)->filterLanguage($educationQualifications, $lang, $fallBack, 'ideducational_qualification');
+
+        $natureOfIncomes = NatureOfIncome::where('status', 1)->select(['idnature_of_income', 'name_en', $lang])->get();
+        $natureOfIncomes = app(ApiUserController::class)->filterLanguage($natureOfIncomes, $lang, $fallBack, 'idnature_of_income');
+
+        $positions = Position::where('status',1)->select(['idposition', $lang, 'name_en'])->get();
+        $positions = app(ApiUserController::class)->filterLanguage($positions, $lang, $fallBack, 'idposition');
+
+        if ($agent != null) {
+            return response()->json(['success' =>
+                [   'titles' => $titles,
+                    'careers' => $careers,
+                    'ethnicities' => $ethnicities,
+                    'religions' => $religions,
+                    'educationQualifications' => $educationQualifications,
+                    'natureOfIncomes' => $natureOfIncomes,
+                    'positions'=>$positions
+                ], 'statusCode' => 0], 200, ['Content-Type' => 'application/json;charset=UTF-8', 'Charset' => 'utf-8'],
+                JSON_UNESCAPED_UNICODE);
+        } else {
+            return response()->json(['error' => 'Agent invalid!', 'statusCode' => -99]);
+        }
+    }
+
 }

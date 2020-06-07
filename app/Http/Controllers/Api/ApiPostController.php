@@ -49,13 +49,13 @@ class ApiPostController extends Controller
             $q->whereHas('postVillages', function ($q) use ($user) {
                 $q->where('idvillage', $user->getType->idvillage);
             })->orWhereHas('postGramasewaDivision', function ($q) use ($user) {
-                $q->where('idgramasewa_division', $user->getType->idgramasewa_division)->where('allChild', 1);
+                $q->where('idgramasewa_division', $user->getType->idgramasewa_division)->orWhere('allChild', 1);
             })->orWhereHas('postPollingBooths', function ($q) use ($user) {
-                $q->where('idpolling_booth', $user->getType->idpolling_booth)->where('allChild', 1);
+                $q->where('idpolling_booth', $user->getType->idpolling_booth)->orWhere('allChild', 1);
             })->orWhereHas('postElectionDivisions', function ($q) use ($user) {
-                $q->where('idelection_division', $user->getType->idelection_division)->where('allChild', 1);
+                $q->where('idelection_division', $user->getType->idelection_division)->orWhere('allChild', 1);
             })->orWhereHas('postDistrict', function ($q) use ($user) {
-                $q->where('iddistrict', $user->getType->iddistrict)->where('allChild', 1);
+                $q->where('iddistrict', $user->getType->iddistrict)->orWhere('allChild', 1);
             });
         })->where(function ($q) use ($user) {
             $q->orWhere('ethnicities', 0)->orWhereHas('postEthnicities', function ($q) use ($user) {
@@ -71,11 +71,11 @@ class ApiPostController extends Controller
             });
         })->where(function ($q) use ($user) {
             $q->orWhere('educations', 0)->orWhereHas('postEducations', function ($q) use ($user) {
-                $q->where('ideducational_qualification', $user->getType->idcareer);
+                $q->where('ideducational_qualification', $user->getType->ideducational_qualification);
             });
         })->where(function ($q) use ($user) {
             $q->orWhere('incomes', 0)->orWhereHas('postIncomes', function ($q) use ($user) {
-                $q->where('idnature_of_income', $user->getType->idcareer);
+                $q->where('idnature_of_income', $user->getType->idnature_of_income);
             });
         })->where(function ($q) use ($user) {
             $q->where('job_sector', null)->orWhere('job_sector',$user->getType->is_government);
