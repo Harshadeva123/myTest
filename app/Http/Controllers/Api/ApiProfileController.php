@@ -14,6 +14,12 @@ class ApiProfileController extends Controller
 
         if($user->iduser_role == 6){
             $voting = VotersCount::where('idoffice',Auth::user()->idoffice)->select(['total','forecasting','houses'])->first();
+            if($voting == null){
+                $voting['total'] = 0;
+                $voting['forecasting'] = 0;
+                $voting['houses'] = 0;
+
+            }
             return response()->json(['success' => ['referral_code'=>Auth::user()->agent->referral_code,'village_meta'=>$voting], 'statusCode' => 0]);
         }
         else if($user->iduser_role == 7){

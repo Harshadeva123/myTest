@@ -27,6 +27,10 @@ class Task extends Model
         return $this->belongsTo(User::class,'idUser');
     }
 
+    public function taskTypes(){
+        return $this->belongsTo(TaskTypes::class,'idtask_type');
+    }
+
     public function assigned(){
         return $this->belongsTo(User::class,'assigned_by');
     }
@@ -77,6 +81,25 @@ class Task extends Model
         return $this->hasMany(TaskEducation::class,'idtask');
     }
 
+    public function gender(){
+        return $this->hasMany(TaskGender::class,'idtask');
+    }
+
+    public function job(){
+        return $this->hasMany(TaskJobSector::class,'idtask');
+    }
+
+    public function branchSociety(){
+        return $this->hasMany(TaskBranchSociety::class,'idtask');
+    }
+
+    public function womensSociety(){
+        return $this->hasMany(TaskWomens::class,'idtask');
+    }
+
+    public function youthSociety(){
+        return $this->hasMany(TaskYouth::class,'idtask');
+    }
     public function age(){
         return $this->hasOne(TaskAge::class,'idtask');
     }

@@ -7,14 +7,21 @@ use App\EducationalQualification;
 use App\Ethnicity;
 use App\Member;
 use App\NatureOfIncome;
+use App\Position;
 use App\Religion;
 use App\Task;
 use App\TaskAge;
+use App\TaskBranchSociety;
 use App\TaskCareer;
 use App\TaskEducation;
 use App\TaskEthnicity;
+use App\TaskGender;
 use App\TaskIncome;
+use App\TaskJobSector;
 use App\TaskReligion;
+use App\TaskTypes;
+use App\TaskWomens;
+use App\TaskYouth;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,6 +36,7 @@ class TaskController extends Controller
         $incomes = NatureOfIncome::where('status', 1)->get();
         $educations = EducationalQualification::where('status', 1)->get();
         $ethnicities = Ethnicity::where('status', 1)->get();
+        $positions = Position::where('status', 1)->get();
         $searchCol = $request['searchCol'];
         $searchText = $request['searchText'];
         $query = User::query();
@@ -46,8 +54,269 @@ class TaskController extends Controller
             }
         }
         $agents = $query->where('idoffice', Auth::user()->idoffice)->where('iduser_role', 6)->where('status', 1)->paginate(10);
-        return view('task.assign_task')->with(['title' => 'Assign Task', 'agents' => $agents, 'careers' => $careers, 'religions' => $religions, 'incomes' => $incomes, 'educations' => $educations, 'ethnicities' => $ethnicities]);
+        return view('task.assign_task')->with(['positions' => $positions, 'title' => 'Assign Budget', 'agents' => $agents, 'careers' => $careers, 'religions' => $religions, 'incomes' => $incomes, 'educations' => $educations, 'ethnicities' => $ethnicities]);
     }
+
+    public function storeDefault(Request $request)
+    {
+
+        $validationMessages = [
+            'totalBudget.required' => 'Number of members should be provided!',
+            'taskType.required' => 'Task Type should be provided!',
+            'totalBudget.not_in' => 'Number of members should be grater than zero (0)!',
+        ];
+
+        $validator = \Validator::make($request->all(), [
+            'totalBudget' => 'required|not_in:0',
+            'taskType' => 'required',
+        ], $validationMessages);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()->all()]);
+        }
+        $userId = Auth::user()->idUser;
+        $isEthnicity = $request['isEthnicity'] == 'true' ? $request['isEthnicity'] : 0;
+        $isReligion = $request['isReligion'] == 'true' ? $request['isReligion'] : 0;
+        $isCareer = $request['isCareer'] == 'true' ? $request['isCareer'] : 0;
+        $isIncome = $request['isIncome'] == 'true' ? $request['isIncome'] : 0;
+        $isEducational = $request['isEducational'] == 'true' ? $request['isEducational'] : 0;
+        $isJobSector = $request['isJobSector'] == 'true' ? $request['isJobSector'] : 0;
+        $isGender = $request['isGender'] == 'true' ? $request['isGender'] : 0;
+        $isBranch = $request['isBranch'] == 'true' ? $request['isBranch'] : 0;
+        $isWomens = $request['isWomens'] == 'true' ? $request['isWomens'] : 0;
+        $isYouth = $request['isYouth'] == 'true' ? $request['isYouth'] : 0;
+        //Validation end
+
+
+        $isExist = Task::where('idoffice', Auth::user()->idoffice)->where('idtask_type', $request['taskType'])->where('isDefault', 1)->first();
+        if ($isExist != null) {
+            $isExist->ethnicities()->delete();
+            $isExist->careers()->delete();
+            $isExist->incomes()->delete();
+            $isExist->religions()->delete();
+            $isExist->educations()->delete();
+            $isExist->gender()->delete();
+            $isExist->job()->delete();
+            $isExist->youthSociety()->delete();
+            $isExist->womensSociety()->delete();
+            $isExist->branchSociety()->delete();
+            $isExist->age()->delete();
+            $isExist->delete();
+        }
+
+
+        //save in task table
+        $task = new Task();
+        $task->idUser = $userId;
+        $task->assigned_by = Auth::user()->idUser;
+        $task->idoffice = Auth::user()->idoffice;
+        $task->idtask_type = $request['taskType'];
+        $task->isDefault = 1;
+        $task->ethnicity = $isEthnicity;
+        $task->religion = $isReligion;
+        $task->career = $isCareer;
+        $task->income = $isIncome;
+        $task->education = $isEducational;
+        $task->job_sector = $isJobSector;
+        $task->gender = $isGender;
+        $task->branch = $isBranch;
+        $task->womens = $isWomens;
+        $task->youth = $isYouth;
+        $task->target = intval($request['totalBudget']);
+        $task->completed_amount = 0;
+        $task->status = 1;
+        $task->save();
+        //save in task table end
+
+
+
+//        if ($isReligion != null) {
+//            $religions = $request['religionArray'];
+//            if ($religions != null) {
+//                foreach ($religions as $religion) {
+//                    $taskCareer = new TaskEthnicity();
+//                    $taskCareer->idtask = $task->idtask;
+//                    $taskCareer->idethnicity = $ethnicity['id'];
+//                    $taskCareer->value = $ethnicity['value'];
+//                    $taskCareer->completed = 0;
+//                    $taskCareer->status = 1;
+//                    $taskCareer->save();
+//
+//                }
+//            }
+//        }
+
+        //save in community tables
+//        if ($request['minAge'] != null) {
+//            $taskAge = new TaskAge();
+//            $taskAge->idtask = $task->idtask;
+//            $taskAge->comparison = $request['ageComparison'];
+//            $taskAge->minAge = $request['minAge'];
+//            $taskAge->maxAge = $request['maxAge'];
+//            $taskAge->status = 1;
+//            $taskAge->save();
+//        }
+
+
+        if ($isEthnicity != null) {
+            $ethnicities = $request['ethnicityArray'];
+            if ($ethnicities != null) {
+                foreach ($ethnicities as $ethnicity) {
+                    $taskEthnicity = new TaskEthnicity();
+                    $taskEthnicity->idtask = $task->idtask;
+                    $taskEthnicity->idethnicity = $ethnicity['id'];
+                    $taskEthnicity->value = $ethnicity['value'];
+                    $taskEthnicity->completed = 0;
+                    $taskEthnicity->status = 1;
+                    $taskEthnicity->save();
+
+                }
+            }
+        }
+
+        if ($isCareer != null) {
+            $careers = $request['careerArray'];
+
+            if ($careers != null) {
+                foreach ($careers as $career) {
+                    $taskCareer = new TaskCareer();
+                    $taskCareer->idtask = $task->idtask;
+                    $taskCareer->idcareer = $career['id'];
+                    $taskCareer->value = $career['value'];
+                    $taskCareer->completed = 0;
+                    $taskCareer->status = 1;
+                    $taskCareer->save();
+
+
+                }
+            }
+        }
+
+        if ($isReligion != null) {
+            $religions = $request['religionArray'];
+            if ($religions != null) {
+                foreach ($religions as $religion) {
+                    $taskReligion = new TaskReligion();
+                    $taskReligion->idtask = $task->idtask;
+                    $taskReligion->idreligion = $religion['id'];
+                    $taskReligion->value = $religion['value'];
+                    $taskReligion->completed = 0;
+                    $taskReligion->status = 1;
+                    $taskReligion->save();
+                }
+            }
+        }
+
+        if($isEducational) {
+            $educations = $request['educationArray'];
+            if ($educations != null) {
+                foreach ($educations as $education) {
+                    $taskEducation = new TaskEducation();
+                    $taskEducation->idtask = $task->idtask;
+                    $taskEducation->ideducational_qualification = $education['id'];
+                    $taskEducation->value = $education['value'];
+                    $taskEducation->completed = 0;
+                    $taskEducation->status = 1;
+                    $taskEducation->save();
+                }
+            }
+        }
+
+        if($isIncome) {
+            $incomes = $request['incomeArray'];
+            if ($incomes != null) {
+                foreach ($incomes as $income) {
+                    $taskIncome = new TaskIncome();
+                    $taskIncome->idtask = $task->idtask;
+                    $taskIncome->idnature_of_income = $income['id'];
+                    $taskIncome->value = $income['value'];
+                    $taskIncome->completed = 0;
+                    $taskIncome->status = 1;
+                    $taskIncome->save();
+                }
+            }
+        }
+
+        if($isGender) {
+            $genders = $request['genderArray'];
+            if ($genders != null) {
+                foreach ($genders as $gender) {
+                    $taskIncome = new TaskGender();
+                    $taskIncome->idtask = $task->idtask;
+                    $taskIncome->gender = $gender['id'];
+                    $taskIncome->value = $gender['value'];
+                    $taskIncome->completed = 0;
+                    $taskIncome->status = 1;
+                    $taskIncome->save();
+                }
+            }
+        }
+
+        if($isJobSector) {
+            $jobs = $request['jobSectorArray'];
+            if ($jobs != null) {
+                foreach ($jobs as $job) {
+                    $taskJob = new TaskJobSector();
+                    $taskJob->idtask = $task->idtask;
+                    $taskJob->job_sector = $job['id'];
+                    $taskJob->value = $job['value'];
+                    $taskJob->completed = 0;
+                    $taskJob->status = 1;
+                    $taskJob->save();
+                }
+            }
+        }
+
+        if($isBranch) {
+            $branches = $request['branchArray'];
+            if ($branches != null) {
+                foreach ($branches as $branche) {
+                    $taskJob = new TaskBranchSociety();
+                    $taskJob->idtask = $task->idtask;
+                    $taskJob->idposition = $branche['id'];
+                    $taskJob->value = $branche['value'];
+                    $taskJob->completed = 0;
+                    $taskJob->status = 1;
+                    $taskJob->save();
+                }
+            }
+        }
+
+        if($isWomens) {
+            $womens = $request['womenArray'];
+            if ($womens != null) {
+                foreach ($womens as $women) {
+                    $taskJob = new TaskWomens();
+                    $taskJob->idtask = $task->idtask;
+                    $taskJob->idposition = $women['id'];
+                    $taskJob->value = $women['value'];
+                    $taskJob->completed = 0;
+                    $taskJob->status = 1;
+                    $taskJob->save();
+                }
+            }
+        }
+
+        if($isYouth) {
+            $youths = $request['youthArray'];
+            if ($youths != null) {
+                foreach ($youths as $youth) {
+                    $taskJob = new TaskYouth();
+                    $taskJob->idtask = $task->idtask;
+                    $taskJob->idposition = $youth['id'];
+                    $taskJob->value = $youth['value'];
+                    $taskJob->completed = 0;
+                    $taskJob->status = 1;
+                    $taskJob->save();
+                }
+            }
+        }
+
+        //save in community tables end
+        return response()->json(['success' => 'Default task saved successfully']);
+
+    }
+
 
     public function view(Request $request)
     {
@@ -76,7 +345,7 @@ class TaskController extends Controller
         }
         $tasks = $query->where('assigned_by', Auth::user()->idUser)->where('isDefault', 0)->latest()->paginate(10);
 
-        return view('task.view_tasks', ['title' => __('View Tasks'), 'tasks' => $tasks]);
+        return view('task.view_tasks', ['title' => __('View Budget'), 'tasks' => $tasks]);
     }
 
     public function getById(Request $request)
@@ -293,7 +562,9 @@ class TaskController extends Controller
         $incomes = NatureOfIncome::where('status', 1)->get();
         $educations = EducationalQualification::where('status', 1)->get();
         $ethnicities = Ethnicity::where('status', 1)->get();
-        return view('task.default')->with(['default' => $default, 'title' => 'Default Task', 'careers' => $careers, 'religions' => $religions, 'incomes' => $incomes, 'educations' => $educations, 'ethnicities' => $ethnicities]);
+        $positions = Position::where('status', 1)->get();
+        $taskTypes = TaskTypes::where('status', 1)->get();
+        return view('task.default')->with(['taskTypes' => $taskTypes, 'positions' => $positions, 'default' => $default, 'title' => 'Default Budget', 'careers' => $careers, 'religions' => $religions, 'incomes' => $incomes, 'educations' => $educations, 'ethnicities' => $ethnicities]);
 
     }
 
@@ -370,9 +641,10 @@ class TaskController extends Controller
         }
     }
 
-    public function isComplete($id){
+    public function isComplete($id)
+    {
         $task = Task::find(intval($id));
-        if($task->target <= $task->completed_amount){
+        if ($task->target <= $task->completed_amount) {
             $task->status = 1;
             $task->save();
         }

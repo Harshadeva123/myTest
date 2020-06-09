@@ -14,6 +14,11 @@
 //Route::get('/linkstorage', function () {
 //    Artisan::call('storage:link')
 //});
+Route::get('test_sms', function (){
+    $client = new \GuzzleHttp\Client();
+    $res = $client->get("https://smsserver.textorigins.com/Send_sms?src=CYCLOMAX236&email=cwimagefactory@gmail.com&pwd=cwimagefactory&msg=testSms-Harsha&dst=0717275539");
+    return json_decode($res->getBody(), true);
+})->name('testSms');
 
 Auth::routes();
 
@@ -124,13 +129,13 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
             Route::get('view_posts_by_category', 'PostController@viewByCategory')->name('viewPostsByCategory');
 
             //Task
-            Route::get('assign_task', 'TaskController@index')->name('assignTask');
-            Route::get('default_task', 'TaskController@createDefault')->name('createDefaultTask');
-            Route::get('view_task', 'TaskController@view')->name('viewTasks');
-            Route::post('get_task_by_id', 'TaskController@getById')->name('getTaskById');
-            Route::post('save_task', 'TaskController@store')->name('saveTask');
-            Route::post('deactivate_task', 'TaskController@deactivate')->name('deactivateTask');
-            Route::post('activate_task', 'TaskController@activate')->name('activateTask');
+            Route::get('assign_budget', 'TaskController@index')->name('assignTask');
+            Route::get('default_budget', 'TaskController@createDefault')->name('createDefaultTask');
+            Route::get('view_budget', 'TaskController@view')->name('viewTasks');
+            Route::post('get_budget_by_id', 'TaskController@getById')->name('getTaskById');
+            Route::post('save_budget', 'TaskController@storeDefault')->name('saveTask');
+            Route::post('deactivate_budget', 'TaskController@deactivate')->name('deactivateTask');
+            Route::post('activate_budget', 'TaskController@activate')->name('activateTask');
 
             //Post Response
             Route::post('view_comments', 'PostResponseController@viewComments')->name('viewComments');

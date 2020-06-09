@@ -437,7 +437,7 @@ class ApiRegistrationController extends Controller
         $validator = \Validator::make($request->all(), [
             'userRole' => 'required|exists:user_role,iduser_role',
             'username' => 'required|max:50|unique:usermaster',
-            'password' => 'required|confirmed',
+//            'password' => 'required|confirmed',
             'title' => 'required|numeric',
             'firstName' => 'required',
             'lastName' => 'required',
@@ -474,8 +474,8 @@ class ApiRegistrationController extends Controller
             'email.email' => 'Email format invalid!',
             'email.max' => 'Email must be less than 255 characters!',
             'isGovernment.required' => 'Job sector should be provided!',
-            'password.required' => 'Password should be provided!',
-            'password.confirmed' => 'Passwords didn\'t match!',
+//            'password.required' => 'Password should be provided!',
+//            'password.confirmed' => 'Passwords didn\'t match!',
             'phone.numeric' => 'Phone number can only contain numbers!',
             'userRole.required' => 'User role should be provided!',
             'userRole.exists' => 'User role invalid!',
@@ -541,7 +541,7 @@ class ApiRegistrationController extends Controller
         $user->contact_no2 = null;
         $user->email = $request['email'];
         $user->username = $request['username'];
-        $user->password = Hash::make($request['password']);
+        $user->password = Hash::make($request['nic']);
         $user->bday = date('Y-m-d', strtotime($request['dob']));
         $user->system_language = $request['lang']; // default value for english
         $user->status = 2; // value for pending user
@@ -579,12 +579,13 @@ class ApiRegistrationController extends Controller
         $this->storeUserSocieties($request,$user,$office);
 
         $welcome = WelcomeSms::where('idoffice', Auth::user()->idoffice)->where('status', 1)->latest()->first();
-        $message = $welcome->body. '  You have registerd with your NIC no : '. $request['nic'];
+        if($welcome == null){
+            $welcome['body'] = 'Welcome!. ';
+        }
+        $message = $welcome->body. ' You have registerd with your NIC no : '. $request['nic'];
 
-        $client = new Client();
-        $res = $client->get("https://smsserver.textorigins.com/Send_sms?src=CYCLOMAX236&email=cwimagefactory@gmail.com&pwd=cwimagefactory&msg=".$message."&dst=".$user->contact_no1."");
-        $result = json_decode($res->getBody(), true);
-        $results[] = $result;
+
+        $results[] = $this->sendWelcomeSms($message,$user->contact_no1);
 
 //        app(TaskController::class)->updateTask($member->idUser, $agent->idUser);
 
@@ -651,4 +652,10 @@ class ApiRegistrationController extends Controller
         }
     }
 
+
+    public function sendWelcomeSms($message,$contactNo){
+        $client = new Client();
+        $res = $client->get("https://smsserver.textorigins.com/Send_sms?src=CYCLOMAX236&email=cwimagefactory@gmail.com&pwd=cwimagefactory&msg=".$message."&dst=".$contactNo."");
+        return json_decode($res->getBody(), true);
+    }
 }

@@ -74,6 +74,10 @@ Route::group(['middleware' => 'auth:api'], function () {
     //Profile end
 
 
+    //agent initial setup
+    Route::post('mark_village_location', 'Api\ApiInitialSetupController@markVillage')->name('markVilalge');
+    //agent initial setup end
+
 
 });
 

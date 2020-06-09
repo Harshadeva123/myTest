@@ -250,13 +250,13 @@
 
                         <li class="has_sub">
                             <a href="javascript:void(0);" class="waves-effect"><i
-                                        class="dripicons-suitcase"></i><span>{{ __('Task') }}
+                                        class="dripicons-suitcase"></i><span>{{ __('Budget') }}
                                     <span
                                             class="pull-right"><i class="mdi mdi-chevron-right"></i></span> </span></a>
                             <ul class="list-unstyled">
-                                <li><a href="{{route('createDefaultTask')}}">{{ __('Default Task') }}</a></li>
-                                <li><a href="{{route('assignTask')}}">{{ __('Assign Task') }}</a></li>
-                                <li><a href="{{route('viewTasks')}}">{{ __('View Task') }}</a></li>
+                                <li><a href="{{route('createDefaultTask')}}">{{ __('Default Budget') }}</a></li>
+                                <li><a href="{{route('assignTask')}}">{{ __('Assign Budget') }}</a></li>
+                                <li><a href="{{route('viewTasks')}}">{{ __('View Budget') }}</a></li>
                             </ul>
                         </li>
                     @endif

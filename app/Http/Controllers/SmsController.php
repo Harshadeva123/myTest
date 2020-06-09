@@ -210,6 +210,8 @@ class SmsController extends Controller
 
         $query = User::query();
 
+        $query = $query->where('idoffice',Auth::user()->idoffice);
+
         if ($villages != null) {
             $query->whereHas('member', function ($q) use ($villages) {
                 $q->whereIn('idvillage', $villages)->where('isSms', 1);
@@ -274,6 +276,9 @@ class SmsController extends Controller
                 $q->where('is_government', $jobSector)->where('isSms', 1);
             });
         }
+        $query->whereHas('memberAgents', function ($q) use ($religions) {
+            $q->whereIn('idoffice', $religions)->where('status', 1);
+        });
 
         $users = $query->get();
 
