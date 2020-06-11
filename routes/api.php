@@ -66,7 +66,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     //Save SMS member end
 
     //Voters
-    Route::post('store_voters_count', 'Api\ApiTaskController@storeVotersCount')->name('storeVotersCount');
+    Route::post('store_voters_count', 'Api\ApiInitialSetupController@storeVotersCount')->name('storeVotersCount');
     //Voters end
 
     //Profile

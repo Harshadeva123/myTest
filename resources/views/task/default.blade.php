@@ -15,97 +15,6 @@
     <div class="page-content-wrapper">
         <div class="container-fluid">
 
-            <div class="card firstPage">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-9 .d-sm-none ">
-                        </div>
-                        <div class="col-md-3  p-sm-2">
-                            <button onclick="goSecondPage();"
-                                    class="btn btn-primary float-right btn-block ">{{ __('Change Default Task') }}
-                            </button>
-                        </div>
-
-                    </div>
-                    <div class="row">
-                        <div class="form-group col-md-3 ">
-                            <div id="membersV"></div>
-                            <label for="membersV" style="margin-left: 5px;"
-                                   class="control-label">{{ __('Target') }}</label>
-                        </div>
-                        <div id="ageDiv" class="form-group col-md-4 ">
-                            <label for="ageComparisonV" style="margin-left: 5px;"
-                                   class="control-label">{{ __('Age') }}</label>
-                            <div class="input-group">
-                                <div class="input-group-append">
-                                    <select class="form-control  " name="ageComparisonV"
-                                            onchange="ageChangedV(this.value)"
-                                            readonly disabled id="ageComparisonV" required>
-                                        <option value="" selected></option>
-                                        <option value="0">EQUAL TO</option>
-                                        <option value="1">LESS THAN</option>
-                                        <option value="2">GRATER THAN</option>
-                                        <option value="3">BETWEEN</option>
-                                    </select>
-                                </div>
-                                <input class="form-control " type="number"
-                                       readonly
-                                       id="minAgeV" placeholder=""
-                                       name="minAgeV">
-                                <input style="display: none;" class="form-control " type="number"
-                                       readonly
-                                       id="maxAgeV" placeholder=""
-                                       name="maxAgeV">
-
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div id="ethnicityDiv" class="form-group col-md-4">
-                            <label for="ethnicitiesV"
-                                   class="control-label">{{ __('Ethnicit') }}</label>
-
-                            <div id="ethnicitiesV"></div>
-                        </div>
-                        <div id="religionsDiv" class="form-group col-md-4">
-                            <label for="religionsV"
-                                   class="control-label">{{ __('Religion') }}</label>
-
-                            <div id="religionsV"></div>
-                        </div>
-                        <div id="incomesDiv" class="form-group col-md-4">
-                            <label for="incomesV"
-                                   class="control-label">{{ __('Nature of income') }}</label>
-
-                            <div id="incomesV"></div>
-                        </div>
-                        <div id="educationsDiv" class="form-group col-md-4">
-                            <label for="educationsV"
-                                   class="control-label">{{ __('Educational Qualification') }}</label>
-
-                            <div id="educationsV"></div>
-                        </div>
-                        <div id="careerDiv" class="form-group col-md-8">
-                            <label for="careersV"
-                                   class="control-label">{{ __('Career') }}</label>
-
-                            <div id="careersV"></div>
-                        </div>
-                        <div id="genderDiv" class="form-group col-md-4">
-                            <label style="margin-left: 5px;"
-                                   class="control-label">{{ __('Gender') }}</label>
-                            <div id="genderValueDiv"></div>
-                        </div>
-
-                        <div id="jobDiv" class="form-group col-md-4">
-                            <label style="margin-left: 5px;"
-                                   class="control-label">{{ __('Job Sector') }}</label>
-                            <div id="jobSectorDiv"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <div class="card secondPage">
                 <form id="form1" method="GET">
 
@@ -132,7 +41,7 @@
                                        class="control-label">{{ __('Total Budget') }}</label>
                                 <div class="input-group">
 
-                                    <input class="form-control " type="number"
+                                    <input class="form-control totalBudget" type="number"
                                            oninput="this.value = this.value < 0 ? 0 : this.value" min="0"
                                            id="totalBudget"
                                            onchange="setCustomValidity('')"
@@ -149,42 +58,14 @@
                                 </div>
                             </div>
 
-
-                            {{--<div class="form-group col-md-4 ">--}}
-                            {{--<label for="ageComparison" style="margin-left: 5px;"--}}
-                            {{--class="control-label">{{ __('Age') }}</label>--}}
-                            {{--<div class="input-group">--}}
-                            {{--<div class="input-group-append">--}}
-                            {{--<select class="form-control  " name="ageComparison"--}}
-                            {{--onchange="ageChanged(this.value)"--}}
-                            {{--id="ageComparison" required>--}}
-                            {{--<option value="0" selected>EQUAL TO</option>--}}
-                            {{--<option value="1">LOWER</option>--}}
-                            {{--<option value="2">GRATER</option>--}}
-                            {{--<option value="3">BETWEEN</option>--}}
-                            {{--</select>--}}
-                            {{--</div>--}}
-                            {{--<input class="form-control " type="number"--}}
-                            {{--oninput="this.value = this.value < 0 ? 0 : this.value" min="0"--}}
-                            {{--id="minAgeV" placeholder="Age"--}}
-                            {{--name="minAge">--}}
-                            {{--<input class="form-control " type="number"--}}
-                            {{--oninput="this.value = this.value < 0 ? 0 : this.value" min="0"--}}
-                            {{--id="maxAgeV" placeholder="Max Age"--}}
-                            {{--name="maxAge">--}}
-
-                            {{--</div>--}}
-                            {{--</div>--}}
                         </div>
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="row">
                                     <div class="col-md-12">
                                         <h5 data-toggle="collapse"
-                                            href="#multiCollapseExample1" aria-expanded="false"
-                                            aria-controls="multiCollapseExample1"
-                                            title="This task will automatically assign to all agent when they were approved."
-                                            class="text-secondary"><input id="isEthnicity" type="checkbox"
+
+                                            class="text-secondary"><input  data-controls="multiCollapseExample1" id="isEthnicity" type="checkbox" class="checkBox"
                                                                           name="isEthnicity" value="1"> Ethnicity
                                         </h5>
 
@@ -197,9 +78,7 @@
                                                     <input data-id="{{$ethnicities->idethnicity}}"
                                                            class="form-control ethnicity col-md-2" type="number"
                                                            oninput="this.value = this.value < 0 ? 0 : this.value"
-                                                           min="0"
-                                                           id="members"
-                                                           name="members">
+                                                           min="0">
                                                     <div class="input-group-append">
                                                         <span class="input-group-text">%</span>
                                                     </div>
@@ -212,11 +91,8 @@
                             <div class="col-md-12">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <h5 data-toggle="collapse"
-                                            href="#multiCollapseExample2" aria-expanded="false"
-                                            aria-controls="multiCollapseExample2"
-                                            title="This task will automatically assign to all agent when they were approved."
-                                            class="text-secondary"><input id="isReligion" type="checkbox"
+                                        <h5
+                                            class="text-secondary"><input  data-controls="multiCollapseExample2" id="isReligion" type="checkbox" class="checkBox"
                                                                           name="isReligion" value="1"> Religion
                                         </h5>
 
@@ -244,11 +120,9 @@
                             <div class="col-md-12">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <h5 data-toggle="collapse"
-                                            href="#multiCollapseExample3" aria-expanded="false"
-                                            aria-controls="multiCollapseExample3"
-                                            title="This task will automatically assign to all agent when they were approved."
-                                            class="text-secondary"><input id="isIncome" type="checkbox" name="isIncome"
+                                        <h5
+
+                                            class="text-secondary"><input  data-controls="multiCollapseExample3" id="isIncome" type="checkbox" class="checkBox" name="isIncome"
                                                                           value="1"> Nature of income
                                         </h5>
 
@@ -276,11 +150,9 @@
                             <div class="col-md-12">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <h5 data-toggle="collapse"
-                                            href="#multiCollapseExample4" aria-expanded="false"
-                                            aria-controls="multiCollapseExample4"
-                                            title="This task will automatically assign to all agent when they were approved."
-                                            class="text-secondary"><input id="isEducational" type="checkbox"
+                                        <h5
+
+                                            class="text-secondary"><input data-controls="multiCollapseExample4" id="isEducational" type="checkbox" class="checkBox"
                                                                           name="isEducational" value="1"> Educational
                                             Qualification
                                         </h5>
@@ -309,11 +181,9 @@
                             <div class="col-md-12">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <h5 data-toggle="collapse"
-                                            href="#multiCollapseExample5" aria-expanded="false"
-                                            aria-controls="multiCollapseExample5"
-                                            title="This task will automatically assign to all agent when they were approved."
-                                            class="text-secondary"><input id="isCareer" type="checkbox" name="isCareer"
+                                        <h5
+
+                                            class="text-secondary"><input  data-controls="multiCollapseExample5" id="isCareer" type="checkbox" class="checkBox" name="isCareer"
                                                                           value="1"> Career
                                         </h5>
 
@@ -322,13 +192,10 @@
                                         @if($careers != null)
                                             @foreach($careers as $career)
                                                 <div class="row">
-                                                    <h6 class="col-md-3 ml-3">{{strtoupper($career->name_en)}}</h6>
+                                                    <h6 class="col-md-6 ml-3">{{strtoupper($career->name_en)}}</h6>
                                                     <input data-id="{{$career->idcareer}}"
                                                            class="form-control careers col-md-2" type="number"
-                                                           oninput="this.value = this.value < 0 ? 0 : this.value"
-                                                           min="0"
-                                                           id="members"
-                                                           name="members">
+                                                           min="0">
                                                     <div class="input-group-append">
                                                         <span class="input-group-text">%</span>
                                                     </div>
@@ -341,42 +208,31 @@
                             <div class="col-md-12">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <h5 data-toggle="collapse"
-                                            href="#multiCollapseExample6" aria-expanded="false"
-                                            aria-controls="multiCollapseExample6"
-                                            title="This task will automatically assign to all agent when they were approved."
+                                        <h5
+
                                             class="text-secondary">
-                                            <input id="isGender" type="checkbox" name="isGender"
+                                            <input data-controls="multiCollapseExample6" id="isGender" type="checkbox" class="checkBox" name="isGender"
                                                    value="1"> Gender
                                         </h5>
                                     </div>
                                     <div class="col-md-12 collapse multi-collapse" id="multiCollapseExample6">
                                         <div class="row">
                                             <h6 class="col-md-3 ml-3">Male</h6>
-                                            <input data-id="1" class="form-control genders col-md-2" type="number"
-                                                   oninput="this.value = this.value < 0 ? 0 : this.value" min="0"
-                                                   id="gender1"
-                                                   name="gender">
+                                            <input data-id="1" class="form-control genders col-md-2" type="number">
                                             <div class="input-group-append">
                                                 <span class="input-group-text">%</span>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <h6 class="col-md-3 ml-3">Female</h6>
-                                            <input data-id="2" class="form-control  genders col-md-2" type="number"
-                                                   oninput="this.value = this.value < 0 ? 0 : this.value" min="0"
-                                                   id="gender2"
-                                                   name="gender">
+                                            <input data-id="2" class="form-control genders col-md-2" type="number">
                                             <div class="input-group-append">
                                                 <span class="input-group-text">%</span>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <h6 class="col-md-3 ml-3">Other</h6>
-                                            <input data-id="3" class="form-control  genders col-md-2" type="number"
-                                                   oninput="this.value = this.value < 0 ? 0 : this.value" min="0"
-                                                   id="gender3"
-                                                   name="gender">
+                                            <input data-id="3" class="form-control genders col-md-2" type="number">
                                             <div class="input-group-append">
                                                 <span class="input-group-text">%</span>
                                             </div>
@@ -387,11 +243,8 @@
                             <div class="col-md-12">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <h5 data-toggle="collapse"
-                                            href="#multiCollapseExample7" aria-expanded="false"
-                                            aria-controls="multiCollapseExample7"
-                                            title="This task will automatically assign to all agent when they were approved."
-                                            class="text-secondary"><input id="isJobSector" type="checkbox"
+                                        <h5
+                                            class="text-secondary"><input  data-controls="multiCollapseExample7" id="isJobSector" type="checkbox" class="checkBox"
                                                                           name="isJobSector" value="1"> Job Sector
                                         </h5>
                                     </div>
@@ -432,12 +285,9 @@
                             <div class="col-md-12">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <h5 data-toggle="collapse"
-                                            href="#multiCollapseExample8" aria-expanded="false"
-                                            aria-controls="multiCollapseExample8"
-                                            title="This task will automatically assign to all agent when they were approved."
-                                            class="text-secondary"><input id="isBranch" type="checkbox" name="isBranch"
-                                                                          value="1"> Branch Society
+                                        <h5
+                                            class="text-secondary"><input id="isBranch" type="checkbox" class="checkBox" name="isBranch"
+                                                                          data-controls="multiCollapseExample8"   value="1"> Branch Society
                                         </h5>
 
                                     </div>
@@ -461,11 +311,9 @@
                             <div class="col-md-12">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <h5 data-toggle="collapse"
-                                            href="#multiCollapseExample9" aria-expanded="false"
-                                            aria-controls="multiCollapseExample9"
-                                            title="This task will automatically assign to all agent when they were approved."
-                                            class="text-secondary"><input id="isWomens" type="checkbox" name="isWomens"
+                                        <h5
+
+                                            class="text-secondary"><input data-controls="multiCollapseExample9" id="isWomens" type="checkbox" class="checkBox" name="isWomens"
                                                                           value="1"> Woment's Society
                                         </h5>
 
@@ -490,11 +338,8 @@
                             <div class="col-md-12">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <h5 data-toggle="collapse"
-                                            href="#multiCollapseExample10" aria-expanded="false"
-                                            aria-controls="multiCollapseExample10"
-                                            title="This task will automatically assign to all agent when they were approved."
-                                            class="text-secondary"><input id="isYouth" type="checkbox" name="isYouth"
+                                        <h5
+                                            class="text-secondary"><input data-controls="multiCollapseExample10" id="isYouth" type="checkbox" class="checkBox" name="isYouth"
                                                                           value="1"> Youth Society
                                         </h5>
 
@@ -551,16 +396,33 @@
                 }
             });
 
-            $('.secondPage').hide();
-            {{--if({{$default != null ? 1 : 0}}){--}}
-            //                goFirstPage();
-            //                viewDefault();
-            //            }
-            //            else{
-            goSecondPage();
-//            }
         });
 
+        $('input').not('.branch').not('.womens').not('.youth').on('keyup',function ()  {
+            if(this.value > 100){
+                this.value = '';
+            }
+            let cl = $(this).attr('class').split(' ')[1];
+            console.log(cl);
+            let total = 0;
+            $('.'+cl).each(function () {
+                total += parseFloat(this.value);
+            });
+            if(total > 100){
+                this.value = '';
+            }
+        });
+
+        $('.checkBox').on('change',function () {
+            if(this.checked){
+                $('#'+$(this).attr('data-controls')).collapse("show");
+
+            }
+            else{
+                $('#'+$(this).attr('data-controls')).collapse("hide");
+
+            }
+        });
 
         function clearAll() {
             $('input').not(':checkbox').not('.noClear').not(':radio').val('');
@@ -578,17 +440,6 @@
             } else {
                 $('#maxAgeV').hide();
             }
-        }
-
-
-        function goSecondPage() {
-            $('.secondPage').fadeIn();
-            $('.firstPage').fadeOut();
-        }
-
-        function goFirstPage() {
-            $('.secondPage').fadeOut();
-            $('.firstPage').fadeIn();
         }
 
         function ageChanged(id) {
@@ -756,20 +607,39 @@
                     },
                     success: function (data) {
 
-                        notify({
-                            type: "success", //alert | success | error | warning | info
-                            title: 'DEFAULT TASK SAVED!',
-                            autoHide: true, //true | false
-                            delay: 2500, //number ms
-                            position: {
-                                x: "right",
-                                y: "top"
-                            },
-                            icon: '<em class="mdi mdi-check-circle-outline"></em>',
+                        console.log(data);
+                        if (data.errors != null) {
+                            notify({
+                                type: "error", //alert | success | error | warning | info
+                                title: 'APPROVE PROCESS INVALID!',
+                                autoHide: true, //true | false
+                                delay: 2500, //number ms
+                                position: {
+                                    x: "right",
+                                    y: "top"
+                                },
+                                icon: '<em class="mdi mdi-check-circle-outline"></em>',
 
-                            message: 'Default task details saved successfully.'
-                        });
-                        clearAll();
+                                message: 'Something wrong with process.contact administrator..'
+                            });
+                        }
+                        if (data.success != null) {
+
+                            notify({
+                                type: "success", //alert | success | error | warning | info
+                                title: 'DEFAULT TASK SAVED!',
+                                autoHide: true, //true | false
+                                delay: 2500, //number ms
+                                position: {
+                                    x: "right",
+                                    y: "top"
+                                },
+                                icon: '<em class="mdi mdi-check-circle-outline"></em>',
+
+                                message: 'Default task details saved successfully.'
+                            });
+                            clearAll();
+                        }
                     }
 
 
@@ -784,96 +654,96 @@
             }
         });
 
-        function viewDefault() {
-            $('#ethnicitiesV').html('');
-            $('#careersV').html('');
-            $('#religionsV').html('');
-            $('#incomesV').html('');
-            $('#educationsV').html('');
-//
-                    @if(isset($default) && $default != null)
-            let result = {!! $default !!};
-                    @else
-            let result = [];
-            @endif
+        {{--function viewDefault() {--}}
+            {{--$('#ethnicitiesV').html('');--}}
+            {{--$('#careersV').html('');--}}
+            {{--$('#religionsV').html('');--}}
+            {{--$('#incomesV').html('');--}}
+            {{--$('#educationsV').html('');--}}
+{{--//--}}
+                    {{--@if(isset($default) && $default != null)--}}
+            {{--let result = {!! $default !!};--}}
+                    {{--@else--}}
+            {{--let result = [];--}}
+            {{--@endif--}}
 
 
-            $('#membersV').html('<h5>' + result.target + '</h5>');
-            $('#taskNoV').val(result.task_no);
-            if (result.age != null) {
-                $('#ageComparisonV').val(result.age.comparison).trigger('change');
-                $('#minAgeV').val(result.age.minAge);
-                $('#maxAgeV').val(result.age.maxAge);
-            }
-            else {
-                $('#ageComparisonV').val('').trigger('change');
-                $('#minAgeV').val('');
-                $('#maxAgeV').val('');
-                $('#maxAgeV').val('');
-                $('#ageDiv').hide();
-            }
+            {{--$('#membersV').html('<h5>' + result.target + '</h5>');--}}
+            {{--$('#taskNoV').val(result.task_no);--}}
+            {{--if (result.age != null) {--}}
+                {{--$('#ageComparisonV').val(result.age.comparison).trigger('change');--}}
+                {{--$('#minAgeV').val(result.age.minAge);--}}
+                {{--$('#maxAgeV').val(result.age.maxAge);--}}
+            {{--}--}}
+            {{--else {--}}
+                {{--$('#ageComparisonV').val('').trigger('change');--}}
+                {{--$('#minAgeV').val('');--}}
+                {{--$('#maxAgeV').val('');--}}
+                {{--$('#maxAgeV').val('');--}}
+                {{--$('#ageDiv').hide();--}}
+            {{--}--}}
 
-            if (result.task_gender == 0) {
-                $('#genderValueDiv').html("<em  class='mdi mdi-human-male-female  mdi-24px' >&nbsp;Any</em>");
-            }
-            else if (result.task_gender == 1) {
-                $('#genderValueDiv').html("<em  class='mdi mdi-human-male  mdi-24px' >&nbsp;Male</em>");
-            }
-            else if (result.task_gender == 2) {
-                $('#genderValueDiv').html("<em  class='mdi mdi-human-female  mdi-24px' >&nbsp;Female</em>");
-            }
-            else {
-                $('#genderValueDiv').html("<em  class='mdi mdi-human-pregnant  mdi-24px' >&nbsp;Other</em>");
-            }
+            {{--if (result.task_gender == 0) {--}}
+                {{--$('#genderValueDiv').html("<em  class='mdi mdi-human-male-female  mdi-24px' >&nbsp;Any</em>");--}}
+            {{--}--}}
+            {{--else if (result.task_gender == 1) {--}}
+                {{--$('#genderValueDiv').html("<em  class='mdi mdi-human-male  mdi-24px' >&nbsp;Male</em>");--}}
+            {{--}--}}
+            {{--else if (result.task_gender == 2) {--}}
+                {{--$('#genderValueDiv').html("<em  class='mdi mdi-human-female  mdi-24px' >&nbsp;Female</em>");--}}
+            {{--}--}}
+            {{--else {--}}
+                {{--$('#genderValueDiv').html("<em  class='mdi mdi-human-pregnant  mdi-24px' >&nbsp;Other</em>");--}}
+            {{--}--}}
 
-            if (result.task_job_sector == 0) {
-                $('#jobSectorDiv').html("<em  class='fa fa-circle-o' style='color: #1295a0;;font-size: 1.3em;' ></em>&nbsp;<span style='font-weight:500;font-size: 1.3em;'>Any</span>");
-            }
-            else if (result.task_job_sector == 1) {
-                $('#jobSectorDiv').html("<em  class='fa fa-circle-o' style='color: #2ca02c;;font-size: 1.3em;' ></em>&nbsp;<span style='font-weight:500;font-size: 1.3em;'>Government</span>");
-            }
-            else if (result.task_job_sector == 2) {
-                $('#jobSectorDiv').html("<em  class='fa fa-circle-o' style='color: #9da009;;font-size: 1.3em;' ></em>&nbsp;<span style='font-weight:500;font-size: 1.3em;'>Private</span>");
-            }
-            else {
-                $('#jobSectorDiv').html("<em  class='fa fa-circle-o' style='color: #8d0aa0;;font-size: 1.3em;' ></em>&nbsp;<span style='font-weight:500;font-size: 1.3em;'>Non-Government</span>");
-            }
+            {{--if (result.task_job_sector == 0) {--}}
+                {{--$('#jobSectorDiv').html("<em  class='fa fa-circle-o' style='color: #1295a0;;font-size: 1.3em;' ></em>&nbsp;<span style='font-weight:500;font-size: 1.3em;'>Any</span>");--}}
+            {{--}--}}
+            {{--else if (result.task_job_sector == 1) {--}}
+                {{--$('#jobSectorDiv').html("<em  class='fa fa-circle-o' style='color: #2ca02c;;font-size: 1.3em;' ></em>&nbsp;<span style='font-weight:500;font-size: 1.3em;'>Government</span>");--}}
+            {{--}--}}
+            {{--else if (result.task_job_sector == 2) {--}}
+                {{--$('#jobSectorDiv').html("<em  class='fa fa-circle-o' style='color: #9da009;;font-size: 1.3em;' ></em>&nbsp;<span style='font-weight:500;font-size: 1.3em;'>Private</span>");--}}
+            {{--}--}}
+            {{--else {--}}
+                {{--$('#jobSectorDiv').html("<em  class='fa fa-circle-o' style='color: #8d0aa0;;font-size: 1.3em;' ></em>&nbsp;<span style='font-weight:500;font-size: 1.3em;'>Non-Government</span>");--}}
+            {{--}--}}
 
-            if (result.ethnicities.length > 0) {
-                $.each(result.ethnicities, function (key, value) {
-                    $('#ethnicitiesV').append('<p><em class="fa fa-dot-circle-o"></em> ' + value.ethnicity.name_en + '</p>');
-                });
-            } else {
-                $('#ethnicityDiv').hide();
-            }
-            if (result.careers.length > 0) {
-                $.each(result.careers, function (key, value) {
-                    $('#careersV').append('<p><em class="fa fa-dot-circle-o"></em> ' + value.career.name_en + '</p>');
-                });
-            } else {
-                $('#careerDiv').hide();
-            }
-            if (result.religions.length > 0) {
-                $.each(result.religions, function (key, value) {
-                    $('#religionsV').append('<p><em class="fa fa-dot-circle-o"></em> ' + value.religion.name_en + '</p>');
-                });
-            } else {
-                $('#religionsDiv').hide();
-            }
-            if (result.incomes.length > 0) {
-                $.each(result.incomes, function (key, value) {
-                    $('#incomesV').append('<p><em class="fa fa-dot-circle-o"></em> ' + value.income.name_en + '</p>');
-                });
-            } else {
-                $('#incomesDiv').hide();
-            }
-            if (result.educations.length > 0) {
-                $.each(result.educations, function (key, value) {
-                    $('#educationsV').append('<p><em class="fa fa-dot-circle-o"></em> ' + value.education.name_en + '</p>');
-                });
-            } else {
-                $('#educationsDiv').hide();
-            }
-        }
+            {{--if (result.ethnicities.length > 0) {--}}
+                {{--$.each(result.ethnicities, function (key, value) {--}}
+                    {{--$('#ethnicitiesV').append('<p><em class="fa fa-dot-circle-o"></em> ' + value.ethnicity.name_en + '</p>');--}}
+                {{--});--}}
+            {{--} else {--}}
+                {{--$('#ethnicityDiv').hide();--}}
+            {{--}--}}
+            {{--if (result.careers.length > 0) {--}}
+                {{--$.each(result.careers, function (key, value) {--}}
+                    {{--$('#careersV').append('<p><em class="fa fa-dot-circle-o"></em> ' + value.career.name_en + '</p>');--}}
+                {{--});--}}
+            {{--} else {--}}
+                {{--$('#careerDiv').hide();--}}
+            {{--}--}}
+            {{--if (result.religions.length > 0) {--}}
+                {{--$.each(result.religions, function (key, value) {--}}
+                    {{--$('#religionsV').append('<p><em class="fa fa-dot-circle-o"></em> ' + value.religion.name_en + '</p>');--}}
+                {{--});--}}
+            {{--} else {--}}
+                {{--$('#religionsDiv').hide();--}}
+            {{--}--}}
+            {{--if (result.incomes.length > 0) {--}}
+                {{--$.each(result.incomes, function (key, value) {--}}
+                    {{--$('#incomesV').append('<p><em class="fa fa-dot-circle-o"></em> ' + value.income.name_en + '</p>');--}}
+                {{--});--}}
+            {{--} else {--}}
+                {{--$('#incomesDiv').hide();--}}
+            {{--}--}}
+            {{--if (result.educations.length > 0) {--}}
+                {{--$.each(result.educations, function (key, value) {--}}
+                    {{--$('#educationsV').append('<p><em class="fa fa-dot-circle-o"></em> ' + value.education.name_en + '</p>');--}}
+                {{--});--}}
+            {{--} else {--}}
+                {{--$('#educationsDiv').hide();--}}
+            {{--}--}}
+        {{--}--}}
     </script>
 @endsection

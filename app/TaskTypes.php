@@ -12,5 +12,7 @@ class TaskTypes extends Model
     public function task(){
         return $this->hasMany(Task::class,'idtask_type');
     }
-
+    public function taskUsers(){
+        return $this->hasMany(TaskTypeUser::class,'idtask_type');
+    }
 }

@@ -39,9 +39,11 @@
                                                 id="gender">
                                             <option value="" disabled selected>Select gender
                                             </option>
-                                            <option value="0">MALE
+                                            <option value="1">MALE
                                             </option>
-                                            <option value="1">FEMALE
+                                            <option value="2">FEMALE
+                                            </option>
+                                            <option value="3">Other
                                             </option>
                                         </select>
                                     </div>
@@ -98,12 +100,14 @@
                                                                 <td>{{strtoupper($user->agent->gramasewaDivision->name_en)}}</td>
                                                                 <td>{{strtoupper($user->agent->village->name_en)}}</td>
                                                                 <td>{{$user->nic}}</td>
-                                                                @if($user->gender == 0)
+                                                                @if($user->gender == 1)
                                                                     <td>MALE</td>
-                                                                @elseif ($user->gender == 1)
+                                                                @elseif ($user->gender == 2)
                                                                     <td>FEMALE</td>
+                                                                @elseif ($user->gender == 3)
+                                                                    <td>OTHER</td>
                                                                 @else
-                                                                    <td>FEMALE</td>
+                                                                    <td>UNKNOWN</td>
                                                                 @endif
                                                                 <td>{{$user->contact_no1}}</td>
                                                                 <td>{{$user->created_at}}</td>
@@ -124,7 +128,7 @@
                                                                                class="dropdown-item">View
                                                                             </a>
                                                                             <a href="#"
-                                                                               onclick="approveAgent({{$user->idUser}})"
+                                                                               onclick="showApproveModal({{$user->idUser}})"
                                                                                class="dropdown-item">Approve
                                                                             </a>
                                                                         </div>
@@ -478,6 +482,53 @@
         </div>
     </div>
     <!-- modal end -->
+
+    <div class="modal fade" id="approveModal" tabindex="-1"
+         role="dialog"
+         aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title mt-0">Approve Agent</h5>
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-hidden="true">×
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="alert alert-danger alert-dismissible " id="approveError" style="display:none">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-8 ">
+                            <label for="budgetType" style="margin-left: 5px;"
+                                   class="control-label">{{ __('Budget Type') }}</label>
+
+                            <select class="form-control  " name="budgetType"
+                                    onchange="setCustomValidity('')"
+                                    oninvalid="this.setCustomValidity('Please select budget type')"
+                                    id="budgetType" required>
+                                <option value="" disabled selected>Select type</option>
+                                @foreach($taskTypes as $taskType)
+                                    <option value="{{$taskType->idtask_type}}">{{$taskType->name}}</option>
+                                @endforeach
+                            </select>
+
+                        </div>
+                        <input type="hidden" id="hiddenId">
+                        <div style="margin-top: 27px;" class="form-group col-md-4">
+                            <button style="background-color: #5f98ff" type="submit" onclick="approveAgent();"
+                                    class="btn btn-block text-white ">{{ __('Approve') }}</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- modal end -->
 @endsection
 @section('psScript')
 
@@ -489,23 +540,20 @@
                 }
             });
         });
-
-        function approveAgent(id) {
-            swal({
-                title: 'Do you want to approve this user?',
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, Approve!',
-                cancelButtonText: 'No, cancel!',
-                confirmButtonClass: 'btn btn-success',
-                cancelButtonClass: 'btn btn-danger m-l-10',
-                buttonsStyling: false
-            }).then(function () {
-
+        function showApproveModal(id) {
+            $('#hiddenId').val(id);
+            $('.alert').html('').hide();
+            $('#approveModal').modal('show');
+        }
+        function approveAgent() {
+            $('.alert').html('').hide();
+            let id = $('#hiddenId').val();
+            let type = $('#budgetType').val();
+            if(type) {
                 $.ajax({
                     url: '{{route('approveAgent')}}',
                     type: 'POST',
-                    data: {id: id},
+                    data: {id: id, type: type},
                     success: function (data) {
                         if (data.errors != null) {
                             notify({
@@ -538,22 +586,39 @@
                                 message: 'Agent approved successfully.'
                             });
                             $('#' + id).remove();
+                            $('#approveModal').modal('hide');
                         }
 
                     }
                 });
-
-            }, function (dismiss) {
-                // dismiss can be 'cancel', 'overlay',
-                // 'close', and 'timer'
-//                if (dismiss === 'cancel') {
-//                    swal(
-//                        'Cancelled',
-//                        'Process has been cancelled',
-//                        'error'
-//                    )
-//                }
-            })
+            }
+            else{
+                $('#approveError').html('Please provide budget type').show();
+            }
+//            swal({
+//                title: 'Do you want to approve this user?',
+//                type: 'warning',
+//                showCancelButton: true,
+//                confirmButtonText: 'Yes, Approve!',
+//                cancelButtonText: 'No, cancel!',
+//                confirmButtonClass: 'btn btn-success',
+//                cancelButtonClass: 'btn btn-danger m-l-10',
+//                buttonsStyling: false
+//            }).then(function () {
+//
+//
+//
+//            }, function (dismiss) {
+//                // dismiss can be 'cancel', 'overlay',
+//                // 'close', and 'timer'
+////                if (dismiss === 'cancel') {
+////                    swal(
+////                        'Cancelled',
+////                        'Process has been cancelled',
+////                        'error'
+////                    )
+////                }
+//            })
         }
 
         function viewUser(id) {

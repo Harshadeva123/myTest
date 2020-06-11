@@ -52,4 +52,5 @@ class Member extends Model
     public function educationalQualification(){
         return $this->belongsTo(EducationalQualification::class,'ideducational_qualification');
     }
+
 }

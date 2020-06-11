@@ -582,12 +582,12 @@ class ApiRegistrationController extends Controller
         if($welcome == null){
             $welcome['body'] = 'Welcome!. ';
         }
-        $message = $welcome->body. ' You have registerd with your NIC no : '. $request['nic'];
+        $message =  $welcome['body']. ' You have registered with your NIC no : '. $request['nic'];
 
 
         $results[] = $this->sendWelcomeSms($message,$user->contact_no1);
 
-//        app(TaskController::class)->updateTask($member->idUser, $agent->idUser);
+        app(TaskController::class)->complete($member->idUser, $agent->idUser);
 
 //        save in selected user role table end
 

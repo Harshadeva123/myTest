@@ -392,7 +392,7 @@
                                 <input type="hidden" name="maxAge" id="maxAge">
                                 <div class="form-group col-md-6">
                                     <label style="margin-left: 5px;" class="control-label">{{ __('Age') }}</label><br/>
-                                    <b id="minAgeLabel">0 Y</b> &nbsp; <input id="age" type="text" class="span2" value="" data-slider-min="0" data-slider-max="120" data-slider-step="1" data-slider-value="[0,120]"/>&nbsp; <b id="maxAgeLabel">120 Y</b>
+                                    <b id="minAgeLabel">0 Y</b> &nbsp; <input  id="age" type="text" class="span2" value="" data-slider-min="0" data-slider-max="120" data-slider-step="1" data-slider-value="[0,120]"/>&nbsp; <b id="maxAgeLabel">120 Y</b>
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label style="margin-left: 5px;"
@@ -590,7 +590,7 @@
         });
 
         function clearAll() {
-            $('input').not(':checkbox').val('');
+            $('input').not('noClear').not('#age').not('#minAge').not('#maxAge').not(':checkbox').val('');
             $('textarea').val('');
             $(":checkbox").attr('checked', false).trigger('change');
             $(":radio").attr('checked', false).trigger('change');

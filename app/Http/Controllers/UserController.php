@@ -10,6 +10,8 @@ use App\Office;
 use App\OfficeAdmin;
 use App\OfficeStaff;
 use App\PollingBooth;
+use App\Task;
+use App\TaskTypes;
 use App\User;
 use App\UserRole;
 use App\UserTitle;
@@ -502,8 +504,17 @@ class UserController extends Controller
         }
 
         $users = $query->where('status', 2)->where('idoffice', intval(Auth::user()->idoffice))->where('iduser_role', 6)->latest()->paginate(10);
+        $taskTypes = TaskTypes::where('status', 1)->get();
+        if($taskTypes != null){
+            foreach ($taskTypes as $id=>$key){
+                if(Task::where('idoffice',Auth::user()->idoffice)->where('status',1)->where('idtask_type',$key->idtask_type)->first() == null){
+                    $taskTypes->forget($id);
+                }
+            }
 
-        return view('user.pending_requests', ['title' =>  __('Pending Requests'), 'users' => $users]);
+        }
+
+        return view('user.pending_requests', ['title' =>  __('Pending Requests'), 'users' => $users,'taskTypes'=>$taskTypes]);
 
     }
 
@@ -524,6 +535,7 @@ class UserController extends Controller
 
     public function approveAgent(Request $request){
         $id  = $request['id'];
+        $type  = $request['type'];
         $agent = User::find(intval($id));
         if($agent->idoffice == Auth::user()->idoffice){
             $agent->status = 1;
@@ -531,6 +543,9 @@ class UserController extends Controller
 
             $agent->agent->status = 1;
             $agent->agent->save();
+
+            app(TaskController::class)->assignTask($request);
+
 
             return response()->json(['success' => 'Approved']);
 

@@ -415,6 +415,9 @@ class ApiUserController extends Controller
         if ($memberAgent->status == 2) {
             $memberAgent->status = 1;
             $memberAgent->save();
+
+            app(TaskController::class)->complete(Member::find($memberAgent->idmember)->idUser, Auth::user()->idUser);
+
             return response()->json(['success' => 'Member Approved!', 'statusCode' => 0]);
 
         } else {

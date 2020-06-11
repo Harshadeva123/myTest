@@ -151,4 +151,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(DirectMessage::class, 'from_idUser');
     }
+
+    public function userSociety()
+    {
+        return $this->hasMany(UserSociety::class, 'idUser');
+    }
 }

@@ -12,4 +12,8 @@ class TaskYouth extends Model
     public function task(){
         return $this->hasMany(Task::class,'idtask_type');
     }
+
+    public function position(){
+        return $this->belongsTo(Position::class,'idposition');
+    }
 }

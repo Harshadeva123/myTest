@@ -20,9 +20,11 @@ use App\TaskIncome;
 use App\TaskJobSector;
 use App\TaskReligion;
 use App\TaskTypes;
+use App\TaskTypeUser;
 use App\TaskWomens;
 use App\TaskYouth;
 use App\User;
+use App\UserSociety;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -59,7 +61,6 @@ class TaskController extends Controller
 
     public function storeDefault(Request $request)
     {
-
         $validationMessages = [
             'totalBudget.required' => 'Number of members should be provided!',
             'taskType.required' => 'Task Type should be provided!',
@@ -75,16 +76,17 @@ class TaskController extends Controller
             return response()->json(['errors' => $validator->errors()->all()]);
         }
         $userId = Auth::user()->idUser;
-        $isEthnicity = $request['isEthnicity'] == 'true' ? $request['isEthnicity'] : 0;
-        $isReligion = $request['isReligion'] == 'true' ? $request['isReligion'] : 0;
-        $isCareer = $request['isCareer'] == 'true' ? $request['isCareer'] : 0;
-        $isIncome = $request['isIncome'] == 'true' ? $request['isIncome'] : 0;
-        $isEducational = $request['isEducational'] == 'true' ? $request['isEducational'] : 0;
-        $isJobSector = $request['isJobSector'] == 'true' ? $request['isJobSector'] : 0;
-        $isGender = $request['isGender'] == 'true' ? $request['isGender'] : 0;
-        $isBranch = $request['isBranch'] == 'true' ? $request['isBranch'] : 0;
-        $isWomens = $request['isWomens'] == 'true' ? $request['isWomens'] : 0;
-        $isYouth = $request['isYouth'] == 'true' ? $request['isYouth'] : 0;
+        $isEthnicity = $request['isEthnicity'] == 'true' ? 1 : 0;
+        $isReligion = $request['isReligion'] == 'true' ? 1 : 0;
+        $isCareer = $request['isCareer'] == 'true' ? 1 : 0;
+        $isIncome = $request['isIncome'] == 'true' ? 1 : 0;
+        $isEducational = $request['isEducational'] == 'true' ? 1 : 0;
+        $isJobSector = $request['isJobSector'] == 'true' ? 1 : 0;
+        $isGender = $request['isGender'] == 'true' ? 1 : 0;
+        $isBranch = $request['isBranch'] == 'true' ? 1 : 0;
+        $isWomens = $request['isWomens'] == 'true' ? 1 : 0;
+        $isYouth = $request['isYouth'] == 'true' ? 1 : 0;
+
         //Validation end
 
 
@@ -95,7 +97,7 @@ class TaskController extends Controller
             $isExist->incomes()->delete();
             $isExist->religions()->delete();
             $isExist->educations()->delete();
-            $isExist->gender()->delete();
+            $isExist->genders()->delete();
             $isExist->job()->delete();
             $isExist->youthSociety()->delete();
             $isExist->womensSociety()->delete();
@@ -129,7 +131,6 @@ class TaskController extends Controller
         //save in task table end
 
 
-
 //        if ($isReligion != null) {
 //            $religions = $request['religionArray'];
 //            if ($religions != null) {
@@ -158,7 +159,7 @@ class TaskController extends Controller
 //        }
 
 
-        if ($isEthnicity != null) {
+        if ($isEthnicity) {
             $ethnicities = $request['ethnicityArray'];
             if ($ethnicities != null) {
                 foreach ($ethnicities as $ethnicity) {
@@ -174,7 +175,7 @@ class TaskController extends Controller
             }
         }
 
-        if ($isCareer != null) {
+        if ($isCareer) {
             $careers = $request['careerArray'];
 
             if ($careers != null) {
@@ -192,7 +193,7 @@ class TaskController extends Controller
             }
         }
 
-        if ($isReligion != null) {
+        if ($isReligion) {
             $religions = $request['religionArray'];
             if ($religions != null) {
                 foreach ($religions as $religion) {
@@ -207,7 +208,7 @@ class TaskController extends Controller
             }
         }
 
-        if($isEducational) {
+        if ($isEducational) {
             $educations = $request['educationArray'];
             if ($educations != null) {
                 foreach ($educations as $education) {
@@ -222,7 +223,7 @@ class TaskController extends Controller
             }
         }
 
-        if($isIncome) {
+        if ($isIncome) {
             $incomes = $request['incomeArray'];
             if ($incomes != null) {
                 foreach ($incomes as $income) {
@@ -237,7 +238,7 @@ class TaskController extends Controller
             }
         }
 
-        if($isGender) {
+        if ($isGender) {
             $genders = $request['genderArray'];
             if ($genders != null) {
                 foreach ($genders as $gender) {
@@ -252,7 +253,7 @@ class TaskController extends Controller
             }
         }
 
-        if($isJobSector) {
+        if ($isJobSector) {
             $jobs = $request['jobSectorArray'];
             if ($jobs != null) {
                 foreach ($jobs as $job) {
@@ -267,7 +268,7 @@ class TaskController extends Controller
             }
         }
 
-        if($isBranch) {
+        if ($isBranch) {
             $branches = $request['branchArray'];
             if ($branches != null) {
                 foreach ($branches as $branche) {
@@ -282,7 +283,7 @@ class TaskController extends Controller
             }
         }
 
-        if($isWomens) {
+        if ($isWomens) {
             $womens = $request['womenArray'];
             if ($womens != null) {
                 foreach ($womens as $women) {
@@ -297,7 +298,7 @@ class TaskController extends Controller
             }
         }
 
-        if($isYouth) {
+        if ($isYouth) {
             $youths = $request['youthArray'];
             if ($youths != null) {
                 foreach ($youths as $youth) {
@@ -316,7 +317,6 @@ class TaskController extends Controller
         return response()->json(['success' => 'Default task saved successfully']);
 
     }
-
 
     public function view(Request $request)
     {
@@ -365,7 +365,6 @@ class TaskController extends Controller
 
     public function store(Request $request)
     {
-
         $validationMessages = [
             'userId.required' => 'Invalid agent!',
             'userId.numeric' => 'Invalid agent!',
@@ -555,7 +554,6 @@ class TaskController extends Controller
 
     public function createDefault()
     {
-
         $default = Task::with(['age', 'educations.education', 'religions.religion', 'incomes.income', 'careers.career', 'ethnicities.ethnicity'])->where('idoffice', Auth::user()->idoffice)->where('isDefault', 1)->first();
         $careers = Career::where('status', 1)->get();
         $religions = Religion::where('status', 1)->get();
@@ -566,6 +564,252 @@ class TaskController extends Controller
         $taskTypes = TaskTypes::where('status', 1)->get();
         return view('task.default')->with(['taskTypes' => $taskTypes, 'positions' => $positions, 'default' => $default, 'title' => 'Default Budget', 'careers' => $careers, 'religions' => $religions, 'incomes' => $incomes, 'educations' => $educations, 'ethnicities' => $ethnicities]);
 
+    }
+
+    public function assignTask($request)
+    {
+        $user = User::find(intval($request['id']));
+        $type = $request['type'];
+
+        $taskUser = TaskTypeUser::where('idUser', $user->idUser)->first();
+        if ($taskUser == null) {
+            $taskUser = new TaskTypeUser();
+            $taskUser->idtask_type = $type;
+            $taskUser->idUser = $user->idUser;
+            $taskUser->assigned_by = Auth::user()->idUser;
+            $taskUser->status = 1;
+            $taskUser->save();
+        } else {
+            $taskUser->idtask_type = $type;
+            $taskUser->status = 1;
+            $taskUser->save();
+        }
+
+
+    }
+
+    public function calAgentBudget($user, $totalVoters)
+    {
+        $budgetTYpe = TaskTypeUser::where('idUser', $user->idUser)->first();
+        if ($budgetTYpe != null) {
+            $defaultTask = Task::where('idoffice', $user->idoffice)->where('isDefault', 1)->where('idtask_type', $budgetTYpe->idtask_type)->first();
+
+            if ($defaultTask != null) {
+
+                $totalBudget = floor(($totalVoters * $defaultTask->target) / 100);
+                $task = Task::where('idoffice', Auth::user()->idoffice)->where('idUser', $user->idUser)->first();
+
+                //save in task table
+                if ($task == null) {
+                    $task = new Task();
+                    $task->completed_amount = 0;
+                }
+                $task->idUser = $user->idUser;
+                $task->assigned_by = $budgetTYpe->assigned_by;
+                $task->idoffice = Auth::user()->idoffice;
+                $task->idtask_type = $budgetTYpe->idtask_type;
+                $task->isDefault = 0;
+                $task->ethnicity = $defaultTask->ethnicity;
+                $task->religion = $defaultTask->religion;
+                $task->career = $defaultTask->career;
+                $task->income = $defaultTask->income;
+                $task->education = $defaultTask->education;
+                $task->job_sector = $defaultTask->job_sector;
+                $task->gender = $defaultTask->gender;
+                $task->branch = $defaultTask->branch;
+                $task->womens = $defaultTask->womens;
+                $task->youth = $defaultTask->youth;
+                $task->target = $totalBudget;
+                $task->status = 1;
+                $task->save();
+                //save in task table end
+
+                if ($defaultTask->ethnicity != null) {
+                    $ethnicities = $defaultTask->ethnicities;
+                    if ($ethnicities != null) {
+                        foreach ($ethnicities as $ethnicity) {
+                            $taskEthnicity = TaskEthnicity::where('idtask', $task->idtask)->where('idethnicity', $ethnicity->idethnicity)->first();
+                            if ($taskEthnicity == null) {
+                                $taskEthnicity = new TaskEthnicity();
+                                $taskEthnicity->completed = 0;
+                            }
+                            $taskEthnicity->idtask = $task->idtask;
+                            $taskEthnicity->idethnicity = $ethnicity->idethnicity;
+                            $taskEthnicity->value = floor(($totalBudget * $ethnicity->value) / 100);
+                            $taskEthnicity->status = 1;
+                            $taskEthnicity->save();
+
+                        }
+                    }
+                }
+
+                if ($defaultTask->career) {
+                    $careers = $defaultTask->careers;
+
+                    if ($careers != null) {
+                        foreach ($careers as $career) {
+                            $taskCareer = TaskCareer::where('idtask', $task->idtask)->where('idcareer', $career->idcareer)->first();
+                            if ($taskCareer == null) {
+                                $taskCareer = new TaskCareer();
+                                $taskCareer->completed = 0;
+                            }
+
+                            $taskCareer->idtask = $task->idtask;
+                            $taskCareer->idcareer = $career->idcareer;
+                            $taskCareer->value = floor(($totalBudget * $career->value) / 100);
+                            $taskCareer->status = 1;
+                            $taskCareer->save();
+                        }
+                    }
+                }
+
+                if ($defaultTask->religion) {
+                    $religions = $defaultTask->religions;
+                    if ($religions != null) {
+                        foreach ($religions as $religion) {
+                            $taskReligion = TaskReligion::where('idtask', $task->idtask)->where('idreligion', $religion->idreligion)->first();
+                            if ($taskReligion == null) {
+                                $taskReligion = new TaskReligion();
+                                $taskReligion->completed = 0;
+                            }
+                            $taskReligion->idtask = $task->idtask;
+                            $taskReligion->idreligion = $religion->idreligion;
+                            $taskReligion->value = floor(($totalBudget * $religion->value) / 100);
+                            $taskReligion->status = 1;
+                            $taskReligion->save();
+                        }
+                    }
+                }
+
+                if ($defaultTask->education) {
+                    $educations = $defaultTask->educations;
+                    if ($educations != null) {
+                        foreach ($educations as $education) {
+                            $taskEducation = TaskEducation::where('idtask', $task->idtask)->where('ideducational_qualification', $education->ideducational_qualification)->first();
+                            if ($taskEducation == null) {
+                                $taskEducation = new TaskEducation();
+                                $taskEducation->completed = 0;
+                            }
+                            $taskEducation->idtask = $task->idtask;
+                            $taskEducation->ideducational_qualification = $education->ideducational_qualification;
+                            $taskEducation->value = floor(($totalBudget * $education->value) / 100);
+                            $taskEducation->status = 1;
+                            $taskEducation->save();
+                        }
+                    }
+                }
+
+                if ($defaultTask->income) {
+                    $incomes = $defaultTask->incomes;
+                    if ($incomes != null) {
+                        foreach ($incomes as $income) {
+                            $taskIncome = TaskIncome::where('idtask', $task->idtask)->where('idnature_of_income', $income->idnature_of_income)->first();
+                            if ($taskIncome == null) {
+                                $taskIncome = new TaskIncome();
+                                $taskIncome->completed = 0;
+                            }
+                            $taskIncome->idtask = $task->idtask;
+                            $taskIncome->idnature_of_income = $income->idnature_of_income;
+                            $taskIncome->value = floor(($totalBudget * $income->value) / 100);
+                            $taskIncome->status = 1;
+                            $taskIncome->save();
+                        }
+                    }
+                }
+
+                if ($defaultTask->gender) {
+                    $genders = $defaultTask->genders;
+                    if ($genders != null) {
+                        foreach ($genders as $gender) {
+                            $taskGender = TaskGender::where('idtask', $task->idtask)->where('gender', $gender->gender)->first();
+                            if ($taskGender == null) {
+                                $taskGender = new TaskGender();
+                                $taskGender->completed = 0;
+                            }
+                            $taskGender->idtask = $task->idtask;
+                            $taskGender->gender = $gender->gender;
+                            $taskGender->value = floor(($totalBudget * $gender->value) / 100);
+                            $taskGender->status = 1;
+                            $taskGender->save();
+                        }
+                    }
+                }
+
+                if ($defaultTask->job_sector) {
+                    $jobs = $defaultTask->job;
+                    if ($jobs != null) {
+                        foreach ($jobs as $job) {
+                            $taskJob = TaskJobSector::where('idtask', $task->idtask)->where('job_sector', $job->job_sector)->first();
+                            if ($taskJob == null) {
+                                $taskJob = new TaskJobSector();
+                                $taskJob->completed = 0;
+                            }
+                            $taskJob->idtask = $task->idtask;
+                            $taskJob->job_sector = $job->job_sector;
+                            $taskJob->value = floor(($totalBudget * $job->value) / 100);
+                            $taskJob->status = 1;
+                            $taskJob->save();
+                        }
+                    }
+                }
+
+                if ($defaultTask->branch) {
+                    $branches = $defaultTask->branchSociety;
+                    if ($branches != null) {
+                        foreach ($branches as $branche) {
+                            $taskBranch = TaskBranchSociety::where('idtask', $task->idtask)->where('idposition', $branche->idposition)->first();
+                            if ($taskBranch == null) {
+                                $taskBranch = new TaskBranchSociety();
+                                $taskBranch->completed = 0;
+                            }
+                            $taskBranch->idtask = $task->idtask;
+                            $taskBranch->idposition = $branche->idposition;
+                            $taskBranch->value = floor(($totalBudget * $branche->value) / 100);
+                            $taskBranch->completed = 0;
+                            $taskBranch->status = 1;
+                            $taskBranch->save();
+                        }
+                    }
+                }
+
+                if ($defaultTask->womens) {
+                    $womens = $defaultTask->womensSociety;
+                    if ($womens != null) {
+                        foreach ($womens as $women) {
+                            $taskWomen = TaskWomens::where('idtask', $task->idtask)->where('idposition', $women->idposition)->first();
+                            if ($taskWomen == null) {
+                                $taskWomen = new TaskWomens();
+                                $taskWomen->completed = 0;
+                            }
+                            $taskWomen->idtask = $task->idtask;
+                            $taskWomen->idposition = $women->idposition;
+                            $taskWomen->value = floor(($totalBudget * $women->value) / 100);
+                            $taskWomen->status = 1;
+                            $taskWomen->save();
+                        }
+                    }
+                }
+
+                if ($defaultTask->youth) {
+                    $youths = $defaultTask->youthSociety;
+                    if ($youths != null) {
+                        foreach ($youths as $youth) {
+                            $taskYouth = TaskYouth::where('idtask', $task->idtask)->where('idposition', $youth->idposition)->first();
+                            if ($taskYouth == null) {
+                                $taskYouth = new TaskYouth();
+                                $taskYouth->completed = 0;
+                            }
+                            $taskYouth->idtask = $task->idtask;
+                            $taskYouth->idposition = $youth->idposition;
+                            $taskYouth->value = floor(($totalBudget * $youth->value) / 100);
+                            $taskYouth->completed = 0;
+                            $taskYouth->status = 1;
+                            $taskYouth->save();
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public function updateTask($memberId, $id)
@@ -648,5 +892,168 @@ class TaskController extends Controller
             $task->status = 1;
             $task->save();
         }
+    }
+
+    public function complete($memberId, $agentId){
+        $agentUSer = User::find(intval($agentId));
+        $memberUser = User::find(intval($memberId));
+        $member = Member::where('idUser',$memberId)->first();
+
+        $task = Task::where('idUser',$agentId)->where('status',1)->latest()->first();
+
+        //Increment completed member count without considering prameters
+        $task->completed_amount += 1;
+        $task->save();
+
+        //search ethnicity match
+        if($task->ethnicity == 1){
+            $array = TaskEthnicity::where('idtask',$task->idtask)->get();
+            if($array != null){
+                foreach ($array as $arr){
+                    if($arr->idethnicity == $member->idethnicity){
+                        $arr->completed += 1;
+                        $arr->save();
+                        break;
+                    }
+                }
+            }
+        }
+
+        //search religion match
+        if($task->religion == 1){
+            $array = TaskReligion::where('idtask',$task->idtask)->get();
+            if($array != null){
+                foreach ($array as $arr){
+                    if($arr->idreligion == $member->idreligion){
+                        $arr->completed += 1;
+                        $arr->save();
+                        break;
+                    }
+                }
+            }
+        }
+
+        //search education match
+        if($task->education == 1){
+            $array = TaskEducation::where('idtask',$task->idtask)->get();
+            if($array != null){
+                foreach ($array as $arr){
+                    if($arr->ideducational_qualification == $member->ideducational_qualification){
+                        $arr->completed += 1;
+                        $arr->save();
+                        break;
+                    }
+                }
+            }
+        }
+
+        //search career match
+        if($task->career == 1){
+            $array = TaskCareer::where('idtask',$task->idtask)->get();
+            if($array != null){
+                foreach ($array as $arr){
+                    if($arr->idcareer == $member->idcareer){
+                        $arr->completed += 1;
+                        $arr->save();
+                        break;
+                    }
+                }
+            }
+        }
+
+        //search income match
+        if($task->income == 1){
+            $array = TaskIncome::where('idtask',$task->idtask)->get();
+            if($array != null){
+                foreach ($array as $arr){
+                    if($arr->idnature_of_income == $member->idnature_of_income){
+                        $arr->completed += 1;
+                        $arr->save();
+                        break;
+                    }
+                }
+            }
+        }
+
+        //search gender match
+        if($task->gender == 1){
+            $array = TaskGender::where('idtask',$task->idtask)->get();
+            if($array != null){
+                foreach ($array as $arr){
+                    if($arr->gender == $member->gender){
+                        $arr->completed += 1;
+                        $arr->save();
+                        break;
+                    }
+                }
+            }
+        }
+
+        //search job sector match
+        if($task->job_sector == 1){
+            $array = TaskJobSector::where('idtask',$task->idtask)->get();
+            if($array != null){
+                foreach ($array as $arr){
+                    if($arr->job_sector == $member->is_government){
+                        $arr->completed += 1;
+                        $arr->save();
+                        break;
+                    }
+                }
+            }
+        }
+
+        //search branch society match
+        if($task->branch == 1){
+            $array = TaskBranchSociety::where('idtask',$task->idtask)->get();
+            $society = UserSociety::where('idUser',$memberId)->where('idsociety',1)->first();
+            if($society != null) {
+                if ($array != null) {
+                    foreach ($array as $arr) {
+                        if ($arr->idposition == $society->idposition) {
+                            $arr->completed += 1;
+                            $arr->save();
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        //search women society match
+        if($task->branch == 1){
+            $array = TaskWomens::where('idtask',$task->idtask)->get();
+            $society = UserSociety::where('idUser',$memberId)->where('idsociety',2)->first();
+            if($society != null) {
+                if ($array != null) {
+                    foreach ($array as $arr) {
+                        if ($arr->idposition == $society->idposition) {
+                            $arr->completed += 1;
+                            $arr->save();
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        //search youth society match
+        if($task->branch == 1){
+            $array = TaskYouth::where('idtask',$task->idtask)->get();
+            $society = UserSociety::where('idUser',$memberId)->where('idsociety',3)->first();
+            if($society != null) {
+                if ($array != null) {
+                    foreach ($array as $arr) {
+                        if ($arr->idposition == $society->idposition) {
+                            $arr->completed += 1;
+                            $arr->save();
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+
     }
 }

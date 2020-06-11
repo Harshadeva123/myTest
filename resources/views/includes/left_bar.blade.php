@@ -255,8 +255,8 @@
                                             class="pull-right"><i class="mdi mdi-chevron-right"></i></span> </span></a>
                             <ul class="list-unstyled">
                                 <li><a href="{{route('createDefaultTask')}}">{{ __('Default Budget') }}</a></li>
-                                <li><a href="{{route('assignTask')}}">{{ __('Assign Budget') }}</a></li>
-                                <li><a href="{{route('viewTasks')}}">{{ __('View Budget') }}</a></li>
+                                {{--<li><a href="{{route('assignTask')}}">{{ __('Assign Budget') }}</a></li>--}}
+                                {{--<li><a href="{{route('viewTasks')}}">{{ __('View Budget') }}</a></li>--}}
                             </ul>
                         </li>
                     @endif

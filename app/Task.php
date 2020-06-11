@@ -81,7 +81,7 @@ class Task extends Model
         return $this->hasMany(TaskEducation::class,'idtask');
     }
 
-    public function gender(){
+    public function genders(){
         return $this->hasMany(TaskGender::class,'idtask');
     }
 

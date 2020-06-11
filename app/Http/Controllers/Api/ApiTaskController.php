@@ -24,151 +24,268 @@ class ApiTaskController extends Controller
             $lang = 'title_en';
             $langText = 'text_en';
         }
-//        $tasks = Task::with(['apiEthnicities','apiCareers','apiEducation','apiReligion','apiAge','apiIncome'])->where('idUser',Auth::user()->idUser)->where('status',2)->latest()->get();
-//
-//        foreach ($tasks as $task){
-//            if($task->task_gender == 0){
-//                $gender = 'Any';
-//            }
-//            else if($task->task_gender == 1){
-//                $gender = 'Male';
-//            }
-//            else if($task->task_gender == 2){
-//                $gender = 'Female';
-//            }
-//            else if($task->task_gender == 3){
-//                $gender = 'Other';
-//            }
-//            else{
-//                $gender = '';
-//            }
-//
-//            if($task->task_job_sector == 0){
-//                $jobSector = 'Any';
-//            }
-//            else if($task->task_job_sector == 1){
-//                $jobSector = 'Government';
-//            }
-//            else if($task->task_job_sector == 2){
-//                $jobSector = 'Private';
-//            }
-//            else if($task->task_job_sector == 3){
-//                $jobSector = 'Non-Government';
-//            }
-//            else{
-//                $jobSector = '';
-//            }
-//
-//            $task['gender'] = $gender;
-//            $task['jobSector'] = $jobSector;
-//
-//
-//            $ethnicities=json_decode($task->apiEthnicities,true);
-//            $ethnicities=array_column($ethnicities,'name');
-//            $task['ethnicities']=implode(',',$ethnicities);
-//
-//            $careers = json_decode($task->apiCareers,true);
-//            $careers=array_column($careers,'name');
-//            $task['careers']=implode(',',$careers);
-//
-//            $education = json_decode($task->apiEducation,true);
-//            $education=array_column($education,'name');
-//            $task['educations']=implode(',',$education);
-//
-//            $religion = json_decode($task->apiReligion,true);
-//            $religion=array_column($religion,'name');
-//            $task['religion']=implode(',',$religion);
-//
-//            $income = json_decode($task->apiIncome,true);
-//            $income=array_column($income,'name');
-//            $task['income']=implode(',',$income);
-//
-//            if($task->apiAge != null) {
-//                if ($task->apiAge['comparison'] == 0) {
-//                    $age = 'Equal To '.$task->apiAge['minAge'];
-//                } else if ($task->apiAge['comparison'] == 1) {
-//                    $age = 'Less Than '.$task->apiAge['minAge'];
-//
-//                } else if ($task->apiAge['comparison'] == 2) {
-//                    $age = 'Grater Than '.$task->apiAge['minAge'];
-//
-//                } else if ($task->apiAge['comparison'] == 3) {
-//                    $age = 'Between '.$task->apiAge['minAge'] . ' - ' . $task->apiAge['maxAge'];
-//                }
-//                else{
-//                    $age = null;
-//                }
-//            }
-//            else{
-//                $age = null;
-//            }
-//            $task['age'] = $age;
-//
-//            $task->makeHidden('apiEthnicities')->toArray();
-//            $task->makeHidden('apiCareers')->toArray();
-//            $task->makeHidden('task_job_sector')->toArray();
-//            $task->makeHidden('task_gender')->toArray();
-//            $task->makeHidden('apiEducation')->toArray();
-//            $task->makeHidden('apiReligion')->toArray();
-//            $task->makeHidden('apiIncome')->toArray();
-//            $task->makeHidden('updated_at')->toArray();
-//            $task->makeHidden('idUser')->toArray();
-//            $task->makeHidden('apiAge')->toArray();
-//            $task->makeHidden('idoffice')->toArray();
-//            $task->makeHidden('assigned_by')->toArray();
-//            $task->makeHidden('isDefault')->toArray();
-////            $task->makeHidden('ethnicities.idtask_ethnicity')->toArray();
-//        }
+        $task = Task::where('idUser',Auth::user()->idUser)->latest()->first();
+        if($task != null) {
+            if ($task->ethnicity == 1) {
+                $ethnicities = $task->ethnicities;
+                foreach ($ethnicities as $ethnicity) {
+                    $ethnicity['label'] = $ethnicity->ethnicity->name_en;
+                    $ethnicity['value'] = $ethnicity->value;
 
-        $tasks['total'] = 10;
-//        $tasks['task_ethnicity'] = [['label'=>'sinhala','value'=>3],['label'=>'tamil','value'=>5]];
-//        $tasks['task_religion'] = [['label'=>'buddhist','value'=>3],['label'=>'hindu','value'=>5]];
-//        $tasks['task_education'] = [];
-//        $tasks['task_income'] = [];
-//        $tasks['task_career'] = [];
-//        $tasks['task_job_sector'] = [];
-//        $tasks['task_gender'] = [];
-//        $tasks['task_branch_society'] = [['label'=>'president','value'=>1],['label'=>'member','value'=>25]];
-//        $tasks['task_womens_society'] = [['label'=>'secretory','value'=>3],['label'=>'member','value'=>30]];
-//        $tasks['task_youth_society'] = [['label'=>'secretory','value'=>4],['label'=>'member','value'=>35]];
-        $tasks['details'] = [
-            ['title'=>'ethnicity','data'=>[['label'=>'sinhala','value'=>3],['label'=>'tamil','value'=>5]]],
-            ['title'=>'gender','data'=>[['label'=>'male','value'=>20],['label'=>'female','value'=>10],['label'=>'other','value'=>0]]],
-            ['title'=>'youth society','data'=>[['label'=>'president','value'=>2],['label'=>'member','value'=>6]]],
-            ['title'=>'woments society','data'=>[['label'=>'secretory','value'=>5],['label'=>'member','value'=>10]]],
-        ];
+                    $ethnicity->makeHidden('created_at')->toArray();
+                    $ethnicity->makeHidden('updated_at')->toArray();
+                    $ethnicity->makeHidden('ethnicity')->toArray();
+                    $ethnicity->makeHidden('completed')->toArray();
+                    $ethnicity->makeHidden('status')->toArray();
+                    $ethnicity->makeHidden('idethnicity')->toArray();
+                    $ethnicity->makeHidden('idtask')->toArray();
+                    $ethnicity->makeHidden('idtask_ethnicity')->toArray();
+                }
+            } else {
+                $ethnicities = [];
+            }
+
+            if ($task->religion == 1) {
+                $religions = $task->religions;
+                foreach ($religions as $religion) {
+                    $religion['label'] = $religion->religion->name_en;
+                    $religion['value'] = $religion->value;
+
+                    $religion->makeHidden('created_at')->toArray();
+                    $religion->makeHidden('updated_at')->toArray();
+                    $religion->makeHidden('completed')->toArray();
+                    $religion->makeHidden('status')->toArray();
+                    $religion->makeHidden('idtask')->toArray();
+                    $religion->makeHidden('idtask_religion')->toArray();
+                    $religion->makeHidden('religion')->toArray();
+                    $religion->makeHidden('idreligion')->toArray();
+
+                }
+            } else {
+                $religions = [];
+            }
+
+            if ($task->income == 1) {
+                $incomeArray = $task->incomes;
+                foreach ($incomeArray as $income) {
+
+                    $income['label'] = $income->income->name_en;
+                    $income['value'] = $income->value;
+
+                    $income->makeHidden('created_at')->toArray();
+                    $income->makeHidden('updated_at')->toArray();
+                    $income->makeHidden('completed')->toArray();
+                    $income->makeHidden('status')->toArray();
+                    $income->makeHidden('idtask')->toArray();
+                    $income->makeHidden('idnature_of_income')->toArray();
+                    $income->makeHidden('income')->toArray();
+                    $income->makeHidden('idtask_income')->toArray();
+
+                }
+            } else {
+                $incomeArray = [];
+            }
+
+            if ($task->gender == 1) {
+                $genderArray = $task->genders;
+                foreach ($genderArray as $gender) {
+
+                    if ($gender->gender == 1) {
+                        $genderName = 'Male';
+                    } else if ($gender->gender == 2) {
+                        $genderName = 'Female';
+
+                    } else if ($gender->gender == 3) {
+                        $genderName = 'Other';
+
+                    } else {
+                        $genderName = 'Unknown';
+
+                    }
+
+                    $gender['label'] = $genderName;
+                    $gender['value'] = $gender->value;
+
+                    $gender->makeHidden('created_at')->toArray();
+                    $gender->makeHidden('updated_at')->toArray();
+                    $gender->makeHidden('completed')->toArray();
+                    $gender->makeHidden('status')->toArray();
+                    $gender->makeHidden('idtask')->toArray();
+                    $gender->makeHidden('gender')->toArray();
+                    $gender->makeHidden('idtask_gender')->toArray();
+
+                }
+            } else {
+                $genderArray = [];
+            }
+
+
+            if ($task->job_sector == 1) {
+                $jobArray = $task->job;
+                foreach ($jobArray as $job) {
+
+                    if ($job->job_sector == 1) {
+                        $jobName = 'Government';
+                    } else if ($job->job_sector == 2) {
+                        $jobName = 'Private';
+
+                    } else if ($job->job_sector == 3) {
+                        $jobName = 'Non-Government';
+
+                    } else {
+                        $jobName = 'Unknown';
+
+                    }
+
+                    $job['label'] = $jobName;
+                    $job['value'] = $job->value;
+
+                    $job->makeHidden('created_at')->toArray();
+                    $job->makeHidden('updated_at')->toArray();
+                    $job->makeHidden('completed')->toArray();
+                    $job->makeHidden('status')->toArray();
+                    $job->makeHidden('job_sector')->toArray();
+                    $job->makeHidden('idtask_job_sector')->toArray();
+
+                }
+            } else {
+                $jobArray = [];
+            }
+
+            if ($task->education == 1) {
+                $educationArray = $task->educations;
+                foreach ($educationArray as $education) {
+
+                    $education['label'] = $education->education->name_en;
+                    $education['value'] = $education->value;
+
+                    $education->makeHidden('created_at')->toArray();
+                    $education->makeHidden('updated_at')->toArray();
+                    $education->makeHidden('completed')->toArray();
+                    $education->makeHidden('status')->toArray();
+                    $education->makeHidden('idtask')->toArray();
+                    $education->makeHidden('idtask_education')->toArray();
+                    $education->makeHidden('education')->toArray();
+                    $education->makeHidden('ideducational_qualification')->toArray();
+
+
+                }
+            } else {
+                $educationArray = [];
+            }
+
+
+            if ($task->career == 1) {
+                $careersArray = $task->careers;
+                foreach ($careersArray as $career) {
+
+                    $career['label'] = $career->career->name_en;
+                    $career['value'] = $career->value;
+
+                    $career->makeHidden('created_at')->toArray();
+                    $career->makeHidden('updated_at')->toArray();
+                    $career->makeHidden('completed')->toArray();
+                    $career->makeHidden('status')->toArray();
+                    $career->makeHidden('idtask')->toArray();
+                    $career->makeHidden('idcareer')->toArray();
+                    $career->makeHidden('career')->toArray();
+                    $career->makeHidden('idtask_career')->toArray();
+
+
+                }
+            } else {
+                $careersArray = [];
+            }
+
+            if ($task->branch == 1) {
+                $branchArray = $task->branchSociety;
+                foreach ($branchArray as $branch) {
+
+                    $branch['label'] = $branch->position->name_en;
+                    $branch['value'] = $branch->value;
+
+                    $branch->makeHidden('created_at')->toArray();
+                    $branch->makeHidden('updated_at')->toArray();
+                    $branch->makeHidden('completed')->toArray();
+                    $branch->makeHidden('status')->toArray();
+                    $branch->makeHidden('idtask')->toArray();
+                    $branch->makeHidden('idposition')->toArray();
+                    $branch->makeHidden('position')->toArray();
+                    $branch->makeHidden('idtask_branch_society')->toArray();
+
+
+                }
+            } else {
+                $branchArray = [];
+            }
+
+
+            if ($task->womens == 1) {
+                $womensArray = $task->womensSociety;
+                foreach ($womensArray as $item) {
+
+                    $item['label'] = $item->position->name_en;
+                    $item['value'] = $item->value;
+
+                    $item->makeHidden('created_at')->toArray();
+                    $item->makeHidden('updated_at')->toArray();
+                    $item->makeHidden('completed')->toArray();
+                    $item->makeHidden('status')->toArray();
+                    $item->makeHidden('idtask')->toArray();
+                    $item->makeHidden('idposition')->toArray();
+                    $item->makeHidden('position')->toArray();
+                    $item->makeHidden('task_women_society')->toArray();
+
+
+                }
+            } else {
+                $womensArray = [];
+            }
+
+            if ($task->youth == 1) {
+                $youthArray = $task->youthSociety;
+                foreach ($youthArray as $item) {
+
+                    $item['label'] = $item->position->name_en;
+                    $item['value'] = $item->value;
+
+                    $item->makeHidden('created_at')->toArray();
+                    $item->makeHidden('updated_at')->toArray();
+                    $item->makeHidden('completed')->toArray();
+                    $item->makeHidden('status')->toArray();
+                    $item->makeHidden('idtask')->toArray();
+                    $item->makeHidden('idposition')->toArray();
+                    $item->makeHidden('position')->toArray();
+                    $item->makeHidden('idtask_youth_society')->toArray();
+
+
+                }
+            } else {
+                $youthArray = [];
+            }
+
+            $tasks['total'] = $task->target;
+            $tasks['details'] = [
+                ['title' => 'Ethnicity', 'data' => $ethnicities],
+                ['title' => 'Religion', 'data' => $religions],
+                ['title' => 'Income Status', 'data' => $incomeArray],
+                ['title' => 'Gender', 'data' => $genderArray],
+                ['title' => 'Educational Level', 'data' => $educationArray],
+                ['title' => 'Career', 'data' => $careersArray],
+                ['title' => 'Job Sector', 'data' => $jobArray],
+                ['title' => 'Branch Society', 'data' => $branchArray],
+                ['title' => 'Youth Society', 'data' => $youthArray],
+                ['title' => 'Womens Society', 'data' => $womensArray],
+            ];
+        }
+        else{
+            $tasks['total'] = 0;
+            $tasks['details'] = [ ];
+        }
         return response()->json(['success' => $tasks, 'statusCode' => 0]);
     }
 
-    public function storeVotersCount(Request $request){
 
-        if (Auth::user()->iduser_role != 6) {
-            return response()->json(['error' => 'You are not an agent', 'statusCode' => -99]);
-        }
-
-        $voters = VotersCount::where('idoffice',Auth::user()->idoffice)->where('status',1)->first();
-        if($voters != null){
-            $voters->total= $request['total'];
-            $voters->forecasting= $request['forecasting'];
-            $voters->houses= $request['noOfHouses'];
-            $voters->save();
-        }
-        else{
-            $voters = new VotersCount();
-            $voters->idvillage = Auth::user()->agent->idvillage;
-            $voters->idoffice = Auth::user()->idoffice;
-            $voters->idUser = Auth::user()->idUser;
-            $voters->total= $request['total'];
-            $voters->forecasting= $request['forecasting'];
-            $voters->houses= $request['noOfHouses'];
-            $voters->status  = 1;
-            $voters->save();
-        }
-
-
-        return response()->json(['success' => 'Value saved', 'statusCode' => 0]);
-
-    }
 
 
 }
