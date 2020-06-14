@@ -14,6 +14,34 @@ class Agent extends Model
         return MemberAgent::where('idagent',$this->idagent)->where('status',1)->count();
     }
 
+    public function numberOfSmsMembers(){
+        return MemberAgent::whereHas('member',function ($q){
+            $q->where('isSms',1);
+        })->where('idagent',$this->idagent)->where('status',1)->count();
+    }
+
+    public function numberOfAppMembers(){
+        return MemberAgent::whereHas('member',function ($q){
+            $q->where('isSms',0);
+        })->where('idagent',$this->idagent)->where('status',1)->count();
+    }
+
+    public function getMembers(){
+        return MemberAgent::with(['member','member.belongsUser'])->where('idagent',$this->idagent)->where('status',1)->get();
+    }
+
+    public function getSmsMembers(){
+        return MemberAgent::with(['member','member.belongsUser'])->whereHas('member',function ($q){
+            $q->where('isSms',1);
+        })->where('idagent',$this->idagent)->where('status',1)->get();
+    }
+
+    public function getAppMembers(){
+        return MemberAgent::with(['member','member.belongsUser'])->whereHas('member',function ($q){
+            $q->where('isSms',0);
+        })->where('idagent',$this->idagent)->where('status',1)->get();
+    }
+
     public function user(){
         return $this->hasOne(User::class,'idUser');
     }
@@ -52,5 +80,9 @@ class Agent extends Model
 
     public function educationalQualification(){
         return $this->belongsTo(EducationalQualification::class,'ideducational_qualification');
+    }
+
+    public function memberAgents(){
+        return $this->hasMany(MemberAgent::class,'idagent');
     }
 }

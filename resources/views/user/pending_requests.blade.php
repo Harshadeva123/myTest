@@ -336,15 +336,25 @@
                                 <label style="margin-left: 5px;" class="radio-inline"><input disabled
                                                                                              style="margin-left: 5px;"
                                                                                              type="radio" required
-                                                                                             value="0" name="genderV"
+                                                                                             value="1" name="genderV"
                                                                                              checked>&nbsp;{{ __('Male') }}
                                 </label>
                                 &nbsp;
                                 &nbsp;
                                 <label style="margin-left: 5px;" class="radio-inline"><input disabled
                                                                                              style="margin-left: 5px;"
-                                                                                             type="radio" value="1"
+                                                                                             type="radio" value="2"
                                                                                              name="genderV">&nbsp;{{ __('Female') }}
+                                </label>
+                                <label style="margin-left: 5px;" class="radio-inline"><input disabled
+                                                                                             style="margin-left: 5px;"
+                                                                                             type="radio" value="3"
+                                                                                             name="genderV">&nbsp;{{ __('Female') }}
+                                </label>
+                                <label style="margin-left: 5px;" class="radio-inline"><input disabled
+                                                                                             style="margin-left: 5px;"
+                                                                                             type="radio" value="4"
+                                                                                             name="genderV">&nbsp;{{ __('Undisclosed') }}
                                 </label>
                             </div>
                         </div>
@@ -408,19 +418,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group col-md-12 hideManagement">
-                            <label for="addressV">{{ __('Address') }}</label>
-                            <div>
-                                <div class="input-group">
-                                    <div class="input-group-append">
-                                            <span class="input-group-text"><em
-                                                        class="mdi mdi-book-open"></em></span>
-                                    </div>
-                                    <input autocomplete="on" type="text" class="form-control" readonly="true"
-                                           placeholder="" name="addressV" id="addressV">
-                                </div>
-                            </div>
-                        </div>
+
 
 
                     </div>
@@ -698,7 +696,6 @@
                             }, 1000);
                         }
                         if (data.success != null) {
-                            console.log(data.success);
                             @if(\Illuminate\Support\Facades\Auth::user()->iduser_role <= 2)
                                 $('#officeV').val(data.success.office.office_name);
                             @endif
@@ -714,7 +711,6 @@
                             $('#nicV').val(data.success.nic);
                             $('#emailV').val(data.success.email);
                             $('#phoneV').val(data.success.contact_no1);
-                            $('#addressV').val(data.success.address);
                             $('#dobV').val(data.success.bday);
                             $('#referralV').val(data.success.agent.referral_code);
                             $('#electionDivisionV').val(data.success.agent.election_division.name_en);

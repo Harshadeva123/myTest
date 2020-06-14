@@ -8,6 +8,7 @@ use App\EducationalQualification;
 use App\ElectionDivision;
 use App\Ethnicity;
 use App\GramasewaDivision;
+use App\Http\Controllers\SmsController;
 use App\Http\Controllers\TaskController;
 use App\Member;
 use App\MemberAgent;
@@ -148,7 +149,6 @@ class ApiRegistrationController extends Controller
             return response()->json(['error' => $validator->errors()->first(), 'statusCode' => -99]);
         }
 
-
         if ($request['userRole'] == 6) {
             if ($request['referral_code'] == null) {
                 return response()->json(['error' => 'Office referral code should be provided!', 'statusCode' => -99]);
@@ -220,7 +220,7 @@ class ApiRegistrationController extends Controller
         $user->email = $request['email'];
         $user->username = $request['username'];
         $user->password = Hash::make($request['password']);
-        $user->bday = date('Y-m-d', strtotime($request['dob']));
+        $user->bday = $request['dob'];
         $user->system_language = $request['lang']; // default value for english
         if ($user->iduser_role == 6) {
             $user->status = $agentStatus; // value for agent form setting table
@@ -240,10 +240,6 @@ class ApiRegistrationController extends Controller
             $this->registerMember($user,$request,$district,$agent,$memberStatus);
         }
         // save in selected user role table end
-
-        //save in society table
-        //$this->storeUserSocieties($request,$user,$office);
-        //$token = $user->createToken('authToken')->accessToken; //generate access token
 
         return response()->json(['success' => 'User registered successfully!', 'statusCode' => 0]);
     }
@@ -303,6 +299,9 @@ class ApiRegistrationController extends Controller
         $memberAgent->status = $memberStatus; //pending member
         $memberAgent->save();
 
+        if($memberStatus == 1){
+            app(TaskController::class)->complete(Member::find($memberAgent->idmember)->idUser, $referralAgent->idUser);
+        }
     }
 
 
@@ -366,11 +365,11 @@ class ApiRegistrationController extends Controller
 
     public function storeSmsUser(Request $request)
     {
+
         //validation start
         $validator = \Validator::make($request->all(), [
             'userRole' => 'required|exists:user_role,iduser_role',
             'username' => 'nullable|max:50|unique:usermaster',
-         // 'password' => 'required|confirmed',
             'title' => 'nullable|numeric',
             'firstName' => 'required',
             'lastName' => 'nullable',
@@ -407,8 +406,6 @@ class ApiRegistrationController extends Controller
             'email.email' => 'Email format invalid!',
             'email.max' => 'Email must be less than 255 characters!',
             'isGovernment.required' => 'Job sector should be provided!',
-//          'password.required' => 'Password should be provided!',
-//          'password.confirmed' => 'Passwords didn\'t match!',
             'phone.numeric' => 'Phone number can only contain numbers!',
             'userRole.required' => 'User role should be provided!',
             'userRole.exists' => 'User role invalid!',
@@ -459,8 +456,6 @@ class ApiRegistrationController extends Controller
 
         }
 
-        $memberStatus = Auth::user()->office->officeSetting != null && Auth::user()->office->officeSetting->member_auto == 1 ? 1 : 2;
-
         $request = $this->customRegistrationValidation($request);
 
         //------------------------------validation end-----------------------------------//
@@ -479,9 +474,9 @@ class ApiRegistrationController extends Controller
         $user->email = $request['email'];
         $user->username = $request['username'];
         $user->password = Hash::make($request['nic']);
-        $user->bday = date('Y-m-d', strtotime($request['dob']));
+        $user->bday = $request['dob'];
         $user->system_language = $request['lang']; // default value for english
-        $user->status = 1; // value for pending user
+        $user->status = 1; // value for active user
         $user->save();
         //save in user table  end
 
@@ -519,10 +514,9 @@ class ApiRegistrationController extends Controller
         if($welcome == null){
             $welcome['body'] = 'Welcome!. ';
         }
-        $message =  $welcome['body']. ' You have registered with your NIC no : '. $request['nic'];
 
-
-        $results[] = $this->sendWelcomeSms($message,$user->contact_no1);
+        $message =  $welcome['body']. ' Registered NIC no : '. $request['nic'];
+        $results[] = app(SmsController::class)->send($message,$user->contact_no1);
 
         app(TaskController::class)->complete($member->idUser, $agent->idUser);
 
@@ -532,7 +526,6 @@ class ApiRegistrationController extends Controller
     public function getRegistrationForm(Request $request){
         $apiLang = $request['lang'];
         $fallBack = 'name_en';
-
 
         if ($apiLang == 'si') {
             $lang = 'name_si';
@@ -586,12 +579,9 @@ class ApiRegistrationController extends Controller
     }
 
 
-    public function sendWelcomeSms($message,$contactNo){
-        $client = new Client();
-        $res = $client->get("https://smsserver.textorigins.com/Send_sms?src=CYCLOMAX236&email=cwimagefactory@gmail.com&pwd=cwimagefactory&msg=".$message."&dst=".$contactNo."");
-        return json_decode($res->getBody(), true);
-    }
-
+    /**
+     Method also calling from ApiProfileController updateProfile method
+     */
     public function customRegistrationValidation($request){
 
         //common data
@@ -599,6 +589,7 @@ class ApiRegistrationController extends Controller
         $request['username'] = isset($request['username']) && $request['username'] != null ? $request['username'] :  $request['nic'];
         $request['password'] = isset($request['password']) && $request['password'] != null ? $request['password'] :  $request['nic'];
         $request['isGovernment'] = isset($request['isGovernment']) && $request['isGovernment'] != null ? $request['isGovernment'] : 4;
+        $request['dob'] = isset($request['dob']) && $request['dob'] != null  && date('Y-m-d', strtotime($request['dob'])) != '1970-01-01' ? date('Y-m-d', strtotime($request['dob'])) : null;
         $request['gender'] = isset($request['gender']) && $request['gender'] != null ? $request['gender'] : 4;
         $request['title'] = isset($request['title']) && $request['title'] != null ? $request['title'] : UserTitle::where('name_en','')->where('status',0)->first()->iduser_title;
 

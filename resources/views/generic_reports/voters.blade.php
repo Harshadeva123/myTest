@@ -103,9 +103,6 @@
                                 <thead>
                                 <tr>
                                     <th id="firstColumn" onclick="sortTable(0)"></th>
-                                    <th onclick="sortTable(5)" style='text-align: center;'>PERCENTAGE (%) <em
-                                                style="opacity: 0.5;"
-                                                class="float-right mt-1 text-secondary fa fa-sort"></em></th>
                                     <th onclick="sortTable(1)" style='text-align: center;'>TOTAL <em
                                                 style="opacity: 0.5;"
                                                 class="float-right mt-1 text-secondary fa fa-sort"></em></th>
@@ -113,6 +110,9 @@
                                                 style="opacity: 0.5;"
                                                 class="float-right mt-1 text-secondary fa fa-sort"></em></th>
                                     <th onclick="sortTable(3)" style='text-align: center;'>DIFFERENCE <em
+                                                style="opacity: 0.5;"
+                                                class="float-right mt-1 text-secondary fa fa-sort"></em></th>
+                                    <th onclick="sortTable(5)" style='text-align: center;'>PERCENTAGE (%) <em
                                                 style="opacity: 0.5;"
                                                 class="float-right mt-1 text-secondary fa fa-sort"></em></th>
                                     <th onclick="sortTable(4)" style='text-align: center;'>HOUSES <em
@@ -357,20 +357,20 @@
                     else {
                         tableDate += "<td onclick=\"firstColumnClick(item['name'])\" >" + key + "</td>";
                     }
-                    tableDate += "<td  style='text-align: center;'>" + ((parseFloat(item[1]) / parseFloat(item[0])) * 100).toFixed(1) + "</td>";
                     tableDate += "<td  style='text-align: center;'>" + item[0] + "</td>";
                     tableDate += "<td  style='text-align: center;'>" + item[1] + "</td>";
                     tableDate += "<td  style='text-align: center;'>" + item[2] + "</td>";
+                    tableDate += "<td  style='text-align: center;'>" + ((parseFloat(item[1]) / parseFloat(item[0])) * 100).toFixed(1) + "</td>";
                     tableDate += "<td  style='text-align: center;'>" + item[3] + "</td>";
                     tableDate += "</tr>";
                 });
 
                 tableDate2 = "<tr style='font-weight: 600' class='font-italic'>" +
                     "<td>TOTAL</td>" +
-                    "<td class='text-center'>"+((totalForecasting/netTotal)*100).toFixed(1)+"</td>" +
                     "<td class='text-center'>"+netTotal+"</td>" +
                     "<td class='text-center'>"+totalForecasting+"</td>" +
                     "<td class='text-center'>"+totalDifference+"</td>" +
+                    "<td class='text-center'>"+((totalForecasting/netTotal)*100).toFixed(1)+"</td>" +
                     "<td class='text-center'>"+totalHouses+"</td>" +
                     "</tr>";
 

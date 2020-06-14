@@ -13,6 +13,10 @@ class Member extends Model
         return $this->hasOne(User::class,'idUser');
     }
 
+    public function belongsUser(){
+        return $this->belongsTo(User::class,'idUser');
+    }
+
     public function memberAgents(){
         return $this->hasMany(MemberAgent::class,'idmember');
     }

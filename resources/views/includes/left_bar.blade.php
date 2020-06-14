@@ -30,7 +30,7 @@
                         <a href="{{ url('/') }}" class="waves-effect"><i
                                     class="dripicons-device-desktop"></i><span>{{ __('Dashboard') }} </span></a>
                     </li>
-                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3)
+                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3 || \Illuminate\Support\Facades\Auth::user()->iduser_role == 5)
 
                         <li class="menu-title">{{ __('HIERARCHY') }}</li>
                         <li class="has_sub">

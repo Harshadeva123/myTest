@@ -81,6 +81,8 @@
                                             </option>
                                             <option value="3">Other
                                             </option>
+                                            <option value="4">UNDISCLOSED
+                                            </option>
                                         </select>
                                     </div>
 
@@ -412,6 +414,11 @@
                                                                                              type="radio" value="3"
                                                                                              name="genderV">&nbsp;{{ __('Other') }}
                                 </label>
+                                <label style="margin-left: 5px;" class="radio-inline"><input disabled
+                                                                                             style="margin-left: 5px;"
+                                                                                             type="radio" value="4"
+                                                                                             name="genderV">&nbsp;{{ __('Undisclosed') }}
+                                </label>
                             </div>
                         </div>
                         <div class="form-group col-md-6 onlyAppLevel">
@@ -474,21 +481,6 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group col-md-12 hideManagement">
-                            <label for="addressV">{{ __('Address') }}</label>
-                            <div>
-                                <div class="input-group">
-                                    <div class="input-group-append">
-                                            <span class="input-group-text"><em
-                                                        class="mdi mdi-book-open"></em></span>
-                                    </div>
-                                    <input autocomplete="on" type="text" class="form-control" readonly="true"
-                                           placeholder="" name="addressV" id="addressV">
-                                </div>
-                            </div>
-                        </div>
-
-
                     </div>
                     <h6 class="text-secondary">System Details</h6>
                     <hr/>
@@ -627,7 +619,6 @@
                 type: 'POST',
                 data: {id: id},
                 success: function (data) {
-                    console.log(data);
                     if (data.errors != null) {
                         $('#errorAlert').show();
                         $.each(data.errors, function (key, value) {
@@ -659,7 +650,6 @@
                             $('#nicV').val(data.success.nic);
                             $('#emailV').val(data.success.email);
                             $('#phoneV').val(data.success.contact_no1);
-                            $('#addressV').val(data.success.address);
                             $('#dobV').val(data.success.bday);
 
                         }

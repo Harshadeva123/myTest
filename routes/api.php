@@ -71,6 +71,9 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     //Profile
     Route::post('profile', 'Api\ApiProfileController@index')->name('profile');
+    Route::post('get_edit_form', 'Api\ApiProfileController@editForm')->name('editForm');
+    Route::post('get_my_profile', 'Api\ApiProfileController@myProfile')->name('myProfile');
+    Route::post('update_my_profile', 'Api\ApiProfileController@updateProfile')->name('updateMyProfile');
     //Profile end
 
 

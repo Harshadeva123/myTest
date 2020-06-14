@@ -258,15 +258,18 @@
                                                         <th>OFFICE</th>
                                                     @endif
                                                     <th>STATUS</th>
+                                                    <th>VILLAGE</th>
+                                                    <th>GRAMASEWA DIVISION</th>
+                                                    <th>POLLING BOOTH</th>
+                                                    <th>ELECTION DIVISION</th>
+                                                    <th>APP MEMBERS</th>
+                                                    <th>SMS MEMBERS</th>
+                                                    <th>TOTAL MEMBERS</th>
                                                     <th>GENDER</th>
                                                     <th>DOB</th>
                                                     <th>NIC</th>
                                                     <th>EMAIL</th>
                                                     <th>CONTACT NO</th>
-                                                    <th>ELECTION DIVISION</th>
-                                                    <th>POLLING BOOTH</th>
-                                                    <th>GRAMASEWA DIVISION</th>
-                                                    <th>VILLAGE</th>
                                                     <th>ETHNICITY</th>
                                                     <th>RELIGION</th>
                                                     <th>EDUCATION</th>
@@ -274,7 +277,6 @@
                                                     <th>CAREER</th>
                                                     <th>JOB SECTOR</th>
                                                     <th>REFERRAL CODE</th>
-                                                    <th>#OF MEMBERS</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
@@ -286,6 +288,7 @@
                                                                 @if(\Illuminate\Support\Facades\Auth::user()->iduser_role <= 2 )
                                                                     <td>{{strtoupper($user->office->office_name)}}</td>
                                                                 @endif
+
                                                                 @if($user->status == 1)
                                                                     <td nowrap><p><em
                                                                                     class="mdi mdi-checkbox-blank-circle text-success "></em>
@@ -304,7 +307,15 @@
                                                                         UNKNOWN
                                                                     </td>
                                                                 @endif
-                                                                @if($user->gender == 1)
+                                                                <td>{{$user->agent->village->name_en}}</td>
+                                                                <td>{{$user->agent->gramasewaDivision->name_en}}</td>
+                                                                <td>{{$user->agent->pollingBooth->name_en}}</td>
+                                                                <td>{{$user->agent->electionDivision->name_en}}</td>
+                                                                <td><a onclick="showMembers(2,{{$user->agent->idagent}});" href="#">{{$user->agent->numberOfAppMembers()}}</a></td>
+                                                                <td><a onclick="showMembers(1,{{$user->agent->idagent}});" href="#">{{$user->agent->numberOfSmsMembers()}}</a></td>
+                                                                <td><a onclick="showMembers(0,{{$user->agent->idagent}});" href="#">{{$user->agent->numberOfMembers()}}</a></td>
+
+                                                            @if($user->gender == 1)
                                                                     <td>MALE</td>
                                                                 @elseif ($user->gender == 2)
                                                                     <td>FEMALE</td>
@@ -317,10 +328,7 @@
                                                                 <td>{{$user->nic}}</td>
                                                                 <td>{{$user->email}}</td>
                                                                 <td>{{$user->contact_no1}}</td>
-                                                                <td>{{$user->agent->electionDivision->name_en}}</td>
-                                                                <td>{{$user->agent->pollingBooth->name_en}}</td>
-                                                                <td>{{$user->agent->gramasewaDivision->name_en}}</td>
-                                                                <td>{{$user->agent->village->name_en}}</td>
+
                                                                 <td>{{$user->agent->ethnicity->name_en}}</td>
                                                                 <td>{{$user->agent->religion->name_en}}</td>
                                                                 <td>{{$user->agent->educationalQualification->name_en}}</td>
@@ -334,7 +342,6 @@
                                                                     <td>FEMALE</td>
                                                                 @endif
                                                                 <td>{{$user->agent->referral_code}}</td>
-                                                                <td>{{$user->agent->numberOfMembers()}}</td>
                                                             </tr>
 
                                                         @endforeach
@@ -364,6 +371,46 @@
         </div> <!-- ./container -->
     </div><!-- ./wrapper -->
 
+
+    <!-- modal start -->
+
+    <div class="modal fade" id="memberModal" tabindex="-1"
+         role="dialog"
+         aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title mt-0">Members</h5>
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-hidden="true">×
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="table-rep-plugin">
+                                <div class="table-responsive b-0" data-pattern="priority-columns">
+                                    <table id="table" class="table table-striped table-bordered"
+                                           cellspacing="0"
+                                           width="100%">
+                                        <thead>
+                                        <tr>
+                                            <th>NAME</th>
+                                            <th>CONTACT NO</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="membersTbody">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- modal end -->
 
 @endsection
 @section('psScript')
@@ -395,7 +442,7 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-
+            $('#rowsCount').val("{{isset($_REQUEST['rows']) && $_REQUEST['rows'] != '' ? $_REQUEST['rows'] : 10}}");
 //            setParameters();
         });
 
@@ -422,6 +469,10 @@
                     pageSize: 'LEGAL',
                     filename: 'Agents Report',
                     title: 'Agent Report',
+                },
+                {
+                    extend: 'colvis',
+                    text: 'Columns'
                 },
             ]
         });
@@ -525,6 +576,28 @@
                     let result = data.success;
                     $.each(result, function (key, value) {
                         $('#village').append("<option value='" + value.idvillage + "'>" + value.name_en + "</option>");
+                    });
+                }
+            });
+        }
+
+        function showMembers(type,id) {
+            let table = '';
+            $.ajax({
+                url: '{{route('getMembersByAgent')}}',
+                type: 'POST',
+                data: {id:id,type:type},
+                success: function (data) {
+                    console.log(data);
+                    $.each(data, function (key, value) {
+                        table += "<tr>";
+                        table += "<td>"+value.member.belongs_user.fName+"</td>";
+                        table += "<td>"+value.member.belongs_user.contact_no1+"</td>";
+                        table += "</tr>";
+
+                        $('#membersTbody').html('');
+                        $('#membersTbody').append(table);
+                        $('#memberModal').modal('show');
                     });
                 }
             });

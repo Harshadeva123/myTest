@@ -25,14 +25,9 @@ class SmsController extends Controller
 {
     public function index()
     {
-//        $client = new Client();
-//        $res = $client->get("https://smsserver.textorigins.com/Send_sms?src=CYCLOMAX236&email=cwimagefactory@gmail.com&pwd=cwimagefactory&msg=TestMassage&dst=0717275539");
-//        $result =  json_decode($res->getBody(),true);
-//        return $result;
         $limit = SmsLimit::where('idoffice', Auth::user()->idoffice)->where('status', 1)->first();
         $welcome = WelcomeSms::where('idoffice', Auth::user()->idoffice)->where('status', 1)->latest()->first();
         return view('sms.welcome')->with(['title' => 'Welcome SMS', 'limit' => $limit, 'welcome' => $welcome]);
-
     }
 
     public function config()
@@ -44,7 +39,6 @@ class SmsController extends Controller
 
     public function limit(Request $request)
     {
-
         $validationMessages = [
             'updateId.required' => 'Invalid!',
             'limit.numeric' => 'Limit required!',
@@ -108,7 +102,6 @@ class SmsController extends Controller
 
     public function create(Request $request)
     {
-
         $electionDivisions = ElectionDivision::where('status', 1)->where('iddistrict', Auth::user()->office->iddistrict)->get();
 
         $careers = Career::where('status', 1)->get();
@@ -315,27 +308,35 @@ class SmsController extends Controller
 
     }
 
-    public function send(Request $request)
+    public function sendBulk(Request $request)
     {
-        $limit = Auth::user()->office->smaLimit != null ? Auth::user()->office->smaLimit->limit : 0;
-        $used = Auth::user()->office->smaLimit != null ? Auth::user()->office->smaLimit->current : 0;
         $recipients = $this->getFilteredUsers($request);
-
         $results = [];
-        if ($limit - $used > count($recipients)) {
 
+        if ($this->isCreditsAvailable(count($recipients))) {
 
             foreach ($recipients as $recipient) {
                 $client = new Client();
                 $res = $client->get("https://smsserver.textorigins.com/Send_sms?src=CYCLOMAX236&email=cwimagefactory@gmail.com&pwd=cwimagefactory&msg=" . $request->body . "&dst=" . $recipient->contact_no1 . "");
-                $result = json_decode($res->getBody(), true);
-                $results[] = $result;
-
-                $limit = SmsLimit::where('idoffice', Auth::user()->idoffice)->where('status', 1)->first();
-                $limit->current += 1;
-                $limit->save();
-
+                $results[] = json_decode($res->getBody(), true);
+                $this->increaseSmsCount(1);
             }
+            return response()->json(['success' => $results]);
+
+        } else {
+            return response()->json(['errors' => ['error' => 'You have not enough credits to send these messages.']]);
+
+        }
+    }
+
+    public function send($message,$contactNo)
+    {
+        if ($this->isCreditsAvailable(1)) {
+
+            $client = new Client();
+            $res = $client->get("https://smsserver.textorigins.com/Send_sms?src=CYCLOMAX236&email=cwimagefactory@gmail.com&pwd=cwimagefactory&msg=" . $message . "&dst=" . $contactNo . "");
+            $results[] = json_decode($res->getBody(), true);
+            $this->increaseSmsCount(1);
 
             return response()->json(['success' => $results]);
 
@@ -343,5 +344,22 @@ class SmsController extends Controller
             return response()->json(['errors' => ['error' => 'You have not enough credits to send these messages.']]);
 
         }
+    }
+
+    public function isCreditsAvailable($count){
+        $limit = Auth::user()->office->smaLimit != null ? Auth::user()->office->smaLimit->limit : 0;
+        $used = Auth::user()->office->smaLimit != null ? Auth::user()->office->smaLimit->current : 0;
+        if($limit - $used > $count){
+            return 1;
+        }
+        else{
+            return 0;
+        }
+    }
+
+    public function increaseSmsCount($count){
+        $limit = SmsLimit::where('idoffice', Auth::user()->idoffice)->where('status', 1)->first();
+        $limit->current += $count;
+        $limit->save();
     }
 }

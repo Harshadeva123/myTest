@@ -387,8 +387,9 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
+            $('#rowsCount').val("{{isset($_REQUEST['rows']) && $_REQUEST['rows'] != '' ? $_REQUEST['rows'] : 10}}");
 
-            setParameters();
+//            setParameters();
         });
 
         $('#table').DataTable({
@@ -414,6 +415,10 @@
                     pageSize: 'LEGAL',
                     filename: 'Members Report',
                     title: 'Agent Report',
+                },
+                {
+                    extend: 'colvis',
+                    text: 'Columns'
                 },
             ]
         });

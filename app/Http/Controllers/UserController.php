@@ -262,6 +262,15 @@ class UserController extends Controller
 //
 //        }
 //        $someArray = json_decode($district, true);
+        $users->appends([
+            'userRole' => $request['userRole'],
+            'searchCol' => $request['searchCol'],
+            'searchText' => $request['searchText'],
+            'gender' => $request['gender'],
+            'end' => $request['end'],
+            'start' => $request['start']
+        ]);
+
         return view('user.view_users', ['title' =>  __('View User'),'userTitles'=>$userTitles, 'users' => $users, 'userRoles' => $userRoles,'offices'=>$offices]);
     }
 
@@ -666,5 +675,19 @@ class UserController extends Controller
         }
 
     }
+
+    public function getMemberByAgent(Request $request){
+        $id = $request['id'];
+      if($request['type'] == 2){
+          return Agent::find(intval($id))->getAppMembers();
+      }
+      else if($request['type'] == 1){
+          return Agent::find(intval($id))->getSmsMembers();
+      }
+      else{
+          return Agent::find(intval($id))->getMembers();
+      }
+    }
+
 
 }

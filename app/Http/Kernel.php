@@ -65,6 +65,7 @@ class Kernel extends HttpKernel
         'authenticated' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'setLanguage' => \App\Http\Middleware\SetLanguage::class,
         'isActive' => \App\Http\Middleware\IsActive::class,
+        'upToManagement' => \App\Http\Middleware\upToManagement::class,
 
     ];
 }
