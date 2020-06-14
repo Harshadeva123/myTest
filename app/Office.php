@@ -28,4 +28,9 @@ class Office extends Model
     public function smaLimit(){
         return $this->hasOne(SmsLimit::class,'idoffice');
     }
+
+    public function officeSetting(){
+        return $this->hasOne(OfficeSetting::class,'idoffice');
+    }
+
 }

@@ -56,9 +56,10 @@ class ApiInitialSetupController extends Controller
             return response()->json(['error' => 'You are not an agent', 'statusCode' => -99]);
         }
 
-        $voters = VotersCount::where('idoffice',Auth::user()->idoffice)->where('status',1)->first();
+        $voters = VotersCount::where('idoffice',Auth::user()->idoffice)->where('idvillage',Auth::user()->agent->idvillage)->where('status',1)->first();
         if($voters != null){
             $voters->total= round($request['total']);
+            $voters->idUser = Auth::user()->idUser;
             $voters->forecasting= round($request['forecasting']);
             $voters->houses= round($request['noOfHouses']);
             $voters->save();

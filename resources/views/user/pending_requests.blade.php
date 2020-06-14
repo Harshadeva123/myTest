@@ -11,6 +11,61 @@
                 <div class="col-lg-12">
                     <div class="card m-b-20">
                         <div class="card-body">
+                            <div class="row">
+                                <div class="text-center col-md-4">
+                                    <h6>Auto Approve Agents</h6>
+                                    @if(\Illuminate\Support\Facades\Auth::user()->office->officeSetting != null && \Illuminate\Support\Facades\Auth::user()->office->officeSetting->agent_auto == 1  )
+
+                                        <input type="checkbox"
+                                               class="btn  btn-sm btn-danger"
+                                               onchange="autoApproveAgent()"
+                                               id="autoAgent" checked
+                                               switch="none"/>
+                                        <label for="autoAgent"
+                                               data-on-label="On"
+                                               data-off-label="Off"></label>
+                                    @else
+                                        <input type="checkbox"
+                                               class="btn  btn-sm btn-danger"
+                                               onchange="autoApproveAgent()"
+                                               id="autoAgent"
+                                               switch="none"/>
+                                        <label for="autoAgent"
+                                               data-on-label="On"
+                                               data-off-label="Off"></label>
+                                    @endif
+                                </div>
+                                <div class="text-center col-md-4">
+                                    <h6>Auto Approve Member</h6>
+                                    @if(\Illuminate\Support\Facades\Auth::user()->office->officeSetting != null && \Illuminate\Support\Facades\Auth::user()->office->officeSetting->member_auto == 1  )
+                                        <input type="checkbox"
+                                               class="btn  btn-sm btn-danger"
+                                               onchange="autoApproveMember()"
+                                               id="autoMember" checked
+                                               switch="none"/>
+                                        <label for="autoMember"
+                                               data-on-label="On"
+                                               data-off-label="Off"></label>
+                                    @else
+                                        <input type="checkbox"
+                                               class="btn  btn-sm btn-danger"
+                                               onchange="autoApproveMember()"
+                                               id="autoMember"
+                                               switch="none"/>
+                                        <label for="autoMember"
+                                               data-on-label="On"
+                                               data-off-label="Off"></label>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card m-b-20">
+                        <div class="card-body">
                             <form action="{{route('pendingAgents')}}" method="GET">
                                 <div class="row">
                                     {{ csrf_field() }}
@@ -61,7 +116,7 @@
                                     <div class="form-group col-md-2">
                                         <button type="submit"
                                                 class="btn form-control text-white btn-info waves-effect waves-light"
-                                                style="margin-top: 21px;">Search
+                                                style="margin-top: 27px;">Search
                                         </button>
                                     </div>
 
@@ -107,7 +162,7 @@
                                                                 @elseif ($user->gender == 3)
                                                                     <td>OTHER</td>
                                                                 @else
-                                                                    <td>UNKNOWN</td>
+                                                                    <td>UNDISCLOSED</td>
                                                                 @endif
                                                                 <td>{{$user->contact_no1}}</td>
                                                                 <td>{{$user->created_at}}</td>
@@ -549,7 +604,7 @@
             $('.alert').html('').hide();
             let id = $('#hiddenId').val();
             let type = $('#budgetType').val();
-            if(type) {
+            if (type) {
                 $.ajax({
                     url: '{{route('approveAgent')}}',
                     type: 'POST',
@@ -592,7 +647,7 @@
                     }
                 });
             }
-            else{
+            else {
                 $('#approveError').html('Please provide budget type').show();
             }
 //            swal({
@@ -677,11 +732,76 @@
 
 
                 }
-            )
-            ;
+            );
+        }
 
+        function autoApproveMember() {
+
+            let status = $('#autoMember').prop('checked');
+            $.ajax({
+                url: '{{route('isDefaultBudgetCreated')}}',
+                data: {status: status},
+                type: 'POST',
+                success: function (data) {
+
+                    if (data == 'true') {
+                        $.ajax({
+                            url: '{{route('autoApproveMember')}}',
+                            data: {status: status},
+                            type: 'POST',
+                            success: function (data) {
+
+                            }
+                        });
+                    }
+                    else {
+                        $('#autoMember').prop("checked", !$('#autoMember').prop("checked"));
+                        swal({
+                            type: 'warning',
+                            title: 'Oops...',
+                            text: "<a href=\"{{route('createDefaultTask')}}\">You Have To Create Default Budget</a>",
+                            showConfirmButton: false,
+                        });
+                    }
+
+                }
+            });
 
         }
 
+        function autoApproveAgent() {
+            let status = $('#autoAgent').prop('checked');
+            $.ajax({
+                url: '{{route('isDefaultBudgetCreated')}}',
+                data: {status: status},
+                type: 'POST',
+                success: function (data) {
+
+                    if (data == 'true') {
+                        $.ajax({
+                            url: '{{route('autoApproveAgent')}}',
+                            data: {status: status},
+                            type: 'POST',
+                            success: function (data) {
+
+                            }
+                        });
+                    }
+                    else {
+                        $('#autoAgent').prop("checked", !$('#autoAgent').prop("checked"));
+
+                        swal({
+                            type: 'warning',
+                            title: 'Oops...',
+                            text: "<a href=\"{{route('createDefaultTask')}}\">You Have To Create Default Budget</a>",
+                            showConfirmButton: false,
+                        });
+                    }
+
+
+                }
+            });
+
+        }
     </script>
 @endsection

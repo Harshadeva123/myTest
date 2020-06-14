@@ -78,7 +78,9 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('mark_village_location', 'Api\ApiInitialSetupController@markVillage')->name('markVilalge');
     //agent initial setup end
 
-
+    //get app version
+    Route::post('app_meta_data', 'GeneralController@getAppVersion')->name('getAppVersion');
+    //get app version end
 });
 
 Route::post('get_polling_booths_by_election_division', 'Api\ApiPollingBoothController@getByElectionDivision')->name('getPollingBoothByElectionDivision');
@@ -93,6 +95,8 @@ Route::post('login', 'Api\ApiUserController@login')->name('loginUser');
 Route::post('get_office_by_referral', 'Api\ApiUserController@getOfficeAdminByReferral')->name('getOfficeByReferral');
 Route::post('get_agent_by_referral', 'Api\ApiUserController@getAgentByReferral')->name('getAgentByReferral');
 //user management
+
+
 
 
 

@@ -174,20 +174,20 @@
                     @endif
                     @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3  && \Illuminate\Support\Facades\Auth::user()->office->attendence_available == 1)
 
-                        <li class="has_sub">
-                            <a href="javascript:void(0);" class="waves-effect">
-                                <i class="dripicons-suitcase"></i>
-                                <span>{{ __('Event') }}
-                                    <span class="pull-right">
-                                       <i class="mdi mdi-chevron-right"></i>
-                                   </span>
-                               </span>
-                            </a>
-                            <ul class="list-unstyled">
-                                <li><a href="{{route('create-event')}}">{{ __('Create Event') }}</a></li>
-                                <li><a href="{{route('view-events')}}">{{ __('View Events') }}</a></li>
-                            </ul>
-                        </li>
+                        {{--<li class="has_sub">--}}
+                            {{--<a href="javascript:void(0);" class="waves-effect">--}}
+                                {{--<i class="dripicons-suitcase"></i>--}}
+                                {{--<span>{{ __('Event') }}--}}
+                                    {{--<span class="pull-right">--}}
+                                       {{--<i class="mdi mdi-chevron-right"></i>--}}
+                                   {{--</span>--}}
+                               {{--</span>--}}
+                            {{--</a>--}}
+                            {{--<ul class="list-unstyled">--}}
+                                {{--<li><a href="{{route('create-event')}}">{{ __('Create Event') }}</a></li>--}}
+                                {{--<li><a href="{{route('view-events')}}">{{ __('View Events') }}</a></li>--}}
+                            {{--</ul>--}}
+                        {{--</li>--}}
                     @endif
                     @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3)
 
@@ -212,6 +212,7 @@
                                 <li><a href="{{route('report-career')}}">{{ __('Career Report') }}</a></li>
                                 <li><a href="{{route('report-religion')}}">{{ __('Religion Report') }}</a></li>
                                 <li><a href="{{route('report-ethnicity')}}">{{ __('Ethnicity Report') }}</a></li>
+                                <li><a href="{{route('report-voters')}}">{{ __('Voters Report') }}</a></li>
                             </ul>
                         </li>
                     @endif
@@ -255,6 +256,7 @@
                                             class="pull-right"><i class="mdi mdi-chevron-right"></i></span> </span></a>
                             <ul class="list-unstyled">
                                 <li><a href="{{route('createDefaultTask')}}">{{ __('Default Budget') }}</a></li>
+                                <li><a href="{{route('viewBudget')}}">{{ __('View Budget') }}</a></li>
                                 {{--<li><a href="{{route('assignTask')}}">{{ __('Assign Budget') }}</a></li>--}}
                                 {{--<li><a href="{{route('viewTasks')}}">{{ __('View Budget') }}</a></li>--}}
                             </ul>
@@ -294,6 +296,18 @@
                                     <li><a href="{{route('pendingAgents')}}">{{ __('Pending Users') }}</a></li>
                                 @endif
                                 <li><a href="{{route('viewUser')}}">{{ __('View Users') }}</a></li>
+                            </ul>
+                        </li>
+
+                    @endif
+                    @if(\Illuminate\Support\Facades\Auth::user()->iduser_role <=2)
+                        <li class="has_sub">
+                            <a href="javascript:void(0);" class="waves-effect"><i
+                                        class="dripicons-suitcase"></i><span>{{ __('Setting') }}
+                                    <span
+                                            class="pull-right"><i class="mdi mdi-chevron-right"></i></span> </span></a>
+                            <ul class="list-unstyled">
+                                <li><a href="{{route('appVersion')}}">{{ __('App Version') }}</a></li>
                             </ul>
                         </li>
 

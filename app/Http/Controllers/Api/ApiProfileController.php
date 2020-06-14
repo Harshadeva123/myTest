@@ -13,7 +13,7 @@ class ApiProfileController extends Controller
         $user = Auth::user();
 
         if($user->iduser_role == 6){
-            $voting = VotersCount::where('idoffice',Auth::user()->idoffice)->select(['total','forecasting','houses'])->first();
+            $voting = VotersCount::where('idoffice',Auth::user()->idoffice)->where('idvillage',Auth::user()->agent->idvillage)->select(['total','forecasting','houses'])->first();
             if($voting == null){
                 $voting['total'] = 0;
                 $voting['forecasting'] = 0;

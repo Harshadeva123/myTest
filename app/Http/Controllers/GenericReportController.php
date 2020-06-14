@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Analysis;
 use App\Career;
 use App\EducationalQualification;
 use App\ElectionDivision;
@@ -9,6 +10,7 @@ use App\Ethnicity;
 use App\NatureOfIncome;
 use App\Religion;
 use App\User;
+use App\VotersCount;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -697,4 +699,54 @@ class GenericReportController extends Controller
         return response()->json(['success' => ['agents'=>$agentsGroup,'members'=>$membersGroups,'agent_count'=>$agentCount,'member_count'=>$membersCount]]);
 
     }
+
+    public function voters(Request $request){
+        $electionDivisions = ElectionDivision::where('iddistrict',Auth::user()->office->iddistrict)->where('status',1)->get();
+        return view('generic_reports.voters')->with(['electionDivisions'=>$electionDivisions,'title' => 'Report : Voters']);
+
+    }
+
+    public function votersChart(Request $request)
+    {
+        $village = $request['village'];
+        $gramasewaDivision = $request['gramasewaDivision'];
+        $pollingBooth = $request['pollingBooth'];
+        $electionDivision = $request['electionDivision'];
+
+        if ($village != null) {
+            $voters = VotersCount::with(['village','village.gramasewaDivision','village.gramasewaDivision.pollingBooth','village.gramasewaDivision.pollingBooth.electionDivision'])->where('idoffice',Auth::user()->idoffice)->where('idvillage',$village)->get();
+
+        } else if ($gramasewaDivision != null) {
+
+            $voters = VotersCount::with(['village','village.gramasewaDivision','village.gramasewaDivision.pollingBooth','village.gramasewaDivision.pollingBooth.electionDivision'])
+                ->whereHas('village', function ($q) use($gramasewaDivision){
+                    $q->where('idgramasewa_division', $gramasewaDivision);
+                })
+                ->where('idoffice',Auth::user()->idoffice)->get();
+
+        } else if ($pollingBooth != null) {
+
+            $voters = VotersCount::with(['village','village.gramasewaDivision','village.gramasewaDivision.pollingBooth','village.gramasewaDivision.pollingBooth.electionDivision'])
+                ->whereHas('village', function ($q) use($pollingBooth){
+                    $q->where('idpolling_booth', $pollingBooth);
+                })
+                ->where('idoffice',Auth::user()->idoffice)->get();
+        } else if ($electionDivision != null) {
+
+            $voters = VotersCount::with(['village','village.gramasewaDivision','village.gramasewaDivision.pollingBooth','village.gramasewaDivision.pollingBooth.electionDivision'])
+                ->whereHas('village', function ($q) use($electionDivision){
+                    $q->where('idelection_division', $electionDivision);
+                })
+                ->where('idoffice',Auth::user()->idoffice)->get();
+        } else {
+            $voters = VotersCount::with(['village','village.gramasewaDivision','village.gramasewaDivision.pollingBooth','village.gramasewaDivision.pollingBooth.electionDivision'])
+                ->whereHas('village', function ($q) {
+                   $q->where('iddistrict', Auth::user()->office->iddistrict);
+                })
+                ->where('idoffice',Auth::user()->idoffice)->get();
+        }
+
+        return response()->json(['success' => $voters]);
+    }
+
 }

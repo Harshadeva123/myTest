@@ -16,4 +16,6 @@ class OfficeStaff extends Model
     public function officeGramasewa(){
         return $this->hasMany(StaffGramasewaDivision::class,'idoffice_staff');
     }
+
+
 }

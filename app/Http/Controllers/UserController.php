@@ -8,6 +8,7 @@ use App\ElectionDivision;
 use App\MemberAgent;
 use App\Office;
 use App\OfficeAdmin;
+use App\OfficeSetting;
 use App\OfficeStaff;
 use App\PollingBooth;
 use App\Task;
@@ -147,7 +148,6 @@ class UserController extends Controller
         $user->lName = $request['lastName'];
         $user->nic = $request['nic'];
         $user->gender = $request['gender'];
-        $user->address = $request['address'];
         $user->contact_no1 = $request['phone'];
         $user->contact_no2 = null;
         $user->email = $request['email'];
@@ -418,7 +418,6 @@ class UserController extends Controller
         $user->gender = $request['gender'];
         $user->contact_no1 = $request['phone'];
         $user->contact_no2 = null;
-        $user->address = $request['address'];
         if($request['password'] != null){
             $user->password = Hash::make($request['password']);
         }
@@ -614,5 +613,58 @@ class UserController extends Controller
         return response()->json(['success' => 'enabled']);
     }
 
+    public function autoMember(Request $request){
+
+        if($request['status'] == 'true'){
+            $office = OfficeSetting::where('idoffice',Auth::user()->idoffice)->first();
+            if($office == null){
+                $office = new OfficeSetting();
+                $office->idoffice = Auth::user()->idoffice;
+                $office->status = 1;
+                $office->agent_auto = 0;
+            }
+            $office->member_auto = 1;
+            $office->save();
+        }
+        else{
+            $office = OfficeSetting::where('idoffice',Auth::user()->idoffice)->first();
+            if($office == null){
+                $office = new OfficeSetting();
+                $office->idoffice = Auth::user()->idoffice;
+                $office->status = 1;
+                $office->agent_auto = 0;
+            }
+            $office->member_auto = 0;
+            $office->save();
+        }
+
+    }
+
+    public function autoAgent(Request $request){
+
+        if($request['status'] == 'true'){
+            $office = OfficeSetting::where('idoffice',Auth::user()->idoffice)->first();
+            if($office == null){
+                $office = new OfficeSetting();
+                $office->idoffice = Auth::user()->idoffice;
+                $office->status = 1;
+                $office->member_auto = 0;
+            }
+            $office->agent_auto = 1;
+            $office->save();
+        }
+        else{
+            $office = OfficeSetting::where('idoffice',Auth::user()->idoffice)->first();
+            if($office == null){
+                $office = new OfficeSetting();
+                $office->idoffice = Auth::user()->idoffice;
+                $office->status = 1;
+                $office->member_auto = 0;
+            }
+            $office->agent_auto = 0;
+            $office->save();
+        }
+
+    }
 
 }

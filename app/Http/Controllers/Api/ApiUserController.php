@@ -373,6 +373,7 @@ class ApiUserController extends Controller
             $memberAgent['id'] = $memberAgent->idmember_agent;
             $memberAgent['name'] = User::find(Member::find($memberAgent->idmember)->idUser)->fName . ' ' . User::find(Member::find($memberAgent->idmember)->idUser)->lName;
             $memberAgent['requested'] = $memberAgent->created_at->format('Y-m-d');
+            $memberAgent['isSms'] = $memberAgent->member->isSms;
             if ($memberAgent->status == 0) {
                 $memberAgent['status'] = 2;
             } else if ($memberAgent->status == 1) {
@@ -386,10 +387,11 @@ class ApiUserController extends Controller
             unset($memberAgent->idoffice);
             unset($memberAgent->updated_at);
             unset($memberAgent->created_at);
+            $memberAgent->makeHidden('member')->toArray();
+
 
         }
         return response()->json(['success' => $memberAgents, 'statusCode' => 0]);
-
     }
 
     public function approveMember(Request $request)

@@ -27,4 +27,8 @@ class Village extends Model
     {
         return $this->belongsTo(Analysis::class, 'idvillage');
     }
+
+    public function votes(){
+        return $this->hasMany(VotersCount::class,'idvillage');
+    }
 }

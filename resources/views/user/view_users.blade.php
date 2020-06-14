@@ -75,9 +75,11 @@
                                                 id="gender">
                                             <option value="" disabled selected>Select gender
                                             </option>
-                                            <option value="0">MALE
+                                            <option value="1">MALE
                                             </option>
-                                            <option value="1">FEMALE
+                                            <option value="2">FEMALE
+                                            </option>
+                                            <option value="3">Other
                                             </option>
                                         </select>
                                     </div>
@@ -164,12 +166,14 @@
                                                                         </td>
                                                                     @endif
                                                                 @endif
-                                                                @if($user->gender == 0)
+                                                                @if($user->gender == 1)
                                                                     <td>MALE</td>
-                                                                @elseif ($user->gender == 1)
+                                                                @elseif ($user->gender == 2)
                                                                     <td>FEMALE</td>
+                                                                @elseif ($user->gender == 3)
+                                                                    <td>OTHER</td>
                                                                 @else
-                                                                    <td>FEMALE</td>
+                                                                    <td>UNDISCLOSED</td>
                                                                 @endif
                                                                 <td>{{$user->bday}}</td>
                                                                 <td>{{$user->email}}</td>

@@ -163,7 +163,6 @@
                         }
                         if (data.success != null) {
 
-                            console.log(data.success);
                             $('#agent-chart').html('');
                             $('#member-chart').html('');
 

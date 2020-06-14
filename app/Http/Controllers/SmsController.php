@@ -210,7 +210,13 @@ class SmsController extends Controller
 
         $query = User::query();
 
-        $query = $query->where('idoffice',Auth::user()->idoffice);
+        $query = $query->where(function ($q) {
+            $q->where('idoffice', Auth::user()->idoffice)->orWhereHas('member', function ($q) {
+                $q->WhereHas('memberAgents', function ($q) {
+                    $q->whereIn('idoffice', [Auth::user()->idoffice])->where('status', 1);
+                });
+            });
+        });
 
         if ($villages != null) {
             $query->whereHas('member', function ($q) use ($villages) {
@@ -276,9 +282,7 @@ class SmsController extends Controller
                 $q->where('is_government', $jobSector)->where('isSms', 1);
             });
         }
-        $query->whereHas('memberAgents', function ($q) use ($religions) {
-            $q->whereIn('idoffice', $religions)->where('status', 1);
-        });
+
 
         $users = $query->get();
 
@@ -323,7 +327,7 @@ class SmsController extends Controller
 
             foreach ($recipients as $recipient) {
                 $client = new Client();
-                $res = $client->get("https://smsserver.textorigins.com/Send_sms?src=CYCLOMAX236&email=cwimagefactory@gmail.com&pwd=cwimagefactory&msg=".$request->body."&dst=".$recipient->contact_no1."");
+                $res = $client->get("https://smsserver.textorigins.com/Send_sms?src=CYCLOMAX236&email=cwimagefactory@gmail.com&pwd=cwimagefactory&msg=" . $request->body . "&dst=" . $recipient->contact_no1 . "");
                 $result = json_decode($res->getBody(), true);
                 $results[] = $result;
 

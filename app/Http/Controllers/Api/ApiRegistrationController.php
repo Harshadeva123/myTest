@@ -81,22 +81,22 @@ class ApiRegistrationController extends Controller
         //validation start
         $validator = \Validator::make($request->all(), [
             'userRole' => 'required|exists:user_role,iduser_role',
-            'username' => 'required|max:50|unique:usermaster',
+            'username' => 'nullable|max:50|unique:usermaster',
             'password' => 'required|confirmed',
-            'title' => 'required|numeric',
+            'title' => 'nullable|numeric',
             'firstName' => 'required',
-            'lastName' => 'required',
-            'isGovernment' => 'required',
-            'gender' => 'required|numeric',
+            'lastName' => 'nullable',
+            'isGovernment' => 'nullable',
+            'gender' => 'nullable|numeric',
             'nic' => 'required|max:15|unique:usermaster',
             'email' => 'nullable|email|max:255',
-            'phone' => 'nullable|numeric',
-            'dob' => 'required|date|before:today',
-            'ethnicity' => 'required|exists:ethnicity,idethnicity',
-            'religion' => 'required|exists:religion,idreligion',
-            'career' => 'required|exists:career,idcareer',
-            'educationalQualification' => 'required|exists:educational_qualification,ideducational_qualification',
-            'natureOfIncome' => 'required|exists:nature_of_income,idnature_of_income',
+            'phone' => 'required|numeric',
+            'dob' => 'nullable|date|before:today',
+            'ethnicity' => 'nullable|exists:ethnicity,idethnicity',
+            'religion' => 'nullable|exists:religion,idreligion',
+            'career' => 'nullable|exists:career,idcareer',
+            'educationalQualification' => 'nullable|exists:educational_qualification,ideducational_qualification',
+            'natureOfIncome' => 'nullable|exists:nature_of_income,idnature_of_income',
             'branchSociety' => 'nullable|numeric',
             'womenSociety' => 'nullable|numeric',
             'youthSociety' => 'nullable|numeric',
@@ -148,6 +148,7 @@ class ApiRegistrationController extends Controller
             return response()->json(['error' => $validator->errors()->first(), 'statusCode' => -99]);
         }
 
+
         if ($request['userRole'] == 6) {
             if ($request['referral_code'] == null) {
                 return response()->json(['error' => 'Office referral code should be provided!', 'statusCode' => -99]);
@@ -158,6 +159,7 @@ class ApiRegistrationController extends Controller
             }
             $office = User::find($officeAdmin->idUser)->idoffice;
             $district = Office::find(intval($office))->iddistrict;
+            $parentOffice = User::find($officeAdmin->idUser)->office;
 
             if ($request['electionDivision'] == null) {
                 return response()->json(['error' => 'Election division should be provided!', 'statusCode' => -99]);
@@ -184,21 +186,23 @@ class ApiRegistrationController extends Controller
                 return response()->json(['error' => 'Agent referral code should be provided!', 'statusCode' => -99]);
             }
             $agent = Agent::where('referral_code', $request['referral_code'])->whereIn('status', [1, 2])->first();
+
             if ($agent == null) {
                 return response()->json(['error' => 'Referral code invalid!', 'statusCode' => -99]);
             }
 
             $office = User::find(intval($agent->idUser))->idoffice;
             $district = Office::find(intval($office))->iddistrict;
+            $parentOffice = User::find(intval($agent->idUser))->office;
+
         } else {
             return response()->json(['error' => 'User role unknown!', 'statusCode' => -99]);
         }
 
-        if(isset(UserTitle::find(intval($request['title']))->gender) && UserTitle::find(intval($request['title']))->gender != $request['gender'] && $request['gender'] != 3){
+        $memberStatus = $parentOffice->officeSetting != null && $parentOffice->officeSetting->member_auto == 1 ? 1 : 2;
+        $agentStatus = $parentOffice->officeSetting != null && $parentOffice->officeSetting->agent_auto == 1 ? 1 : 2;
 
-            return response()->json(['errors' => ['title'=>'Please re-check title and gender!']]);
-
-        }
+        $request = $this->customRegistrationValidation($request);
 
         //---------------------------------------------validation end-------------------------------------------------//
 
@@ -211,7 +215,6 @@ class ApiRegistrationController extends Controller
         $user->lName = $request['lastName'];
         $user->nic = $request['nic'];
         $user->gender = $request['gender'];
-        $user->address = $request['address'];
         $user->contact_no1 = $request['phone'];
         $user->contact_no2 = null;
         $user->email = $request['email'];
@@ -219,27 +222,33 @@ class ApiRegistrationController extends Controller
         $user->password = Hash::make($request['password']);
         $user->bday = date('Y-m-d', strtotime($request['dob']));
         $user->system_language = $request['lang']; // default value for english
-        $user->status = 2; // value for pending user
+        if ($user->iduser_role == 6) {
+            $user->status = $agentStatus; // value for agent form setting table
+
+        } else if ($user->iduser_role == 7) {
+            $user->status = $memberStatus; // value for member form setting table
+        }
+
         $user->save();
         //save in user table  end
 
         //save in selected user role table
         if ($user->iduser_role == 6) {
-            $this->registerAgent($user,$request,$district);
+            $this->registerAgent($user,$request,$district,$agentStatus);
 
         } else if ($user->iduser_role == 7) {
-            $this->registerMember($user,$request,$district,$agent);
+            $this->registerMember($user,$request,$district,$agent,$memberStatus);
         }
         // save in selected user role table end
 
         //save in society table
-        $this->storeUserSocieties($request,$user,$office);
+        //$this->storeUserSocieties($request,$user,$office);
         //$token = $user->createToken('authToken')->accessToken; //generate access token
 
         return response()->json(['success' => 'User registered successfully!', 'statusCode' => 0]);
     }
 
-    public function registerAgent($user,$request,$district){
+    public function registerAgent($user,$request,$district,$agentStatus){
 
         $agent = new Agent();
         $agent->idUser = $user->idUser;
@@ -257,89 +266,15 @@ class ApiRegistrationController extends Controller
         $agent->referral_code = $this->generateReferral($user->idUser);
         $agent->is_government = $request['isGovernment'];
         $agent->isSms = 0;// non sms user
-        $agent->status = 2;// value for pending user
+        $agent->status = $agentStatus;// value for pending user
         $agent->save();
 
-        $defaultTask = Task::where('idoffice', $user->idoffice)->where('status', 3)->where('isDefault', 1)->first();
-        if ($defaultTask != null) {
-            $task = new Task();
-            $task->idUser = $user->idUser;
-            $task->idoffice = $user->idoffice;
-            $task->assigned_by = $defaultTask->assigned_by;
-            $task->task_no = 1;
-            $task->target = $defaultTask->target;
-            $task->task_gender = $defaultTask->task_gender;
-            $task->task_job_sector = $defaultTask->task_job_sector;
-            $task->completed_amount = $defaultTask->completed_amount;
-            $task->description = $defaultTask->description;
-            $task->isDefault = 0;
-            $task->status = 2;//pending
-            $task->save();
-
-            if ($defaultTask->religions != null) {
-                foreach ($defaultTask->religions as $religion) {
-                    $new = new TaskReligion();
-                    $new->idtask = $task->idtask;
-                    $new->idreligion = $religion->idreligion;
-                    $new->status = 1;
-                    $new->save();
-                }
-            }
-
-            if ($defaultTask->ethnicities != null) {
-                foreach ($defaultTask->ethnicities as $ethnicities) {
-                    $new = new TaskEthnicity();
-                    $new->idtask = $task->idtask;
-                    $new->idethnicity = $ethnicities->idethnicity;
-                    $new->status = 1;
-                    $new->save();
-                }
-            }
-
-            if ($defaultTask->careers != null) {
-                foreach ($defaultTask->careers as $careers) {
-                    $new = new TaskCareer();
-                    $new->idtask = $task->idtask;
-                    $new->idcareer = $careers->idcareer;
-                    $new->status = 1;
-                    $new->save();
-                }
-            }
-
-            if ($defaultTask->incomes != null) {
-                foreach ($defaultTask->incomes as $incomes) {
-                    $new = new TaskIncome();
-                    $new->idtask = $task->idtask;
-                    $new->idnature_of_income = $incomes->idnature_of_income;
-                    $new->status = 1;
-                    $new->save();
-                }
-            }
-
-            if ($defaultTask->educations != null) {
-                foreach ($defaultTask->educations as $educations) {
-                    $new = new TaskEducation();
-                    $new->idtask = $task->idtask;
-                    $new->ideducational_qualification = $educations->ideducational_qualification;
-                    $new->status = 1;
-                    $new->save();
-                }
-            }
-
-            if ($defaultTask->age != null) {
-                $new = new TaskAge();
-                $new->idtask = $task->idtask;
-                $new->comparison = $defaultTask->age->comparison;
-                $new->minAge = $defaultTask->age->minAge;
-                $new->maxAge = $defaultTask->age->maxAge;
-                $new->status = 1;
-                $new->save();
-            }
-
+        if($agentStatus == 1){
+            app(TaskController::class)->assignDefaultTask($user->idUser);
         }
     }
 
-    public function registerMember($user,$request,$district,$agent){
+    public function registerMember($user,$request,$district,$agent,$memberStatus){
         $referralAgent = Agent::where('referral_code', $request['referral_code'])->first();
 
         $member = new Member();
@@ -365,17 +300,16 @@ class ApiRegistrationController extends Controller
         $memberAgent->idmember = $member->idmember;
         $memberAgent->idagent = $referralAgent->idagent;
         $memberAgent->idoffice = User::find($referralAgent->idUser)->idoffice;
-        $memberAgent->status = 2; //pending member
+        $memberAgent->status = $memberStatus; //pending member
         $memberAgent->save();
 
-//            app(TaskController::class)->updateTask($member->idUser, $referralAgent->idUser);
     }
 
 
     public function generateReferral($uid)
     {
         $user = User::find(intval($uid));
-        $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $permitted_chars = '0123456789abcdefghijklmnpqrstuvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ';
 
         $referral = substr(str_shuffle($permitted_chars), 0, 7);
 //        $referral [7] = 2 randoms from row . first name first character . 2 randoms from row . 2 randoms from office name;
@@ -430,28 +364,27 @@ class ApiRegistrationController extends Controller
         }
     }
 
-
     public function storeSmsUser(Request $request)
     {
         //validation start
         $validator = \Validator::make($request->all(), [
             'userRole' => 'required|exists:user_role,iduser_role',
-            'username' => 'required|max:50|unique:usermaster',
-//            'password' => 'required|confirmed',
-            'title' => 'required|numeric',
+            'username' => 'nullable|max:50|unique:usermaster',
+         // 'password' => 'required|confirmed',
+            'title' => 'nullable|numeric',
             'firstName' => 'required',
-            'lastName' => 'required',
-            'isGovernment' => 'required',
-            'gender' => 'required|numeric',
+            'lastName' => 'nullable',
+            'isGovernment' => 'nullable',
+            'gender' => 'nullable|numeric',
             'nic' => 'required|max:15|unique:usermaster',
             'email' => 'nullable|email|max:255',
-            'phone' => 'nullable|numeric',
-            'dob' => 'required|date|before:today',
-            'ethnicity' => 'required|exists:ethnicity,idethnicity',
-            'religion' => 'required|exists:religion,idreligion',
-            'career' => 'required|exists:career,idcareer',
-            'educationalQualification' => 'required|exists:educational_qualification,ideducational_qualification',
-            'natureOfIncome' => 'required|exists:nature_of_income,idnature_of_income',
+            'phone' => 'required|numeric',
+            'dob' => 'nullable|date|before:today',
+            'ethnicity' => 'nullable|exists:ethnicity,idethnicity',
+            'religion' => 'nullable|exists:religion,idreligion',
+            'career' => 'nullable|exists:career,idcareer',
+            'educationalQualification' => 'nullable|exists:educational_qualification,ideducational_qualification',
+            'natureOfIncome' => 'nullable|exists:nature_of_income,idnature_of_income',
             'branchSociety' => 'nullable|numeric',
             'womenSociety' => 'nullable|numeric',
             'youthSociety' => 'nullable|numeric',
@@ -474,8 +407,8 @@ class ApiRegistrationController extends Controller
             'email.email' => 'Email format invalid!',
             'email.max' => 'Email must be less than 255 characters!',
             'isGovernment.required' => 'Job sector should be provided!',
-//            'password.required' => 'Password should be provided!',
-//            'password.confirmed' => 'Passwords didn\'t match!',
+//          'password.required' => 'Password should be provided!',
+//          'password.confirmed' => 'Passwords didn\'t match!',
             'phone.numeric' => 'Phone number can only contain numbers!',
             'userRole.required' => 'User role should be provided!',
             'userRole.exists' => 'User role invalid!',
@@ -525,7 +458,12 @@ class ApiRegistrationController extends Controller
             return response()->json(['errors' => ['title'=>'Please re-check title and gender!']]);
 
         }
-        //validation end
+
+        $memberStatus = Auth::user()->office->officeSetting != null && Auth::user()->office->officeSetting->member_auto == 1 ? 1 : 2;
+
+        $request = $this->customRegistrationValidation($request);
+
+        //------------------------------validation end-----------------------------------//
 
         //save in user table
         $user = new User();
@@ -536,7 +474,6 @@ class ApiRegistrationController extends Controller
         $user->lName = $request['lastName'];
         $user->nic = $request['nic'];
         $user->gender = $request['gender'];
-        $user->address = $request['address'];
         $user->contact_no1 = $request['phone'];
         $user->contact_no2 = null;
         $user->email = $request['email'];
@@ -544,7 +481,7 @@ class ApiRegistrationController extends Controller
         $user->password = Hash::make($request['nic']);
         $user->bday = date('Y-m-d', strtotime($request['dob']));
         $user->system_language = $request['lang']; // default value for english
-        $user->status = 2; // value for pending user
+        $user->status = 1; // value for pending user
         $user->save();
         //save in user table  end
 
@@ -588,10 +525,6 @@ class ApiRegistrationController extends Controller
         $results[] = $this->sendWelcomeSms($message,$user->contact_no1);
 
         app(TaskController::class)->complete($member->idUser, $agent->idUser);
-
-//        save in selected user role table end
-
-//        $token = $user->createToken('authToken')->accessToken; //generate access token
 
         return response()->json(['success' => 'User registered successfully!', 'statusCode' => 0]);
     }
@@ -657,5 +590,28 @@ class ApiRegistrationController extends Controller
         $client = new Client();
         $res = $client->get("https://smsserver.textorigins.com/Send_sms?src=CYCLOMAX236&email=cwimagefactory@gmail.com&pwd=cwimagefactory&msg=".$message."&dst=".$contactNo."");
         return json_decode($res->getBody(), true);
+    }
+
+    public function customRegistrationValidation($request){
+
+        //common data
+        $request['lastName'] = isset($request['lastName']) && $request['lastName'] != null ? $request['lastName'] :  '';
+        $request['username'] = isset($request['username']) && $request['username'] != null ? $request['username'] :  $request['nic'];
+        $request['password'] = isset($request['password']) && $request['password'] != null ? $request['password'] :  $request['nic'];
+        $request['isGovernment'] = isset($request['isGovernment']) && $request['isGovernment'] != null ? $request['isGovernment'] : 4;
+        $request['gender'] = isset($request['gender']) && $request['gender'] != null ? $request['gender'] : 4;
+        $request['title'] = isset($request['title']) && $request['title'] != null ? $request['title'] : UserTitle::where('name_en','')->where('status',0)->first()->iduser_title;
+
+        //common data end
+
+        //profile data
+        $request['ethnicity'] = isset($request['ethnicity']) && $request['ethnicity'] != null ? $request['ethnicity'] : Ethnicity::where('name_en','UNDISCLOSED')->where('status',0)->first()->idethnicity;
+        $request['religion'] = isset($request['religion']) && $request['religion'] != null ? $request['religion'] : Religion::where('name_en','UNDISCLOSED')->where('status',0)->first()->idreligion;
+        $request['educationalQualification'] = isset($request['educationalQualification']) && $request['educationalQualification'] != null ? $request['educationalQualification'] : EducationalQualification::where('name_en','UNDISCLOSED')->where('status',0)->first()->ideducational_qualification;
+        $request['natureOfIncome'] = isset($request['natureOfIncome']) && $request['natureOfIncome'] != null ? $request['natureOfIncome'] : NatureOfIncome::where('name_en','UNDISCLOSED')->where('status',0)->first()->idnature_of_income;
+        $request['career'] = isset($request['career']) && $request['career'] != null ? $request['career'] : Career::where('name_en','UNDISCLOSED')->where('status',0)->first()->idcareer;
+        //profile data end
+
+        return $request;
     }
 }

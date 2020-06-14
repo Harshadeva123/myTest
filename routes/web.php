@@ -50,6 +50,8 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
             Route::post('approve_agent', 'UserController@approveAgent')->name('approveAgent');
             Route::post('disable_user', 'UserController@disable')->name('disableUser');
             Route::post('enable_user', 'UserController@enable')->name('enableUser');
+            Route::post('auto_approve_member', 'UserController@autoMember')->name('autoApproveMember');
+            Route::post('auto_approve_agent', 'UserController@autoAgent')->name('autoApproveAgent');
 
             //office management
             Route::get('add_office', 'OfficeController@index')->name('addOffice');
@@ -136,6 +138,9 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
             Route::post('save_budget', 'TaskController@storeDefault')->name('saveTask');
             Route::post('deactivate_budget', 'TaskController@deactivate')->name('deactivateTask');
             Route::post('activate_budget', 'TaskController@activate')->name('activateTask');
+            Route::post('view_budget', 'TaskController@view')->name('viewBudget');
+            Route::post('view_budget_by_type', 'TaskController@viewByType')->name('viewBudgetByType');
+            Route::post('is_default_budget_created', 'TaskController@isDefaultBudgetCreated')->name('isDefaultBudgetCreated');
 
             //Post Response
             Route::post('view_comments', 'PostResponseController@viewComments')->name('viewComments');
@@ -187,6 +192,8 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
             Route::post('religion_report', 'GenericReportController@religionChart')->name('report-religion');
             Route::get('ethnicity_report', 'GenericReportController@ethnicity')->name('report-ethnicity');
             Route::post('ethnicity_report', 'GenericReportController@ethnicityChart')->name('report-ethnicity');
+            Route::get('voters_report', 'GenericReportController@voters')->name('report-voters');
+            Route::post('voters_report', 'GenericReportController@votersChart')->name('report-voters');
 
             //Attendance management
             Route::get('create_event', 'EventController@index')->name('create-event');
@@ -226,6 +233,11 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
             Route::get('create_sms', 'SmsController@create')->name('createSms');
             Route::post('create_sms', 'SmsController@send')->name('createSms');
             Route::post('get_number_of_users', 'SmsController@getNumberOfReceivers')->name('getNumberOfReceivers');
+
+            //setting
+            Route::get('app_version', 'GeneralController@appVersion')->name('appVersion');
+            Route::post('app_version', 'GeneralController@storeAppVersion')->name('storeAppVersion');
+
 
         });
     });
