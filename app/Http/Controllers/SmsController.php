@@ -8,10 +8,12 @@ use App\EducationalQualification;
 use App\ElectionDivision;
 use App\Ethnicity;
 use App\GramasewaDivision;
+use App\GroupContacts;
 use App\NatureOfIncome;
 use App\Office;
 use App\PollingBooth;
 use App\Religion;
+use App\SmsGroup;
 use App\SmsLimit;
 use App\User;
 use App\Village;
@@ -362,4 +364,201 @@ class SmsController extends Controller
         $limit->current += $count;
         $limit->save();
     }
+
+    public function createGroup(Request $request){
+        $groups = SmsGroup::where('idoffice',Auth::user()->idoffice)->where('status',1)->get();
+        return view('sms.create_group')->with(['title' => 'Create SMS Group', 'groups' => $groups]);
+    }
+
+    public function getGroupByOffice(){
+        $groups  =  SmsGroup::where('idoffice',Auth::user()->idoffice)->latest()->get();
+        foreach ($groups as $group){
+            $group['count'] = $group->contacts()->count();
+        }
+        return response()->json(['success' =>$groups]);
+    }
+
+    public function storeGroup(Request $request){
+        $validationMessages = [
+            'group.required' => 'Group name should be provided!',
+        ];
+
+        $validator = \Validator::make($request->all(), [
+            'group' => 'required'
+
+        ], $validationMessages);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()->all()]);
+        }
+
+        $group = new SmsGroup();
+        $group->idoffice = Auth::user()->idoffice;
+        $group->name = strtoupper($request['group']);
+        $group->status = 1;
+        $group->save();
+        return response()->json(['success' => 'success']);
+    }
+
+    public function updateGroup(Request $request){
+        $validationMessages = [
+            'group.required' => 'Group name should be provided!',
+            'updateId.required' => 'Updated Invalid!'
+        ];
+
+        $validator = \Validator::make($request->all(), [
+            'group' => 'required',
+            'updateId' => 'required'
+        ], $validationMessages);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()->all()]);
+        }
+
+        $id = $request['updateId'];
+        $isExist = SmsGroup::find(intval($id));
+        if($isExist != null){
+            $isExist->name = $request['group'];
+            $isExist->save();
+            return response()->json(['success' => 'success']);
+
+        }
+        else{
+            return response()->json(['errors' => ['error' => 'Group Invalid!']]);
+
+        }
+    }
+
+    public function deleteGroup(Request $request){
+
+        $group = SmsGroup::where('idoffice',Auth::user()->idoffice)->where('idsms_group',$request['id'])->first();
+        if($group != null){
+            $group->delete();
+            return response()->json(['success' => 'success']);
+        }
+        else{
+            return response()->json(['errors' => ['error' => 'Group Invalid!']]);
+
+        }
+
+    }
+
+    public function addContacts(){
+        $groups = SmsGroup::where('idoffice',Auth::user()->idoffice)->where('status',1)->get();
+        return view('sms.add_contacts')->with(['title' => 'Add Contacts', 'groups' => $groups]);
+    }
+
+    public function getContactByGroup(Request $request){
+        $validationMessages = [
+            'id.required' => 'Group name should be provided!',
+            'id.required' => 'Updated Invalid!'
+        ];
+
+        $validator = \Validator::make($request->all(), [
+            'id' => 'required',
+            'id' => 'required'
+        ], $validationMessages);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()->all()]);
+        }
+
+        $contacts =  GroupContacts::where('idsms_group',$request['id'])->where('status',1)->get();
+        return response()->json(['success' => $contacts]);
+
+    }
+
+    public function storeContact(Request $request){
+        $validationMessages = [
+            'group.required' => 'Group invalid!',
+            'contact.required' => 'Updated Invalid!',
+            'contact.min' => 'Contact should be 10 numbers long',
+            'contact.numeric' => 'Contact can only contains numbers'
+        ];
+
+        $validator = \Validator::make($request->all(), [
+            'contact' => 'required|min:10|numeric',
+            'group' => 'required'
+        ], $validationMessages);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()->all()]);
+        }
+
+        $contact = new GroupContacts();
+        $contact->idsms_group = $request['group'];
+        $contact->contact = $request['contact'];
+        $contact->status = 1;
+        $contact->save();
+        return response()->json(['success' => 'success']);
+
+    }
+
+    public function updateContact(Request $request){
+        $validationMessages = [
+            'contact.required' => 'Contact number should be provided!',
+            'updateId.required' => 'Updated Invalid!'
+        ];
+
+        $validator = \Validator::make($request->all(), [
+            'contact' => 'required',
+            'updateId' => 'required'
+        ], $validationMessages);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()->all()]);
+        }
+
+        $id = $request['updateId'];
+        $isExist = GroupContacts::find(intval($id));
+        if($isExist != null){
+            $isExist->contact = $request['contact'];
+            $isExist->save();
+            return response()->json(['success' => 'success']);
+
+        }
+        else{
+            return response()->json(['errors' => ['error' => 'Update Invalid!']]);
+
+        }
+    }
+
+    public function deleteContact(Request $request){
+
+        $contact = GroupContacts::find($request['id']);
+        if($contact != null){
+            $contact->delete();
+            return response()->json(['success' => 'success']);
+        }
+        else{
+            return response()->json(['errors' => ['error' => 'Process Invalid!']]);
+
+        }
+
+    }
+
+    public function sendGroup(Request $request){
+        $group = SmsGroup::where('idoffice',Auth::user()->idoffice)->where('status',1)->get();
+        return view('sms.broadcast_group', ['title' => __('Send Group'), 'groups' => $group]);
+
+    }
+
+    public function getNumberOfReceiversGroup(Request $request)
+    {
+
+        $group = $request['group'];
+        $limit = Auth::user()->office->smaLimit != null ? Auth::user()->office->smaLimit->limit : 0;
+        $used = Auth::user()->office->smaLimit != null ? Auth::user()->office->smaLimit->current : 0;
+
+        return response()->json(['success' =>
+                ['recipient' => SmsGroup::find(intval($group))->contacts()->count(),
+                    'totalPages' => 1,
+                    'limit' => $limit,
+                    'used' => $used,
+                ]
+            ]
+        );
+
+    }
+
 }

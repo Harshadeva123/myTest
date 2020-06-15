@@ -274,12 +274,13 @@
                                 @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 3 )
                                     <li><a href="{{route('welcomeMessage')}}">{{ __('Welcome SMS') }}</a></li>
                                     <li><a href="{{route('createSms')}}">{{ __('Create SMS') }}</a></li>
+                                    <li><a href="{{route('createSmsGroup')}}">{{ __('Create Group') }}</a></li>
+                                    <li><a href="{{route('addContacts')}}">{{ __('Add Contacts') }}</a></li>
+                                    <li><a href="{{route('sendGroup')}}">{{ __('Send Group') }}</a></li>
                                 @endif
                                 @if(\Illuminate\Support\Facades\Auth::user()->iduser_role == 2 )
                                     <li><a href="{{route('smsConfiguration')}}">{{ __('SMS Configurations') }}</a></li>
                                 @endif
-                                {{--<li><a href="{{route('assignTask')}}">{{ __('Assign Task') }}</a></li>--}}
-                                {{--<li><a href="{{route('viewTasks')}}">{{ __('View Task') }}</a></li>--}}
                             </ul>
                         </li>
                     @endif

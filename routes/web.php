@@ -144,11 +144,24 @@ Route::group(['middleware' => 'auth', 'prefix' => ''], function () {
                 //SMS
                 Route::get('welcome_message', 'SmsController@index')->name('welcomeMessage');
                 Route::get('sms_configuration', 'SmsController@config')->name('smsConfiguration');
+                Route::get('create_sms_group', 'SmsController@createGroup')->name('createSmsGroup');
                 Route::post('updateSmsLimit', 'SmsController@limit')->name('updateSmsLimit');
                 Route::post('saveWelcomeSms', 'SmsController@saveWelcome')->name('saveWelcomeSms');
                 Route::get('create_sms', 'SmsController@create')->name('createSms');
                 Route::post('create_sms', 'SmsController@sendBulk')->name('createSms');
                 Route::post('get_number_of_users', 'SmsController@getNumberOfReceivers')->name('getNumberOfReceivers');
+                Route::post('get_number_of_users_group', 'SmsController@getNumberOfReceiversGroup')->name('getNumberOfReceiversGroup');
+                Route::post('get_group_by_office', 'SmsController@getGroupByOffice')->name('getSmsGroupByOffice');
+                Route::post('save_sms_group', 'SmsController@storeGroup')->name('saveSmsGroup');
+                Route::post('update_sms_group', 'SmsController@updateGroup')->name('updateSmsGroup');
+                Route::post('delete_sms_group', 'SmsController@deleteGroup')->name('deleteGroup');
+                Route::get('add_contacts', 'SmsController@addContacts')->name('addContacts');
+                Route::post('get_contact_by_group', 'SmsController@getContactByGroup')->name('getContactByGroup');
+                Route::post('save_contact', 'SmsController@storeContact')->name('saveContact');
+                Route::post('update_contact', 'SmsController@updateContact')->name('updateContact');
+                Route::post('delete_contact', 'SmsController@deleteContact')->name('deleteContact');
+                Route::get('send_group', 'SmsController@sendGroup')->name('sendGroup');
+                Route::get('save_group_sms', 'SmsController@saveGroupSms')->name('saveGroupSms');
 
                 //setting
                 Route::get('app_version', 'GeneralController@appVersion')->name('appVersion');

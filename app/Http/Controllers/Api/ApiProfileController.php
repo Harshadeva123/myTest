@@ -24,7 +24,6 @@ use Illuminate\Support\Facades\Auth;
 class ApiProfileController extends Controller
 {
     public function index(Request $request){
-        $user = Auth::user();
         $validationMessages = [
             'lang.required' => 'Please provide user language!',
             'lang.in' => 'User language invalid!',
@@ -47,23 +46,150 @@ class ApiProfileController extends Controller
             $lang = 'name_en';
         }
 
-        if($user->iduser_role == 6){
-            $voting = VotersCount::where('idoffice',Auth::user()->idoffice)->where('idvillage',Auth::user()->agent->idvillage)->select(['total','forecasting','houses'])->first();
-            if($voting == null){
-                $voting['total'] = 0;
-                $voting['forecasting'] = 0;
-                $voting['houses'] = 0;
+        if (Auth::user()->iduser_role == 6 || Auth::user()->iduser_role == 7 ) {
 
+            $user['firstName'] =  Auth::user()->fName.' '.Auth::user()->lName;
+            $user['nic'] =  Auth::user()->nic;
+            if( Auth::user()->gender != 4) {
+                $user['gender'] = $user['gender'] =  Auth::user()->gender;
             }
-            return response()->json(['success' => ['referral_code'=>Auth::user()->agent->referral_code,'village_meta'=>$voting,'completedPercentage'=>$this->completedPercentage()], 'statusCode' => 0]);
-        }
-        else if($user->iduser_role == 7){
-            return response()->json(['success' => [], 'statusCode' => 0]);
+            else{
+                $user['gender'] =  null;
+            }
+            $user['contactNumber'] =  Auth::user()->contact_no1;
+            $user['email'] =  Auth::user()->email;
+            $user['username'] =  Auth::user()->username;
+            $user['dateOfBirth'] =  Auth::user()->bday;
+            if( Auth::user()->isGovernmen != 4) {
+                $user['jobSector'] = Auth::user()->isGovernmen;
+            }
+            else{
+                $user['jobSector'] =  null;
+            }
+            $user['youthSociety'] =  UserSociety::where('idUser',Auth::user()->idUser)->where('idsociety',3)->first() ?['id'=>UserSociety::where('idUser',Auth::user()->idUser)->where('idsociety',3)->first()->idposition,'label'=>UserSociety::where('idUser',Auth::user()->idUser)->where('idsociety',3)->first()->position->$lang]  : null;
+            $user['womenSociety'] =  UserSociety::where('idUser',Auth::user()->idUser)->where('idsociety',2)->first() ? ['id'=>UserSociety::where('idUser',Auth::user()->idUser)->where('idsociety',2)->first()->idposition,'label'=>UserSociety::where('idUser',Auth::user()->idUser)->where('idsociety',2)->first()->position->$lang] : null;
+            $user['branchSociety'] =  UserSociety::where('idUser',Auth::user()->idUser)->where('idsociety',1)->first() ? ['id'=>UserSociety::where('idUser',Auth::user()->idUser)->where('idsociety',1)->first()->idposition,'label'=>UserSociety::where('idUser',Auth::user()->idUser)->where('idsociety',1)->first()->position->$lang] : null;
+            $user['completedPercentage'] =  $this->completedPercentage();
+
+            $educationDefault = EducationalQualification::where('name_en','UNDISCLOSED')->where('status',0)->first()->ideducational_qualification;
+            $religionDefault = Religion::where('name_en','UNDISCLOSED')->where('status',0)->first()->idreligion;
+            $ethnicityDefault = Ethnicity::where('name_en','UNDISCLOSED')->where('status',0)->first()->idethnicity;
+            $careerDefault  = Career::where('name_en','UNDISCLOSED')->where('status',0)->first()->idcareer;
+            $incomeDefault  = NatureOfIncome::where('name_en','UNDISCLOSED')->where('status',0)->first()->idnature_of_income;
+            $titleDefault  = UserTitle::where('name_en','')->where('status',0)->first()->iduser_title;
+
+
+            if(Auth::user()->iduser_title != $titleDefault  ) {
+                $user['title'] = ['id' => Auth::user()->iduser_title, 'label' => Auth::user()->userTitle->$lang];
+            }
+            else{
+                $user['title']  = null;
+            }
+
+            if(Auth::user()->iduser_role == 6){
+
+                if(Auth::user()->agent->idethnicity != $ethnicityDefault  ) {
+                    $user['ethnicity'] = ['id' => Auth::user()->agent->idethnicity, 'label' => Auth::user()->agent->ethnicity->$lang];
+                }
+                else{
+                    $user['ethnicity']  = null;
+                }
+                if(Auth::user()->agent->idreligion != $religionDefault  ) {
+                    $user['religion'] = ['id' => Auth::user()->agent->idreligion, 'label' => Auth::user()->agent->religion->$lang];
+                }
+                else{
+                    $user['religion'] = null;
+                }
+                if(Auth::user()->agent->ideducational_qualification != $educationDefault  ) {
+                    $user['educationalQualification'] = ['id'=> Auth::user()->agent->ideducational_qualification,'label'=>Auth::user()->agent->educationalQualification->$lang];
+                }
+                else{
+                    $user['educationalQualification'] = null;
+                }
+                if(Auth::user()->agent->idnature_of_income != $incomeDefault  ) {
+                    $user['natureOfIncome'] = ['id'=> Auth::user()->agent->idnature_of_income,'label'=>Auth::user()->agent->natureOfIncome->$lang];
+                }
+                else{
+                    $user['natureOfIncome'] = null;
+                }
+                if(Auth::user()->agent->idcareer != $careerDefault  ) {
+                    $user['career'] = ['id'=> Auth::user()->agent->idcareer,'label'=>Auth::user()->agent->career->$lang];
+                }
+                else{
+                    $user['career'] = null;
+                }
+                $user['electionDivision'] = ['id'=> Auth::user()->agent->idelection_division,'label'=>Auth::user()->agent->electionDivision->$lang];
+                $user['pollingBooth'] = ['id'=> Auth::user()->agent->idpolling_booth,'label'=>Auth::user()->agent->pollingBooth->$lang];
+                $user['gramasewaDivision'] = ['id'=> Auth::user()->agent->idgramasewa_division,'label'=>Auth::user()->agent->gramasewaDivision->$lang];
+                $user['village'] = ['id'=> Auth::user()->agent->idvillage,'label'=>Auth::user()->agent->village->$lang];
+                $user['houseNo'] =  Auth::user()->agent->homeNo;
+
+                $voting = VotersCount::where('idoffice',Auth::user()->idoffice)->where('idvillage',Auth::user()->agent->idvillage)->select(['total','forecasting','houses'])->first();
+                if($voting == null){
+                    $voting['total'] = 0;
+                    $voting['forecasting'] = 0;
+                    $voting['houses'] = 0;
+                }
+            }
+            else if(Auth::user()->iduser_role == 7){
+
+                $user['houseNo'] =  Auth::user()->member->homeNo;
+
+                if(Auth::user()->member->idelection_division != $ethnicityDefault  ) {
+                    $user['ethnicity'] = ['id' => Auth::user()->member->idelection_division, 'label' => Auth::user()->member->electionDivision->$lang];
+                }
+                else{
+                    $user['ethnicity']  = null;
+                }
+                if(Auth::user()->member->idreligion != $religionDefault  ) {
+                    $user['religion'] = ['id' => Auth::user()->member->idreligion, 'label' => Auth::user()->member->religion->$lang];
+                }
+                else{
+                    $user['religion'] = null;
+                }
+                if(Auth::user()->member->ideducational_qualification != $educationDefault  ) {
+                    $user['educationalQualification'] = ['id'=> Auth::user()->member->ideducational_qualification,'label'=>Auth::user()->member->educationalQualification->$lang];
+                }
+                else{
+                    $user['educationalQualification'] = null;
+                }
+                if(Auth::user()->member->idnature_of_income != $incomeDefault  ) {
+                    $user['natureOfIncome'] = ['id'=> Auth::user()->member->idnature_of_income,'label'=>Auth::user()->member->natureOfIncome->$lang];
+                }
+                else{
+                    $user['natureOfIncome'] = null;
+                }
+                if(Auth::user()->member->idcareer != $careerDefault  ) {
+                    $user['career'] = ['id'=> Auth::user()->member->idcareer,'label'=> Auth::user()->member->career->$lang];
+                }
+                else{
+                    $user['career'] = null;
+                }
+                $user['electionDivision'] = ['id'=> Auth::user()->member->idelection_division,'label'=>Auth::user()->member->electionDivision->$lang];
+                $user['pollingBooth'] = ['id'=> Auth::user()->member->idpolling_booth,'label'=>Auth::user()->member->pollingBooth->$lang];
+                $user['gramasewaDivision'] = ['id'=> Auth::user()->member->idgramasewa_division,'label'=>Auth::user()->member->gramasewaDivision->$lang];
+                $user['village'] = ['id'=> Auth::user()->member->idvillage,'label'=>Auth::user()->member->village->$lang];
+            }
+
+            if(Auth::user()->iduser_role == 6){
+                return response()->json(['success' => ['my_profile'=>$user,'referral_code'=>Auth::user()->agent->referral_code,'village_meta'=>$voting], 'statusCode' => 0]);
+            }
+            else if($user->iduser_role == 7){
+                return response()->json(['success' => ['my_profile'=>$user], 'statusCode' => 0]);
+            }
+            else{
+                return response()->json(['error' => 'Unknown user role', 'statusCode' => -99]);
+            }
+
         }
         else{
-            return response()->json(['error' => 'Unknown user role', 'statusCode' => -99]);
+            return response()->json(['error' => 'User invalid!', 'statusCode' => -99]);
+
         }
+
+
     }
+
 
     public function myProfile(Request $request){
         $validationMessages = [
